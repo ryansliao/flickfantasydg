@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasydg.Data;
 
@@ -11,9 +12,11 @@ using fantasydg.Data;
 namespace fantasydg.Migrations
 {
     [DbContext(typeof(DGDbContext))]
-    partial class DGDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250520220941_AddCompositeKeyToTournament")]
+    partial class AddCompositeKeyToTournament
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,21 +88,6 @@ namespace fantasydg.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("Scramble")
-                        .HasColumnType("float");
-
-                    b.Property<double>("StrokesGainedC1xPutting")
-                        .HasColumnType("float");
-
-                    b.Property<double>("StrokesGainedC2Putting")
-                        .HasColumnType("float");
-
-                    b.Property<double>("StrokesGainedPutting")
-                        .HasColumnType("float");
-
-                    b.Property<double>("StrokesGainedTeeToGreen")
-                        .HasColumnType("float");
-
-                    b.Property<double>("StrokesGainedTotal")
                         .HasColumnType("float");
 
                     b.Property<int>("TournamentScore")

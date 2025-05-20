@@ -1,0 +1,30 @@
+Stat 1: Fairway Hits %
+Stat 2: C1 In Regulation %
+Stat 3: C2 In Regulation %
+Stat 4: Parked %
+Stat 5: Scramble %
+Stat 6: C1 Putting %
+Stat 7: C1x Putting %
+Stat 8: C2 Putting %
+Stat 9: OB Rate %
+Stat 10: Birdie+ %
+Stat 11: 2x Bogey+ %
+Stat 12: Bogey+ %
+Stat 13: Par %
+Stat 14: Birdie %
+Stat 15: Eagle+ %
+Stat 16: Total Putt Distance
+Stat 17: Long Throw-In
+Stat 18: Avg. Putt
+Stat 21: ?
+Stat 22: ?
+
+Strokes Gained Stats:
+Stat 100: Gained Total
+Stat 101: Gained Putting
+Stat 102: Gained Tee to Green - measures a player's performance on all shots from outside Circle 2.
+Stat 103: NULL
+Stat 104: Gained C1x - measures a player's performance on putts from inside Circle 1X (over 11 feet/3.3 meters from the basket but within 33 feet/10 meters).
+Stat 105: Gained C2 - measures a player's performance on putts from inside Circle 2 (over 33 feet/10 meters from the basket but within 66 feet/20 meters).
+Stat 106: NULL
+Stat 107: ?

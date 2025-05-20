@@ -56,28 +56,32 @@ else
     <table class="table table-bordered table-striped table-sm">
         <thead class="thead-dark">
             <tr>
-                <th>Name</th>
+                <th>Player</th>
                 <th>Tournament</th>
                 <th>Division</th>
                 <th>Place</th>
-                <th>Round Score</th>
-                <th>Tournament Score</th>
-                <th>Fairway %</th>
-                <th>C1 In Reg %</th>
-                <th>C2 In Reg %</th>
-                <th>Parked %</th>
-                <th>Scramble %</th>
-                <th>C1 Putting %</th>
-                <th>C1x Putting %</th>
-                <th>C2 Putting %</th>
-                <th>OB Rate %</th>
-                <th>Birdie+ %</th>
-                <th>Double Bogey+ %</th>
-                <th>Bogey+ %</th>
-                <th>Par %</th>
-                <th>Birdie %</th>
-                <th>Eagle+ %</th>
-                <th>Putt Distance</th>
+                <th>Overall</th>
+                <th>Fairway</th>
+                <th>C1 In-Reg</th>
+                <th>C2 In-Reg</th>
+                <th>Parked</th>
+                <th>Scramble</th>
+                <th>C1 Putting</th>
+                <th>C1x Putting</th>
+                <th>C2 Putting</th>
+                <th>OB</th>
+                <th>Birdie+</th>
+                <th>Double Bogey+</th>
+                <th>Bogey+</th>
+                <th>Par</th>
+                <th>Birdie</th>
+                <th>Eagle+</th>
+                <th>Avg. Putt Dist.</th>
+                <th>SG Total</th>
+                <th>SG Tee->Green</th>
+                <th>SG Putting</th>
+                <th>SG C1x</th>
+                <th>SG C2</th>
             </tr>
         </thead>
         <tbody>
@@ -88,7 +92,6 @@ else
                 <td>@player.Round?.Tournament?.Name</td>
                 <td>@player.Round?.Tournament?.Division</td>
                 <td>@player.Place</td>
-                <td>@player.RoundScore</td>
                 <td>@player.TournamentScore</td>
                 <td>@player.Fairway</td>
                 <td>@player.C1InReg</td>
@@ -106,6 +109,11 @@ else
                 <td>@player.Birdie</td>
                 <td>@player.EaglePlus</td>
                 <td>@player.PuttDistance</td>
+                <td>@player.StrokesGainedTotal</td>
+                <td>@player.StrokesGainedTeeToGreen</td>
+                <td>@player.StrokesGainedPutting</td>
+                <td>@player.StrokesGainedC1xPutting</td>
+                <td>@player.StrokesGainedC2Putting</td>
             </tr>
         }
         </tbody>

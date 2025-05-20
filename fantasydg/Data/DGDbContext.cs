@@ -14,12 +14,18 @@ namespace fantasydg.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Composite primary key for Tournament
             modelBuilder.Entity<Tournament>()
-                .HasMany(t => t.RoundList)
-                .WithOne(r => r.Tournament)
-                .HasForeignKey(r => r.TournamentId)
+                .HasKey(t => new { t.Id, t.Division });
+
+            // Round references Tournament by both Id and Division
+            modelBuilder.Entity<Round>()
+                .HasOne(r => r.Tournament)
+                .WithMany(t => t.RoundList)
+                .HasForeignKey(r => new { r.TournamentId, r.Division })
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Player references Round as before
             modelBuilder.Entity<Round>()
                 .HasMany(r => r.Players)
                 .WithOne(p => p.Round)

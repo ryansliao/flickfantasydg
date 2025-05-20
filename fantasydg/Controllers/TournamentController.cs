@@ -6,11 +6,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace fantasydg.Controllers
 {
@@ -64,11 +59,10 @@ namespace fantasydg.Controllers
             string startDateStr = infoData?["StartDate"]?.ToString();
             DateTime startDate = DateTime.TryParse(startDateStr, out var parsedDate) ? parsedDate : DateTime.MinValue;
 
-            
-
             string tournamentName = infoData?["SimpleName"]?.ToString() ?? $"Tournament {model.TournamentId}";
             string tier = infoData?["TierPro"]?.ToString();
 
+            // Only accept pro tournaments
             if (tier != "M" && tier != "ES")
             {
                 _logger.LogWarning("Rejected tournament ID {Id}: Tier = {tier}", model.TournamentId, tier);
@@ -93,36 +87,11 @@ namespace fantasydg.Controllers
             var players = await _dataService.FetchAveragedTournamentStatsAsync(model.TournamentId, model.Division);
             _logger.LogInformation("Fetched {Count} players", players.Count);
 
-            // Validate conflict on name/id mismatch
-            var conflicting = await _db.Tournaments
-                .Where(t => t.Id == model.TournamentId || t.Name == tournamentName)
-                .ToListAsync();
-
-            var conflict = conflicting.FirstOrDefault();
-            if (conflict != null)
-            {
-                bool idMatch = conflict.Id == model.TournamentId;
-                bool nameMatch = conflict.Name.Equals(tournamentName, StringComparison.OrdinalIgnoreCase);
-
-                if (!(idMatch && nameMatch))
-                {
-                    _logger.LogWarning("Tournament ID/Name mismatch");
-                    ModelState.AddModelError("", "Tournament ID and Name must refer to the same tournament.");
-                    model.DivisionOptions = new List<SelectListItem>
-                    {
-                        new SelectListItem { Value = "MPO", Text = "MPO" },
-                        new SelectListItem { Value = "FPO", Text = "FPO" }
-                    };
-                    return View("Input", model);
-                }
-            }
-
-            // Load or create tournament
+            // Initiate tournament object
             var tournament = await _db.Tournaments
                 .Include(t => t.RoundList)
                 .ThenInclude(r => r.Players)
                 .FirstOrDefaultAsync(t => t.Id == model.TournamentId && t.Division == model.Division);
-
 
             if (tournament == null)
             {
@@ -145,6 +114,7 @@ namespace fantasydg.Controllers
                 tournament.Weight = weight;
             }
 
+            // Initiate round objects and player objects in the round
             if (players.Any())
             {
                 var round = new Round
@@ -159,29 +129,33 @@ namespace fantasydg.Controllers
                 {
                     p.Round = round;
 
-                    var existingPlayer = await _db.Players.FindAsync(p.Id);
-                    if (existingPlayer != null)
+                    var player = await _db.Players.FindAsync(p.Id);
+                    if (player != null)
                     {
-                        existingPlayer.Name = p.Name;
-                        existingPlayer.Place = p.Place;
-                        existingPlayer.RoundScore = p.RoundScore;
-                        existingPlayer.TournamentScore = p.TournamentScore;
-                        existingPlayer.Fairway = p.Fairway;
-                        existingPlayer.C1InReg = p.C1InReg;
-                        existingPlayer.C2InReg = p.C2InReg;
-                        existingPlayer.Parked = p.Parked;
-                        existingPlayer.Scramble = p.Scramble;
-                        existingPlayer.C1Putting = p.C1Putting;
-                        existingPlayer.C1xPutting = p.C1xPutting;
-                        existingPlayer.C2Putting = p.C2Putting;
-                        existingPlayer.ObRate = p.ObRate;
-                        existingPlayer.BirdiePlus = p.BirdiePlus;
-                        existingPlayer.DoubleBogeyPlus = p.DoubleBogeyPlus;
-                        existingPlayer.BogeyPlus = p.BogeyPlus;
-                        existingPlayer.Par = p.Par;
-                        existingPlayer.Birdie = p.Birdie;
-                        existingPlayer.EaglePlus = p.EaglePlus;
-                        existingPlayer.PuttDistance = p.PuttDistance;
+                        player.Name = p.Name;
+                        player.Place = p.Place;
+                        player.TournamentScore = p.TournamentScore;
+                        player.Fairway = p.Fairway;
+                        player.C1InReg = p.C1InReg;
+                        player.C2InReg = p.C2InReg;
+                        player.Parked = p.Parked;
+                        player.Scramble = p.Scramble;
+                        player.C1Putting = p.C1Putting;
+                        player.C1xPutting = p.C1xPutting;
+                        player.C2Putting = p.C2Putting;
+                        player.ObRate = p.ObRate;
+                        player.BirdiePlus = p.BirdiePlus;
+                        player.DoubleBogeyPlus = p.DoubleBogeyPlus;
+                        player.BogeyPlus = p.BogeyPlus;
+                        player.Par = p.Par;
+                        player.Birdie = p.Birdie;
+                        player.EaglePlus = p.EaglePlus;
+                        player.PuttDistance = p.PuttDistance;
+                        player.StrokesGainedTotal = p.StrokesGainedTotal;
+                        player.StrokesGainedPutting = p.StrokesGainedPutting;
+                        player.StrokesGainedTeeToGreen = p.StrokesGainedTeeToGreen;
+                        player.StrokesGainedC1xPutting = p.StrokesGainedC1xPutting;
+                        player.StrokesGainedC2Putting = p.StrokesGainedC2Putting;
                     }
                     else
                     {
@@ -212,6 +186,7 @@ namespace fantasydg.Controllers
 
             var players = await query
                 .OrderBy(p => p.Round.Tournament.Date)
+                .ThenBy(p => p.Round.Tournament.Division)
                 .ThenBy(p => p.TournamentScore)
                 .ToListAsync();
 

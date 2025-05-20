@@ -2,11 +2,6 @@
 using fantasydg.Data;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace fantasydg.Services
 {
@@ -140,7 +135,6 @@ namespace fantasydg.Services
                                 }
                             }
 
-                            // ✅ Aggregate players
                             foreach (var player in playerMap.Values)
                             {
                                 if (!aggregatedPlayers.ContainsKey(player.Id))
@@ -156,6 +150,72 @@ namespace fantasydg.Services
                             _logger.LogError(ex, "Failed to fetch or parse stats for Round {Round} (live_round_id = {Id})", roundNumber, liveRoundId);
                             continue;
                         }
+
+                        _logger.LogInformation("Fetching round strokes gained stats for live_round_id {Id}", liveRoundId);
+                        string strokesGainedUrl = $"https://www.pdga.com/api/v1/feat/stats/strokes-gained/{liveRoundId}";
+
+                        try
+                        {
+                            var strokesGainedJson = await _httpClient.GetStringAsync(strokesGainedUrl);
+                            var strokesGainedArray = JArray.Parse(strokesGainedJson);
+
+                            foreach (var playerData in strokesGainedArray)
+                            {
+                                var liveResult = playerData["score"]?["liveResult"];
+                                if (liveResult == null)
+                                {
+                                    _logger.LogWarning("liveResult missing for playerData");
+                                    continue;
+                                }
+
+                                int playerId = liveResult["resultId"]?.Value<int>() ?? 0;
+                                string name = $"{liveResult["firstName"]} {liveResult["lastName"]}".Trim();
+
+                                if (!playerMap.ContainsKey(playerId))
+                                {
+                                    _logger.LogWarning("Player ID {Id} from strokes gained stats not found in round player map — skipping", playerId);
+                                    continue;
+                                }
+
+                                var player = playerMap[playerId];
+                                player.Name = name;
+
+                                var statList = playerData["stats"] as JArray;
+                                if (statList == null) continue;
+
+                                foreach (var stat in statList)
+                                {
+                                    int statId = stat["statId"]?.Value<int>() ?? 0;
+                                    double statValue = stat["statValue"]?.Type == JTokenType.Null ? 0.0 : stat["statValue"]?.Value<double>() ?? 0.0;
+                                    int statCount = stat["statCount"]?.Type == JTokenType.Null ? 0 : stat["statCount"]?.Value<int>() ?? 0;
+
+                                    switch (statId)
+                                    {
+                                        case 100: player.StrokesGainedTotal = Math.Round(statValue, 2); break;
+                                        case 101: player.StrokesGainedPutting = Math.Round(statValue, 2); break;
+                                        case 102: player.StrokesGainedTeeToGreen = Math.Round(statValue, 2); break;
+                                        case 104: player.StrokesGainedC1xPutting = Math.Round(statValue, 2); break;
+                                        case 105: player.StrokesGainedC2Putting = Math.Round(statValue, 2); break;
+                                    }
+                                }
+                            }
+
+                            foreach (var player in playerMap.Values)
+                            {
+                                if (!aggregatedPlayers.ContainsKey(player.Id))
+                                    aggregatedPlayers[player.Id] = new List<Player>();
+
+                                aggregatedPlayers[player.Id].Add(player);
+                            }
+
+                            roundCount++;
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Failed to fetch or parse strokes gained stats for Round {Round} (live_round_id = {Id})", roundNumber, liveRoundId);
+                            continue;
+                        }
+
                     }
                     else
                     {
@@ -187,7 +247,6 @@ namespace fantasydg.Services
                     Name = players.First().Name,
                     Place = players.Last().Place,
                     TournamentScore = players.Last().TournamentScore,
-                    RoundScore = players.Sum(p => p.RoundScore),
                     Fairway = Math.Round(players.Average(p => p.Fairway), 2),
                     C1InReg = Math.Round(players.Average(p => p.C1InReg), 2),
                     C2InReg = Math.Round(players.Average(p => p.C2InReg), 2),
@@ -203,7 +262,12 @@ namespace fantasydg.Services
                     Par = Math.Round(players.Average(p => p.Par), 2),
                     Birdie = Math.Round(players.Average(p => p.Birdie), 2),
                     EaglePlus = Math.Round(players.Average(p => p.EaglePlus), 2),
-                    PuttDistance = (int)players.Average(p => p.PuttDistance)
+                    PuttDistance = (int)players.Average(p => p.PuttDistance),
+                    StrokesGainedTotal = Math.Round(players.Average(p => p.StrokesGainedTotal), 2),
+                    StrokesGainedPutting = Math.Round(players.Average(p => p.StrokesGainedPutting), 2),
+                    StrokesGainedTeeToGreen = Math.Round(players.Average(p => p.StrokesGainedTeeToGreen), 2),
+                    StrokesGainedC1xPutting = Math.Round(players.Average(p => p.StrokesGainedC1xPutting), 2),
+                    StrokesGainedC2Putting = Math.Round(players.Average(p => p.StrokesGainedC2Putting), 2)
                 };
 
                 averagedPlayers.Add(player);

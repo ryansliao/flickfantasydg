@@ -10,6 +10,7 @@ namespace fantasydg.Models
 
         // Foreign Key to Tournament
         public int TournamentId { get; set; }
+        public string Division { get; set; } = null!;
         public Tournament? Tournament { get; set; }
 
         public List<Player> Players { get; set; } = new();
