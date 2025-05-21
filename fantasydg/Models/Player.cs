@@ -29,7 +29,6 @@ namespace fantasydg.Models
         public double Birdie { get; set; }
         public double EaglePlus { get; set; }
         public int PuttDistance { get; set; }
-
         public double StrokesGainedTotal { get; set; }
         public double StrokesGainedTeeToGreen { get; set; }
         public double StrokesGainedPutting { get; set; }

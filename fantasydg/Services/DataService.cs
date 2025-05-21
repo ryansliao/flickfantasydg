@@ -21,6 +21,11 @@ namespace fantasydg.Services
         public async Task<List<Player>> FetchAveragedTournamentStatsAsync(int tournamentId, string division)
         {
             var aggregatedPlayers = new Dictionary<int, List<Player>>();
+
+            _logger.LogInformation("Fetching tournament stats for tournament_id {tournamentId}, {division} division:", tournamentId, division);
+            string totalStatsUrl = $"https://www.pdga.com/api/v1/feat/stats/tournament-division-strokes-gained/{tournamentId}/{division}/";
+
+
             int roundCount = 0;
 
             for (int roundNumber = 1; roundNumber <= 12; roundNumber++)
@@ -76,14 +81,14 @@ namespace fantasydg.Services
                         }
 
                         _logger.LogInformation("Fetching round stats for live_round_id {Id}", liveRoundId);
-                        string statsUrl = $"https://www.pdga.com/api/v1/feat/stats/round-stats/{liveRoundId}";
+                        string roundStatsUrl = $"https://www.pdga.com/api/v1/feat/stats/round-stats/{liveRoundId}";
 
                         try
                         {
-                            var statsJson = await _httpClient.GetStringAsync(statsUrl);
-                            var statsArray = JArray.Parse(statsJson);
+                            var roundStatsJson = await _httpClient.GetStringAsync(roundStatsUrl);
+                            var roundStatsArray = JArray.Parse(roundStatsJson);
 
-                            foreach (var playerData in statsArray)
+                            foreach (var playerData in roundStatsArray)
                             {
                                 var liveResult = playerData["score"]?["liveResult"];
                                 if (liveResult == null)
@@ -102,12 +107,12 @@ namespace fantasydg.Services
                                 }
 
                                 var player = playerMap[playerId];
-                                player.Name = name;  // Reaffirm
+                                player.Name = name;
 
-                                var statList = playerData["stats"] as JArray;
-                                if (statList == null) continue;
+                                var roundStatList = playerData["stats"] as JArray;
+                                if (roundStatList == null) continue;
 
-                                foreach (var stat in statList)
+                                foreach (var stat in roundStatList)
                                 {
                                     int statId = stat["statId"]?.Value<int>() ?? 0;
                                     double statValue = stat["statValue"]?.Type == JTokenType.Null ? 0.0 : stat["statValue"]?.Value<double>() ?? 0.0;
@@ -235,7 +240,7 @@ namespace fantasydg.Services
                 }
             }
 
-            // ✅ Now average across successful rounds only
+            // Now average across successful rounds only
             var averagedPlayers = new List<Player>();
 
             foreach (var kvp in aggregatedPlayers)

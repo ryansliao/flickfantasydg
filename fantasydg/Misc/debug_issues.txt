@@ -1,3 +1,5 @@
 - round stats are not matching with tournament stats (avg rounds vs. total)
 	- maybe look to change method of averaging round stats to just tracking tournament stats
 		- if the overall stats page is constantly updated
+
+- split database into a different file

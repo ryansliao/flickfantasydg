@@ -14,15 +14,15 @@
         <label for="tournamentName" class="mr-2">Tournament</label>
         <select name="name" id="tournamentName" class="form-control">
             <option value="">All</option>
-            @foreach (var t in ViewBag.UniqueTournaments as List<TournamentDropdownItem>)
+            @foreach (var t in ViewBag.Tournaments as List<TournamentDropdownItem>)
             {
                 if (t.Name == Context.Request.Query["name"])
                 {
-                    <option value="@t.Name" selected>@($"{t.Date:yyyy-MM-dd} - {t.Name}")</option>
+                    <option value="@t.Name" selected>@($"{t.Name}")</option>
                 }
                 else
                 {
-                    <option value="@t.Name">@($"{t.Date:yyyy-MM-dd} - {t.Name}")</option>
+                    <option value="@t.Name">@($"{t.Name}")</option>
                 }
             }
         </select>
@@ -31,7 +31,7 @@
         <label for="division" class="mr-2">Division</label>
         <select name="division" id="division" class="form-control">
             <option value="">All</option>
-            @foreach (var div in ViewBag.UniqueDivisions as List<string>)
+            @foreach (var div in ViewBag.Divisions as List<string>)
             {
                 if (div == selectedDivision)
                 {

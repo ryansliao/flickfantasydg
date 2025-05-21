@@ -26,6 +26,7 @@
 @{
         var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
         var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        //var tournaments = ViewBag.Tournaments as List<fantasydg.Models.Tournament> ?? new List<fantasydg.Models.Tournament>();
 }
 <body>
     <header>
@@ -50,6 +51,26 @@
                                 Database
                             </a>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" @(currentAction == "DatabaseResults" ? "active" : "")"
+                               href="#"
+                               id="tournamentDropdown"
+                               role="button"
+                               data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                Tournaments
+                            </a>
+
+                            <ul class="dropdown-menu" aria-labelledby="tournamentDropdown">
+                                @foreach (var tournament in ViewBag.Tournaments as List<TournamentDropdownItem>)
+                                {
+                                    <a class="dropdown-item"
+                                        href="@Url.Action("DatabaseResults", "Tournament", new { name = tournament.Name })">
+                                        @($"{tournament.Name}")
+                                    </a>
+                                }
+                            </ul>
+                        </li>
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -71,5 +92,6 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -25,8 +25,22 @@ namespace fantasydg.Controllers
         }
 
         [HttpGet]
-        public IActionResult Input()
+        public async Task<IActionResult> Input()
         {
+            var tournaments = await _db.Tournaments
+                .Select(t => new TournamentDropdownItem
+                {
+                    Name = t.Name,
+                    Date = t.Date
+                })
+                .ToListAsync();
+
+            ViewBag.Tournaments = tournaments
+                .GroupBy(t => t.Name)
+                .Select(g => g.OrderByDescending(t => t.Date).First())
+                .OrderByDescending(t => t.Date)
+                .ToList();
+
             var model = new TournamentInputView
             {
                 DivisionOptions = new List<SelectListItem>
@@ -198,13 +212,20 @@ namespace fantasydg.Controllers
                 })
                 .ToListAsync();
 
-            ViewBag.UniqueTournaments = tournaments
+            /*
+            ViewBag.Tournaments = await _db.Tournaments
+                .OrderByDescending(t => t.Date)
+                .ThenBy(t => t.Division)
+                .ToListAsync();
+            */
+
+            ViewBag.Tournaments = tournaments
                 .GroupBy(t => t.Name)
                 .Select(g => g.OrderByDescending(t => t.Date).First())
                 .OrderByDescending(t => t.Date)
                 .ToList();
 
-            ViewBag.UniqueDivisions = await _db.Tournaments
+            ViewBag.Divisions = await _db.Tournaments
                 .Select(t => t.Division)
                 .Distinct()
                 .OrderBy(d => d)
