@@ -44,20 +44,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Tournament/DatabaseResults.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91cm5hbWVudFxEYXRhYmFzZVJlc3VsdHMuY3NodG1s
+[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Tournament/DatabaseView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91cm5hbWVudFxEYXRhYmFzZVZpZXcuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Tournament/Input.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91cm5hbWVudFxJbnB1dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Tournament/TournamentSummary.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91cm5hbWVudFxUb3VybmFtZW50U3VtbWFyeS5jc2h0bWw=
+[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Tournament/PlayerView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91cm5hbWVudFxQbGF5ZXJWaWV3LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Tournament/_PlayerResults.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91cm5hbWVudFxfUGxheWVyUmVzdWx0cy5jc2h0bWw=
+[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Tournament/TournamentView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91cm5hbWVudFxUb3VybmFtZW50Vmlldy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/_ViewImports.cshtml]

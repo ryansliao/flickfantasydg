@@ -1,5 +1,12 @@
 ﻿@model List<fantasydg.Models.Player>
 
+@{
+    ViewData["Title"] = "Database View";
+    Layout = "_Layout";
+}
+
+<h2>Database View</h2>
+
 <style>
     table.player-stats {
         width: 100%;
@@ -57,7 +64,7 @@
 <hr />
 
 <div id="results-container">
-    @await Html.PartialAsync("_PlayerResults", Model)
+    @await Html.PartialAsync("PlayerView", Model)
 </div>
 
 @section Scripts {
@@ -83,7 +90,7 @@
             var division = $('#division').val();
             var round = $('#round').val();
 
-            $.get('/Tournament/TournamentSummaryPartial', { name: tournament, division: division, round: round }, function (data) {
+            $.get('/Tournament/TournamentViewPartial', { name: tournament, division: division, round: round }, function (data) {
                 $('#results-container').html(data);
             });
         }

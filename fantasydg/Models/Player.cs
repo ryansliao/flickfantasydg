@@ -5,9 +5,12 @@ namespace fantasydg.Models
 {
     public class Player
     {
-        [Key]
+        [Key, Column(Order = 0)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int Id { get; set; }
+        public int Id { get; set; } // PDGA ID, reused across rounds
+
+        [Key, Column(Order = 1)]
+        public int RoundId { get; set; }
 
         public string? Name { get; set; }
         public int Place { get; set; }
@@ -36,7 +39,6 @@ namespace fantasydg.Models
         public double StrokesGainedC2Putting { get; set; }
 
         // Foreign key to Round
-        public int RoundId { get; set; }
         public Round? Round { get; set; }
     }
 }

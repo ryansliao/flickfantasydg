@@ -18,19 +18,18 @@ namespace fantasydg.Data
             modelBuilder.Entity<Tournament>()
                 .HasKey(t => new { t.Id, t.Division });
 
-            // Round references Tournament by both Id and Division
-            modelBuilder.Entity<Round>()
-                .HasOne(r => r.Tournament)
-                .WithMany(t => t.RoundList)
-                .HasForeignKey(r => new { r.TournamentId, r.Division })
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Player>()
+                .HasKey(p => new { p.Id, p.RoundId });
 
-            // Player references Round as before
-            modelBuilder.Entity<Round>()
-                .HasMany(r => r.Players)
-                .WithOne(p => p.Round)
+            modelBuilder.Entity<Player>()
+                .HasOne(p => p.Round)
+                .WithMany(r => r.Players)
                 .HasForeignKey(p => p.RoundId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Round>()
+                .Property(r => r.Division)
+                .IsRequired();
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasydg.Data;
 
@@ -11,9 +12,11 @@ using fantasydg.Data;
 namespace fantasydg.Migrations
 {
     [DbContext(typeof(DGDbContext))]
-    partial class DGDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250521063212_PlayerCompositeKey")]
+    partial class PlayerCompositeKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -133,9 +136,10 @@ namespace fantasydg.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("TournamentDivision")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("TournamentId")
+                    b.Property<int>("TournamentId")
                         .HasColumnType("int");
 
                     b.HasKey("RoundId");
@@ -185,7 +189,9 @@ namespace fantasydg.Migrations
                 {
                     b.HasOne("fantasydg.Models.Tournament", "Tournament")
                         .WithMany("RoundList")
-                        .HasForeignKey("TournamentId", "TournamentDivision");
+                        .HasForeignKey("TournamentId", "TournamentDivision")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Tournament");
                 });

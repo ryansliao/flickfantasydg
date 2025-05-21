@@ -3,9 +3,14 @@
 		- if the overall stats page is constantly updated
 
 - implement tournament view and round view and use the tournament api pages
+-round.tournament is empty
+-There are two round 1s
+-tournament.roundlist is empty
+-tournament.rounds is 0
 
-- Add database repository in models repo:
-	- database functions, Create, update, insert
+-show all rounds option (add tournament end stats)
+
+
 - Move to Azure Cloud.
 - Implement third party authentication.
 - split database into a different file

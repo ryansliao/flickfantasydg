@@ -9,7 +9,7 @@ namespace fantasydg.Models
         public bool Exists { get; set; }
 
         // Foreign Key to Tournament
-        public int TournamentId { get; set; }
+        public int? TournamentId { get; set; }
         public string Division { get; set; } = null!;
         public Tournament? Tournament { get; set; }
 

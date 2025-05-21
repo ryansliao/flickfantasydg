@@ -36,6 +36,20 @@
         }
 </style>
 
+@{
+    var selectedDivision = ViewContext.HttpContext.Request.Query["division"].ToString();
+    var selectedRound = ViewContext.HttpContext.Request.Query["round"].ToString();
+    var roundFilter = int.TryParse(selectedRound, out var r) ? r : (int?)null;
+
+    var filteredModel = Model
+        .Where(p =>
+            (string.IsNullOrEmpty(selectedDivision) || selectedDivision == "All" || p.Round.Tournament.Division == selectedDivision) &&
+            (!roundFilter.HasValue || p.Round.RoundNumber == roundFilter))
+        .OrderBy(p => p.Round.Tournament.Date)
+        .ThenBy(p => p.Round.RoundNumber)
+        .ThenBy(p => p.Place);
+}
+
 <div id="top-scroll" class="scroll-container">
     <div style="width: fit-content;"></div>
 </div>
@@ -75,7 +89,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var p in Model)
+            @foreach (var p in filteredModel)
             {
                 <tr>
                     <td>@p.Name</td>

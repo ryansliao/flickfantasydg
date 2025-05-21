@@ -31,7 +31,7 @@
         var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
         var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
         var isTournamentView = currentController == "Tournament" &&
-                    (currentAction == "TournamentSummary" || currentAction == "TournamentSummaryPartial");
+                    (currentAction == "TournamentView" || currentAction == "TournamentViewPartial");
 }
 <body>
     <header>
@@ -64,7 +64,7 @@
                             <ul class="dropdown-menu" aria-labelledby="tournamentDropdown">
                                 @foreach (var tournament in ViewBag.Tournaments as List<fantasydg.Models.TournamentDropdownItem>)
                                 {
-                                    <a class="nav-link dropdown-item" href="/Tournament/TournamentSummary?name=@Uri.EscapeDataString(tournament.Name)">
+                                    <a class="nav-link dropdown-item" href="/Tournament/TournamentView?name=@Uri.EscapeDataString(tournament.Name)">
                                         @tournament.Name
                                     </a>
                                 }
@@ -72,8 +72,8 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link @(currentAction == "DatabaseResults" ? "active" : "")"
-                               asp-controller="Tournament" asp-action="DatabaseResults">
+                            <a class="nav-link @(currentAction == "DatabaseView" ? "active" : "")"
+                               asp-controller="Tournament" asp-action="DatabaseView">
                                 Database
                             </a>
                         </li>
