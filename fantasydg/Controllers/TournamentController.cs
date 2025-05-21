@@ -181,7 +181,67 @@ namespace fantasydg.Controllers
                 await _db.SaveChangesAsync();
             }
 
-            return RedirectToAction("DatabaseResults", new { name = tournament.Name, division = model.Division });
+            return RedirectToAction("TournamentSummary", new { name = tournament.Name, division = model.Division });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetRounds(string name, string division)
+        {
+            var rounds = await _db.Rounds
+                .Where(r => r.Tournament!.Name == name && r.Division == division)
+                .Select(r => r.RoundNumber)
+                .Distinct()
+                .OrderBy(r => r)
+                .ToListAsync();
+
+            return Json(rounds);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TournamentSummary(string name, string division, int? round)
+        {
+            var query = _db.Players
+                .Include(p => p.Round)
+                .ThenInclude(r => r.Tournament)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(name))
+                query = query.Where(p => p.Round.Tournament.Name == name);
+
+            if (!string.IsNullOrEmpty(division))
+                query = query.Where(p => p.Round.Tournament.Division == division);
+
+            if (round.HasValue)
+                query = query.Where(p => p.Round.RoundNumber == round);
+
+            var players = await query
+                .OrderBy(p => p.Place)
+                .ToListAsync();
+
+            var tournaments = await _db.Tournaments
+                .Select(t => new TournamentDropdownItem
+                {
+                    Name = t.Name,
+                    Date = t.Date
+                })
+                .ToListAsync();
+
+            ViewBag.Tournaments = tournaments
+                .GroupBy(t => t.Name)
+                .Select(g => g.OrderByDescending(t => t.Date).First())
+                .OrderByDescending(t => t.Date)
+                .ToList();
+
+            var divisions = await _db.Tournaments
+                .Select(t => t.Division)
+                .Distinct()
+                .OrderByDescending(d => d)
+                .ToListAsync();
+
+            divisions.Insert(0, "All");
+            ViewBag.Divisions = divisions;
+
+            return View("TournamentSummary", players);
         }
 
         [HttpGet]
@@ -201,7 +261,7 @@ namespace fantasydg.Controllers
             var players = await query
                 .OrderBy(p => p.Round.Tournament.Date)
                 .ThenBy(p => p.Round.Tournament.Division)
-                .ThenBy(p => p.TournamentScore)
+                .ThenBy(p => p.Place)
                 .ToListAsync();
 
             var tournaments = await _db.Tournaments
@@ -212,26 +272,47 @@ namespace fantasydg.Controllers
                 })
                 .ToListAsync();
 
-            /*
-            ViewBag.Tournaments = await _db.Tournaments
-                .OrderByDescending(t => t.Date)
-                .ThenBy(t => t.Division)
-                .ToListAsync();
-            */
-
             ViewBag.Tournaments = tournaments
                 .GroupBy(t => t.Name)
                 .Select(g => g.OrderByDescending(t => t.Date).First())
                 .OrderByDescending(t => t.Date)
                 .ToList();
 
-            ViewBag.Divisions = await _db.Tournaments
+            var divisions = await _db.Tournaments
                 .Select(t => t.Division)
                 .Distinct()
-                .OrderBy(d => d)
+                .OrderByDescending(d => d)
                 .ToListAsync();
 
+            divisions.Insert(0, "All");
+
+            ViewBag.Divisions = divisions;
+
             return View("DatabaseResults", players);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TournamentSummaryPartial(string name, string division, int? round)
+        {
+            var query = _db.Players
+                .Include(p => p.Round)
+                .ThenInclude(r => r.Tournament)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(name))
+                query = query.Where(p => p.Round.Tournament.Name == name);
+
+            if (!string.IsNullOrEmpty(division))
+                query = query.Where(p => p.Round.Tournament.Division == division);
+
+            if (round.HasValue)
+                query = query.Where(p => p.Round.RoundNumber == round);
+
+            var players = await query
+                .OrderBy(p => p.Place)
+                .ToListAsync();
+
+            return PartialView("_PlayerResults", players);
         }
     }
 }

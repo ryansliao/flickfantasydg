@@ -1,0 +1,141 @@
+﻿@model List<fantasydg.Models.Player>
+
+<style>
+    .scroll-container {
+        overflow-x: auto;
+        margin-bottom: 10px;
+    }
+
+    table.player-stats {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+        min-width: 1800px;
+    }
+
+        table.player-stats th,
+        table.player-stats td {
+            border: 1px solid #ccc;
+            padding: 6px 10px;
+            text-align: center;
+        }
+
+        table.player-stats thead {
+            background-color: #f5f5f5;
+        }
+
+        table.player-stats tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table.player-stats th {
+            position: sticky;
+            top: 0;
+            background: #eee;
+            z-index: 1;
+        }
+</style>
+
+<div id="top-scroll" class="scroll-container">
+    <div style="width: fit-content;"></div>
+</div>
+
+<div id="table-scroll" class="scroll-container">
+    <table class="player-stats">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Place</th>
+                <th>Round</th>
+                <th>Tournament</th>
+                <th>Division</th>
+                <th>Tourn. Score</th>
+                <th>Round Score</th>
+                <th>Putt Dist</th>
+                <th>Fairway</th>
+                <th>C1 Reg</th>
+                <th>C2 Reg</th>
+                <th>Parked</th>
+                <th>Scramble</th>
+                <th>C1 Put</th>
+                <th>C1x Put</th>
+                <th>C2 Put</th>
+                <th>OB Rate</th>
+                <th>Birdie+</th>
+                <th>Birdie</th>
+                <th>Par</th>
+                <th>Bogey+</th>
+                <th>Dbl Bogey+</th>
+                <th>Eagle+</th>
+                <th>SG Total</th>
+                <th>SG Putting</th>
+                <th>SG T2G</th>
+                <th>SG C1x</th>
+                <th>SG C2</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.Name</td>
+                    <td>@p.Place</td>
+                    <td>@p.Round?.RoundNumber</td>
+                    <td>@p.Round?.Tournament?.Name</td>
+                    <td>@p.Round?.Tournament?.Division</td>
+                    <td>@p.TournamentScore</td>
+                    <td>@p.RoundScore</td>
+                    <td>@p.PuttDistance</td>
+                    <td>@p.Fairway%</td>
+                    <td>@p.C1InReg%</td>
+                    <td>@p.C2InReg%</td>
+                    <td>@p.Parked%</td>
+                    <td>@p.Scramble%</td>
+                    <td>@p.C1Putting%</td>
+                    <td>@p.C1xPutting%</td>
+                    <td>@p.C2Putting%</td>
+                    <td>@p.ObRate%</td>
+                    <td>@p.BirdiePlus%</td>
+                    <td>@p.Birdie%</td>
+                    <td>@p.Par%</td>
+                    <td>@p.BogeyPlus%</td>
+                    <td>@p.DoubleBogeyPlus%</td>
+                    <td>@p.EaglePlus%</td>
+                    <td>@p.StrokesGainedTotal</td>
+                    <td>@p.StrokesGainedPutting</td>
+                    <td>@p.StrokesGainedTeeToGreen</td>
+                    <td>@p.StrokesGainedC1xPutting</td>
+                    <td>@p.StrokesGainedC2Putting</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div id="bottom-scroll" class="scroll-container">
+    <div style="width: fit-content;"></div>
+</div>
+
+@section Scripts {
+    <script>
+        // Synchronize top and bottom scrollbars with the table scroll container
+        const tableScroll = document.getElementById('table-scroll');
+        const topScroll = document.getElementById('top-scroll');
+        const bottomScroll = document.getElementById('bottom-scroll');
+
+        // Set width of top/bottom dummy divs to match table scroll width
+        function syncScrollWidths() {
+            const tableWidth = tableScroll.scrollWidth;
+            topScroll.firstElementChild.style.width = `${tableWidth}px`;
+            bottomScroll.firstElementChild.style.width = `${tableWidth}px`;
+        }
+
+        // Sync scroll positions
+        topScroll.onscroll = () => { tableScroll.scrollLeft = topScroll.scrollLeft; bottomScroll.scrollLeft = topScroll.scrollLeft; };
+        bottomScroll.onscroll = () => { tableScroll.scrollLeft = bottomScroll.scrollLeft; topScroll.scrollLeft = bottomScroll.scrollLeft; };
+        tableScroll.onscroll = () => { topScroll.scrollLeft = tableScroll.scrollLeft; bottomScroll.scrollLeft = tableScroll.scrollLeft; };
+
+        window.addEventListener('resize', syncScrollWidths);
+        window.addEventListener('load', syncScrollWidths);
+    </script>
+}

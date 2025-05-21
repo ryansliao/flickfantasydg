@@ -6,8 +6,8 @@
     @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 
     <div class="form-group">
-        <label asp-for="TournamentId"></label>
-        <input asp-for="TournamentId" class="form-control" />
+        <label asp-for="TournamentId">Find the tournament ID in the URL of the PDGA Live page:</label>
+        <input asp-for="TournamentId" class="form-control" placeholder="e.g. 00000" />
         <span asp-validation-for="TournamentId" class="text-danger"></span>
     </div>
 
@@ -19,5 +19,5 @@
         <span asp-validation-for="Division" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
 </form>

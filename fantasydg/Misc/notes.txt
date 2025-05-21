@@ -1,0 +1,11 @@
+- round stats are not matching with tournament stats (avg rounds vs. total)
+	- maybe look to change method of averaging round stats to just tracking tournament stats
+		- if the overall stats page is constantly updated
+
+- implement tournament view and round view and use the tournament api pages
+
+- Add database repository in models repo:
+	- database functions, Create, update, insert
+- Move to Azure Cloud.
+- Implement third party authentication.
+- split database into a different file
