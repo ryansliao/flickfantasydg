@@ -58,15 +58,19 @@ namespace fantasydg.Controllers
         public async Task<IActionResult> DatabaseView(string? name = null, string? division = null, int? round = null)
         {
             var allTournaments = await _repository.GetAllTournamentsAsync();
-            _logger.LogInformation("Found {Count} tournaments", allTournaments.Count);
-
-            ViewBag.Tournaments = allTournaments;
+            ViewBag.Tournaments = allTournaments 
+                .OrderByDescending(t => t.Date) // sorts tournaments by descending date order
+                .ToList();
 
             if (string.IsNullOrEmpty(name))
                 name = allTournaments.FirstOrDefault()?.Name;
 
+            ViewBag.SelectedTournament = name;
+
             if (!string.IsNullOrEmpty(name))
-                ViewBag.Divisions = await _repository.GetDivisionsForTournamentAsync(name);
+                ViewBag.Divisions = (await _repository.GetDivisionsForTournamentAsync(name))
+                    .OrderByDescending(d => d) 
+                    .ToList();
             else
                 ViewBag.Divisions = new List<string>();
 
@@ -83,6 +87,8 @@ namespace fantasydg.Controllers
             {
                 ViewBag.Rounds = new List<int>();
             }
+
+            ViewBag.SelectedRound = round;
 
             if (round.HasValue)
             {

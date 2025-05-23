@@ -2,8 +2,10 @@
 using fantasydg.Data;
 using fantasydg.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace fantasydg.Services
 {
@@ -13,18 +15,26 @@ namespace fantasydg.Services
         private readonly DGDbContext _db;
         private readonly ILogger<DataService> _logger;
 
-        private async Task<string> GetTournamentNameAsync(int tournamentId)
+        private async Task<List<string>> GetTournamentNameAsync(int tournamentId)
         {
             try
             {
                 var url = $"https://www.pdga.com/apps/tournament/live-api/live_results_fetch_event?TournID={tournamentId}";
                 var json = await _httpClient.GetStringAsync(url);
-                var name = JObject.Parse(json)?["data"]?["Name"]?.ToString();
-                return string.IsNullOrWhiteSpace(name) ? $"Tournament {tournamentId}" : name;
+                
+                var name = JObject.Parse(json)?["data"]?["Name"]?.ToString() ?? $"Tournament {tournamentId}";
+                var dateStr = JObject.Parse(json)?["data"]?["StartDate"]?.ToString();
+
+                DateTime? date = null;
+                if (DateTime.TryParse(dateStr, out var parsedDate))
+                {
+                    date = parsedDate;
+                }
+                return new List<string> { name, dateStr };
             }
             catch
             {
-                return $"Tournament {tournamentId}";
+                return new List<string> { $"Tournament {tournamentId}", "" };
             }
         }
 
@@ -68,7 +78,13 @@ namespace fantasydg.Services
                     _db.Tournaments.Add(tournament);
                 }
 
-                tournament.Name = await GetTournamentNameAsync(tournamentId);
+                var nameDate = await GetTournamentNameAsync(tournamentId);
+                var dateStr = nameDate[1];
+                DateTime date = DateTime.TryParse(dateStr, out var parsedDate)
+                    ? parsedDate
+                    : DateTime.UtcNow;
+                tournament.Name = nameDate[0];
+                tournament.Date = date;
 
                 await _db.SaveChangesAsync();
 
@@ -107,21 +123,21 @@ namespace fantasydg.Services
 
                         switch (statId)
                         {
-                            case 1: pt.Fairway = Math.Round(statValue, 2); break;
-                            case 2: pt.C1InReg = Math.Round(statValue, 2); break;
-                            case 3: pt.C2InReg = Math.Round(statValue, 2); break;
-                            case 4: pt.Parked = Math.Round(statValue, 2); break;
-                            case 5: pt.Scramble = Math.Round(statValue, 2); break;
-                            case 6: pt.C1Putting = Math.Round(statValue, 2); break;
-                            case 7: pt.C1xPutting = Math.Round(statValue, 2); break;
-                            case 8: pt.C2Putting = Math.Round(statValue, 2); break;
-                            case 9: pt.ObRate = Math.Round(statValue, 2); break;
-                            case 10: pt.BirdieMinus = Math.Round(statValue, 2); break;
-                            case 11: pt.DoubleBogeyPlus = Math.Round(statValue, 2); break;
-                            case 12: pt.BogeyPlus = Math.Round(statValue, 2); break;
-                            case 13: pt.Par = Math.Round(statValue, 2); break;
-                            case 14: pt.Birdie = Math.Round(statValue, 2); break;
-                            case 15: pt.EagleMinus = Math.Round(statValue, 2); break;
+                            case 1: pt.Fairway = Math.Round(statValue, 0); break;
+                            case 2: pt.C1InReg = Math.Round(statValue, 0); break;
+                            case 3: pt.C2InReg = Math.Round(statValue, 0); break;
+                            case 4: pt.Parked = Math.Round(statValue, 1); break;
+                            case 5: pt.Scramble = Math.Round(statValue, 0); break;
+                            case 6: pt.C1Putting = Math.Round(statValue, 0); break;
+                            case 7: pt.C1xPutting = Math.Round(statValue, 0); break;
+                            case 8: pt.C2Putting = Math.Round(statValue, 0); break;
+                            case 9: pt.ObRate = Math.Round(statValue, 1); break;
+                            case 10: pt.BirdieMinus = Math.Round(statValue, 0); break;
+                            case 11: pt.DoubleBogeyPlus = Math.Round(statValue, 1); break;
+                            case 12: pt.BogeyPlus = Math.Round(statValue, 0); break;
+                            case 13: pt.Par = Math.Round(statValue, 0); break;
+                            case 14: pt.Birdie = Math.Round(statValue, 0); break;
+                            case 15: pt.EagleMinus = Math.Round(statValue, 1); break;
                             case 16: pt.PuttDistance = statCount; break;
                             default: continue;
                         }
@@ -301,21 +317,21 @@ namespace fantasydg.Services
 
                             switch (statId)
                             {
-                                case 1: rs.Fairway = Math.Round(statValue, 2); break;
-                                case 2: rs.C1InReg = Math.Round(statValue, 2); break;
-                                case 3: rs.C2InReg = Math.Round(statValue, 2); break;
-                                case 4: rs.Parked = Math.Round(statValue, 2); break;
-                                case 5: rs.Scramble = Math.Round(statValue, 2); break;
-                                case 6: rs.C1Putting = Math.Round(statValue, 2); break;
-                                case 7: rs.C1xPutting = Math.Round(statValue, 2); break;
-                                case 8: rs.C2Putting = Math.Round(statValue, 2); break;
-                                case 9: rs.ObRate = Math.Round(statValue, 2); break;
-                                case 10: rs.BirdieMinus = Math.Round(statValue, 2); break;
-                                case 11: rs.DoubleBogeyPlus = Math.Round(statValue, 2); break;
-                                case 12: rs.BogeyPlus = Math.Round(statValue, 2); break;
-                                case 13: rs.Par = Math.Round(statValue, 2); break;
-                                case 14: rs.Birdie = Math.Round(statValue, 2); break;
-                                case 15: rs.EagleMinus = Math.Round(statValue, 2); break;
+                                case 1: rs.Fairway = Math.Round(statValue, 0); break;
+                                case 2: rs.C1InReg = Math.Round(statValue, 0); break;
+                                case 3: rs.C2InReg = Math.Round(statValue, 0); break;
+                                case 4: rs.Parked = Math.Round(statValue, 1); break;
+                                case 5: rs.Scramble = Math.Round(statValue, 0); break;
+                                case 6: rs.C1Putting = Math.Round(statValue, 0); break;
+                                case 7: rs.C1xPutting = Math.Round(statValue, 0); break;
+                                case 8: rs.C2Putting = Math.Round(statValue, 0); break;
+                                case 9: rs.ObRate = Math.Round(statValue, 1); break;
+                                case 10: rs.BirdieMinus = Math.Round(statValue, 0); break;
+                                case 11: rs.DoubleBogeyPlus = Math.Round(statValue, 1); break;
+                                case 12: rs.BogeyPlus = Math.Round(statValue, 0); break;
+                                case 13: rs.Par = Math.Round(statValue, 0); break;
+                                case 14: rs.Birdie = Math.Round(statValue, 0); break;
+                                case 15: rs.EagleMinus = Math.Round(statValue, 1); break;
                                 case 16: rs.PuttDistance = statCount; break;
                             }
                         }

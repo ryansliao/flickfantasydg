@@ -8,6 +8,10 @@
 <h2>Database View</h2>
 
 <style>
+    .filter-form {
+        margin-bottom: 0.25rem; /* reduce space below filters */
+    }
+
     table.player-stats {
         width: 100%;
         border-collapse: collapse;
@@ -18,15 +22,6 @@
     table.player-stats td {
         border: 1px solid #ccc;
         padding: 6px 10px;
-        text-align: center;
-    }
-
-    table.player-stats thead {
-        background-color: #f5f5f5;
-    }
-
-    table.player-stats tbody tr:nth-child(even) {
-        background-color: #f9f9f9;
     }
 
     table.player-stats th {
@@ -38,6 +33,7 @@
 
     .table-scroll-container {
         position: relative;
+        margin-top: 0;
         padding-bottom: 10px;
     }
 
@@ -46,7 +42,45 @@
         overflow-x: auto;
         overflow-y: hidden;
         height: 20px;
+        margin-bottom: 0px; /* Small space between scroll and table */
+        padding: 0;
     }
+
+    .table-scroll-wrapper table {
+        font-size: 0.85rem; /* Adjust as needed (e.g., 0.75rem for extra small) */
+    }
+
+    /* Wrap header text */
+    .table-scroll-wrapper table th {
+        white-space: normal;
+        word-break: keep-all; /* prevent breaking words */
+        overflow-wrap: break-word; /* allow breaking at spaces only */
+        vertical-align: middle;
+        text-align: center;
+        padding: 5px 7px;
+        line-height: 1.2;
+    }
+        
+    /* Player columns text aligns left */
+        .table-scroll-wrapper table th:nth-child(2) {
+            text-align: left;
+        }
+
+    /* Prevent wrapping in table cells */
+    .table-scroll-wrapper table td {
+        white-space: nowrap;
+        overflow: hidden;
+        min-width: 60px;
+        padding: 5px 7px;
+        line-height: 1.2;
+        text-overflow: ellipsis;
+        text-align: center;
+    }
+
+        /* Player text aligns left */
+        .table-scroll-wrapper table td:nth-child(2) {
+            text-align: left;
+        }
 
     .table-scroll-wrapper {
         overflow-x: auto;
@@ -60,68 +94,64 @@
         display: block;
         height: 1px;
     }
-
-    .table-scroll-wrapper table {
-        font-size: 0.85rem; /* Adjust as needed (e.g., 0.75rem for extra small) */
-    }
-
-    .table-scroll-wrapper table th,
-    .table-scroll-wrapper table td {
-        white-space: nowrap; /* Prevents wrapping if desired */
-    }
 </style>
 
-<form method="get" asp-action="DatabaseView" asp-controller="Database" class="filter-form">
-    <label for="name">Tournament:</label>
-    <select name="name" onchange="this.form.submit()">
-        @foreach (var t in ViewBag.Tournaments as List<fantasydg.Models.Tournament>)
-        {
-            if (t.Name == (string)ViewBag.SelectedTournament)
+<form method="get" asp-action="DatabaseView" asp-controller="Database" class="filter-form" style="display: flex; gap: 1rem; align-items: center;">
+    <div class="filter-item" style="padding-right: 1rem; border-right: 1px solid #ccc;">
+        <label for="name">Tournament:</label>
+        <select name="name" onchange="this.form.submit()">
+            @foreach (var t in ViewBag.Tournaments as List<fantasydg.Models.Tournament>)
             {
-                <option value="@t.Name" selected>@t.Name</option>
-            }
-            else
-            {
-                <option value="@t.Name">@t.Name</option>
-            }
-        }
-    </select>
-
-    <label for="division">Division:</label>
-    <select id="divisionDropdown" name="division" onchange="this.form.submit()">
-        @foreach (var d in ViewBag.Divisions as List<string>)
-        {
-            if (d == (string)ViewBag.SelectedDivision)
-            {
-                <option value="@d" selected>@d</option>
-            }
-            else
-            {
-                <option value="@d">@d</option>
-            }
-        }
-    </select>
-
-    <label for="round">Round:</label>
-    <select name="round" onchange="this.form.submit()">
-        <option value="">All</option>
-        @if (ViewBag.Rounds is List<int> rounds)
-        {
-            foreach (var r in rounds)
-            {
-                if (r == (int?)ViewBag.SelectedRound)
+                if (t.Name == (string)ViewBag.SelectedTournament)
                 {
-                    <option value="@r" selected>@r</option>
+                    <option value="@t.Name" selected>@t.Name</option>
                 }
                 else
                 {
-                    <option value="@r">@r</option>
+                    <option value="@t.Name">@t.Name</option>
                 }
             }
-        }
-    </select>
-</form>
+        </select>
+    </div>
 
+    <div class="filter-item" style="padding-right: 1rem; border-right: 1px solid #ccc;">
+        <label for="division">Division:</label>
+        <select id="divisionDropdown" name="division" onchange="this.form.submit()">
+            @foreach (var d in ViewBag.Divisions as List<string>)
+            {
+                if (d == (string)ViewBag.SelectedDivision)
+                {
+                    <option value="@d" selected>@d</option>
+                }
+                else
+                {
+                    <option value="@d">@d</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="filter-item">
+        <label for="round">Round:</label>
+        <select name="round" onchange="this.form.submit()">
+            <option value="">All</option>
+            @if (ViewBag.Rounds is List<int> rounds)
+            {
+                foreach (var r in rounds)
+                {
+                    if ((int?)ViewBag.SelectedRound == r)
+                    {
+                        <option value="@r" selected>@r</option>
+                    }
+                    else
+                    {
+                        <option value="@r">@r</option>
+                    }
+                }
+            }
+        </select>
+    </div>
+</form>
 <hr />
 
 @if (roundView)

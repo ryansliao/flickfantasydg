@@ -35,6 +35,7 @@ namespace fantasydg.Models.Repository
                           && rs.Division == division
                           && rs.Round.RoundNumber == round)
                 .OrderBy(rs => rs.RunningPlace)
+                    .ThenBy(rs => rs.RoundToPar)
                 .ToListAsync();
         }
 
@@ -59,15 +60,14 @@ namespace fantasydg.Models.Repository
                 .ToListAsync();
         }
 
-        public async Task<List<RoundScore>> GetRoundsForTournamentAsync(string name, string division)
+        public async Task<List<int>> GetRoundsForTournamentAsync(string name, string division)
         {
-            return await _db.RoundScores
-                .Include(rs => rs.Player)
-                .Include(rs => rs.Round)
-                    .ThenInclude(r => r.Tournament)
-                .Where(rs => rs.Round.Tournament.Name == name &&
-                             rs.Division == division)
-                .OrderBy(r => r)
+            return await _db.Rounds
+                .Include(r => r.Tournament)
+                .Where(r => r.Tournament.Name == name && r.Division == division)
+                .Select(r => r.RoundNumber)
+                .Distinct()
+                .OrderBy(n => n)
                 .ToListAsync();
         }
     }

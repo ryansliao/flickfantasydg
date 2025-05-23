@@ -1,15 +1,15 @@
 ﻿@model fantasydg.Models.TournamentInputView
 
 @{
-    ViewData["Title"] = "Add Tournament";
+    ViewData["Title"] = "Tournament Input";
 }
 
-<h2>Add a Tournament</h2>
+<h2>Add or Update Tournament</h2>
 
 <form asp-action="Input" method="post">
     <div class="form-group mb-3">
         <label asp-for="TournamentId" class="form-label">Tournament ID</label>
-        <input asp-for="TournamentId" class="form-control" placeholder="Enter PDGA Tournament ID" />
+        <input asp-for="TournamentId" class="form-control" placeholder="Find a five-digit ID in its PDGA Live URL." />
         <span asp-validation-for="TournamentId" class="text-danger"></span>
     </div>
 
