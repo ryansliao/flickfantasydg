@@ -1,65 +1,71 @@
 ﻿@model IEnumerable<fantasydg.Models.PlayerTournament>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Player</th>
-            <th>Place</th>
-            <th>Division</th>
-            <th>Score</th>
-            <th>Fairway</th>
-            <th>C1 Reg</th>
-            <th>C2 Reg</th>
-            <th>Parked</th>
-            <th>Scramble</th>
-            <th>C1 Putt</th>
-            <th>C1x Putt</th>
-            <th>C2 Putt</th>
-            <th>OB Rate</th>
-            <th>Birdie+</th>
-            <th>Birdie</th>
-            <th>Par</th>
-            <th>Bogey+</th>
-            <th>Dbl Bogey+</th>
-            <th>Eagle+</th>
-            <th>Putt Dist</th>
-            <th>SG Total</th>
-            <th>SG Putt</th>
-            <th>SG T2G</th>
-            <th>SG C1x</th>
-            <th>SG C2</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var pt in Model)
-        {
-            <tr>
-                <td>@pt.Player.Name</td>
-                <td>@pt.Place</td>
-                <td>@pt.Division</td>
-                <td>@pt.TotalToPar</td>
-                <td>@pt.Fairway%</td>
-                <td>@pt.C1InReg%</td>
-                <td>@pt.C2InReg%</td>
-                <td>@pt.Parked%</td>
-                <td>@pt.Scramble%</td>
-                <td>@pt.C1Putting%</td>
-                <td>@pt.C1xPutting%</td>
-                <td>@pt.C2Putting%</td>
-                <td>@pt.ObRate%</td>
-                <td>@pt.BirdiePlus%</td>
-                <td>@pt.Birdie%</td>
-                <td>@pt.Par%</td>
-                <td>@pt.BogeyPlus%</td>
-                <td>@pt.DoubleBogeyPlus%</td>
-                <td>@pt.EaglePlus%</td>
-                <td>@pt.PuttDistance</td>
-                <td>@pt.StrokesGainedTotal</td>
-                <td>@pt.StrokesGainedPutting</td>
-                <td>@pt.StrokesGainedTeeToGreen</td>
-                <td>@pt.StrokesGainedC1xPutting</td>
-                <td>@pt.StrokesGainedC2Putting</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="table-scroll-container">
+    <div class="table-scroll-top"></div>
+    <div class="table-scroll-wrapper">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Player</th>
+                    <th>Place</th>
+                    <th>Division</th>
+                    <th>Score</th>
+                    <th>Fairway</th>
+                    <th>C1 Reg</th>
+                    <th>C2 Reg</th>
+                    <th>Parked</th>
+                    <th>Scramble</th>
+                    <th>C1 Putt</th>
+                    <th>C1x Putt</th>
+                    <th>C2 Putt</th>
+                    <th>OB Rate</th>
+                    <th>Birdie-</th>
+                    <th>Birdie</th>
+                    <th>Par</th>
+                    <th>Bogey+</th>
+                    <th>Dbl Bogey+</th>
+                    <th>Eagle-</th>
+                    <th>Putt Dist</th>
+                    <th>SG Total</th>
+                    <th>SG Putt</th>
+                    <th>SG T2G</th>
+                    <th>SG C1x</th>
+                    <th>SG C2</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pt in Model)
+                {
+                    <tr>
+                        <td>@pt.Player.Name</td>
+                        <td>@pt.Place</td>
+                        <td>@pt.Division</td>
+                        <td>@pt.TotalToPar</td>
+                        <td>@pt.Fairway%</td>
+                        <td>@pt.C1InReg%</td>
+                        <td>@pt.C2InReg%</td>
+                        <td>@pt.Parked%</td>
+                        <td>@pt.Scramble%</td>
+                        <td>@pt.C1Putting%</td>
+                        <td>@pt.C1xPutting%</td>
+                        <td>@pt.C2Putting%</td>
+                        <td>@pt.ObRate%</td>
+                        <td>@pt.BirdieMinus%</td>
+                        <td>@pt.Birdie%</td>
+                        <td>@pt.Par%</td>
+                        <td>@pt.BogeyPlus%</td>
+                        <td>@pt.DoubleBogeyPlus%</td>
+                        <td>@pt.EagleMinus%</td>
+                        <td>@pt.PuttDistance</td>
+                        <td>@pt.StrokesGainedTotal</td>
+                        <td>@pt.StrokesGainedPutting</td>
+                        <td>@pt.StrokesGainedTeeToGreen</td>
+                        <td>@pt.StrokesGainedC1xPutting</td>
+                        <td>@pt.StrokesGainedC2Putting</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="table-scroll-bottom"></div>
+</div>

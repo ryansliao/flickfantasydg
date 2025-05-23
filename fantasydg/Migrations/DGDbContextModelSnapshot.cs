@@ -52,7 +52,7 @@ namespace fantasydg.Migrations
                     b.Property<double>("Birdie")
                         .HasColumnType("float");
 
-                    b.Property<double>("BirdiePlus")
+                    b.Property<double>("BirdieMinus")
                         .HasColumnType("float");
 
                     b.Property<double>("BogeyPlus")
@@ -76,7 +76,7 @@ namespace fantasydg.Migrations
                     b.Property<double>("DoubleBogeyPlus")
                         .HasColumnType("float");
 
-                    b.Property<double>("EaglePlus")
+                    b.Property<double>("EagleMinus")
                         .HasColumnType("float");
 
                     b.Property<double>("Fairway")
@@ -163,7 +163,7 @@ namespace fantasydg.Migrations
                     b.Property<double>("Birdie")
                         .HasColumnType("float");
 
-                    b.Property<double>("BirdiePlus")
+                    b.Property<double>("BirdieMinus")
                         .HasColumnType("float");
 
                     b.Property<double>("BogeyPlus")
@@ -191,7 +191,7 @@ namespace fantasydg.Migrations
                     b.Property<double>("DoubleBogeyPlus")
                         .HasColumnType("float");
 
-                    b.Property<double>("EaglePlus")
+                    b.Property<double>("EagleMinus")
                         .HasColumnType("float");
 
                     b.Property<double>("Fairway")

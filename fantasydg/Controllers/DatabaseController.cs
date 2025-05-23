@@ -71,7 +71,9 @@ namespace fantasydg.Controllers
                 ViewBag.Divisions = new List<string>();
 
             if (string.IsNullOrEmpty(division))
-                division = (ViewBag.Divisions as List<string>)?.FirstOrDefault();
+                division = (ViewBag.Divisions as List<string>)?.Contains("MPO") == true ? "MPO" : (ViewBag.Divisions as List<string>)?.FirstOrDefault();
+            
+            ViewBag.SelectedDivision = division;
 
             if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(division))
             {

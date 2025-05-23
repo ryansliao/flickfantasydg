@@ -107,21 +107,21 @@ namespace fantasydg.Services
 
                         switch (statId)
                         {
-                            case 1: pt.Fairway = statValue; break;
-                            case 2: pt.C1InReg = statValue; break;
-                            case 3: pt.C2InReg = statValue; break;
-                            case 4: pt.Parked = statValue; break;
-                            case 5: pt.Scramble = statValue; break;
-                            case 6: pt.C1Putting = statValue; break;
-                            case 7: pt.C1xPutting = statValue; break;
-                            case 8: pt.C2Putting = statValue; break;
-                            case 9: pt.ObRate = statValue; break;
-                            case 10: pt.BirdiePlus = statValue; break;
-                            case 11: pt.DoubleBogeyPlus = statValue; break;
-                            case 12: pt.BogeyPlus = statValue; break;
-                            case 13: pt.Par = statValue; break;
-                            case 14: pt.Birdie = statValue; break;
-                            case 15: pt.EaglePlus = statValue; break;
+                            case 1: pt.Fairway = Math.Round(statValue, 2); break;
+                            case 2: pt.C1InReg = Math.Round(statValue, 2); break;
+                            case 3: pt.C2InReg = Math.Round(statValue, 2); break;
+                            case 4: pt.Parked = Math.Round(statValue, 2); break;
+                            case 5: pt.Scramble = Math.Round(statValue, 2); break;
+                            case 6: pt.C1Putting = Math.Round(statValue, 2); break;
+                            case 7: pt.C1xPutting = Math.Round(statValue, 2); break;
+                            case 8: pt.C2Putting = Math.Round(statValue, 2); break;
+                            case 9: pt.ObRate = Math.Round(statValue, 2); break;
+                            case 10: pt.BirdieMinus = Math.Round(statValue, 2); break;
+                            case 11: pt.DoubleBogeyPlus = Math.Round(statValue, 2); break;
+                            case 12: pt.BogeyPlus = Math.Round(statValue, 2); break;
+                            case 13: pt.Par = Math.Round(statValue, 2); break;
+                            case 14: pt.Birdie = Math.Round(statValue, 2); break;
+                            case 15: pt.EagleMinus = Math.Round(statValue, 2); break;
                             case 16: pt.PuttDistance = statCount; break;
                             default: continue;
                         }
@@ -149,11 +149,11 @@ namespace fantasydg.Services
 
                         switch (statId)
                         {
-                            case 100: pt.StrokesGainedTotal = statValue; break;
-                            case 101: pt.StrokesGainedPutting = statValue; break;
-                            case 102: pt.StrokesGainedTeeToGreen = statValue; break;
-                            case 104: pt.StrokesGainedC1xPutting = statValue; break;
-                            case 105: pt.StrokesGainedC2Putting = statValue; break;
+                            case 100: pt.StrokesGainedTotal = Math.Round(statValue, 2); break;
+                            case 101: pt.StrokesGainedPutting = Math.Round(statValue, 2); break;
+                            case 102: pt.StrokesGainedTeeToGreen = Math.Round(statValue, 2); break;
+                            case 104: pt.StrokesGainedC1xPutting = Math.Round(statValue, 2); break;
+                            case 105: pt.StrokesGainedC2Putting = Math.Round(statValue, 2); break;
                             default: continue;
                         }
                     }
@@ -177,12 +177,12 @@ namespace fantasydg.Services
                         existing.C1xPutting = pt.C1xPutting;
                         existing.C2Putting = pt.C2Putting;
                         existing.ObRate = pt.ObRate;
-                        existing.BirdiePlus = pt.BirdiePlus;
+                        existing.BirdieMinus = pt.BirdieMinus;
                         existing.DoubleBogeyPlus = pt.DoubleBogeyPlus;
                         existing.BogeyPlus = pt.BogeyPlus;
                         existing.Par = pt.Par;
                         existing.Birdie = pt.Birdie;
-                        existing.EaglePlus = pt.EaglePlus;
+                        existing.EagleMinus = pt.EagleMinus;
                         existing.PuttDistance = pt.PuttDistance;
                         existing.StrokesGainedTotal = pt.StrokesGainedTotal;
                         existing.StrokesGainedPutting = pt.StrokesGainedPutting;
@@ -301,21 +301,21 @@ namespace fantasydg.Services
 
                             switch (statId)
                             {
-                                case 1: rs.Fairway = statValue; break;
-                                case 2: rs.C1InReg = statValue; break;
-                                case 3: rs.C2InReg = statValue; break;
-                                case 4: rs.Parked = statValue; break;
-                                case 5: rs.Scramble = statValue; break;
-                                case 6: rs.C1Putting = statValue; break;
-                                case 7: rs.C1xPutting = statValue; break;
-                                case 8: rs.C2Putting = statValue; break;
-                                case 9: rs.ObRate = statValue; break;
-                                case 10: rs.BirdiePlus = statValue; break;
-                                case 11: rs.DoubleBogeyPlus = statValue; break;
-                                case 12: rs.BogeyPlus = statValue; break;
-                                case 13: rs.Par = statValue; break;
-                                case 14: rs.Birdie = statValue; break;
-                                case 15: rs.EaglePlus = statValue; break;
+                                case 1: rs.Fairway = Math.Round(statValue, 2); break;
+                                case 2: rs.C1InReg = Math.Round(statValue, 2); break;
+                                case 3: rs.C2InReg = Math.Round(statValue, 2); break;
+                                case 4: rs.Parked = Math.Round(statValue, 2); break;
+                                case 5: rs.Scramble = Math.Round(statValue, 2); break;
+                                case 6: rs.C1Putting = Math.Round(statValue, 2); break;
+                                case 7: rs.C1xPutting = Math.Round(statValue, 2); break;
+                                case 8: rs.C2Putting = Math.Round(statValue, 2); break;
+                                case 9: rs.ObRate = Math.Round(statValue, 2); break;
+                                case 10: rs.BirdieMinus = Math.Round(statValue, 2); break;
+                                case 11: rs.DoubleBogeyPlus = Math.Round(statValue, 2); break;
+                                case 12: rs.BogeyPlus = Math.Round(statValue, 2); break;
+                                case 13: rs.Par = Math.Round(statValue, 2); break;
+                                case 14: rs.Birdie = Math.Round(statValue, 2); break;
+                                case 15: rs.EagleMinus = Math.Round(statValue, 2); break;
                                 case 16: rs.PuttDistance = statCount; break;
                             }
                         }
@@ -340,11 +340,11 @@ namespace fantasydg.Services
 
                             switch (statId)
                             {
-                                case 100: rs.StrokesGainedTotal = statValue; break;
-                                case 101: rs.StrokesGainedPutting = statValue; break;
-                                case 102: rs.StrokesGainedTeeToGreen = statValue; break;
-                                case 104: rs.StrokesGainedC1xPutting = statValue; break;
-                                case 105: rs.StrokesGainedC2Putting = statValue; break;
+                                case 100: rs.StrokesGainedTotal = Math.Round(statValue, 2); break;
+                                case 101: rs.StrokesGainedPutting = Math.Round(statValue, 2); break;
+                                case 102: rs.StrokesGainedTeeToGreen = Math.Round(statValue, 2); break;
+                                case 104: rs.StrokesGainedC1xPutting = Math.Round(statValue, 2); break;
+                                case 105: rs.StrokesGainedC2Putting = Math.Round(statValue, 2); break;
                             }
                         }
                     }
@@ -371,12 +371,12 @@ namespace fantasydg.Services
                             existing.C1xPutting = rs.C1xPutting;
                             existing.C2Putting = rs.C2Putting;
                             existing.ObRate = rs.ObRate;
-                            existing.BirdiePlus = rs.BirdiePlus;
+                            existing.BirdieMinus = rs.BirdieMinus;
                             existing.DoubleBogeyPlus = rs.DoubleBogeyPlus;
                             existing.BogeyPlus = rs.BogeyPlus;
                             existing.Par = rs.Par;
                             existing.Birdie = rs.Birdie;
-                            existing.EaglePlus = rs.EaglePlus;
+                            existing.EagleMinus = rs.EagleMinus;
                             existing.PuttDistance = rs.PuttDistance;
                             existing.StrokesGainedTotal = rs.StrokesGainedTotal;
                             existing.StrokesGainedPutting = rs.StrokesGainedPutting;

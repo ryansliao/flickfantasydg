@@ -1,69 +1,75 @@
 ﻿@model IEnumerable<fantasydg.Models.RoundScore>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Player</th>
-            <th>Place</th>
-            <th>Division</th>
-            <th>Tournament</th>
-            <th>Round</th>
-            <th>Round Score</th>
-            <th>Fairway</th>
-            <th>C1 Reg</th>
-            <th>C2 Reg</th>
-            <th>Parked</th>
-            <th>Scramble</th>
-            <th>C1 Putt</th>
-            <th>C1x Putt</th>
-            <th>C2 Putt</th>
-            <th>OB Rate</th>
-            <th>Birdie+</th>
-            <th>Birdie</th>
-            <th>Par</th>
-            <th>Bogey+</th>
-            <th>Dbl Bogey+</th>
-            <th>Eagle+</th>
-            <th>Putt Dist</th>
-            <th>SG Total</th>
-            <th>SG Putt</th>
-            <th>SG T2G</th>
-            <th>SG C1x</th>
-            <th>SG C2</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var rs in Model)
-        {
-            <tr>
-                <td>@rs.Player.Name</td>
-                <td>@rs.RunningPlace</td>
-                <td>@rs.Round?.Tournament?.Division</td>
-                <td>@rs.Round?.Tournament?.Name</td>
-                <td>@rs.Round?.RoundNumber</td>
-                <td>@rs.RoundToPar</td>
-                <td>@rs.Fairway%</td>
-                <td>@rs.C1InReg%</td>
-                <td>@rs.C2InReg%</td>
-                <td>@rs.Parked%</td>
-                <td>@rs.Scramble%</td>
-                <td>@rs.C1Putting%</td>
-                <td>@rs.C1xPutting%</td>
-                <td>@rs.C2Putting%</td>
-                <td>@rs.ObRate%</td>
-                <td>@rs.BirdiePlus%</td>
-                <td>@rs.Birdie%</td>
-                <td>@rs.Par%</td>
-                <td>@rs.BogeyPlus%</td>
-                <td>@rs.DoubleBogeyPlus%</td>
-                <td>@rs.EaglePlus%</td>
-                <td>@rs.PuttDistance</td>
-                <td>@rs.StrokesGainedTotal</td>
-                <td>@rs.StrokesGainedPutting</td>
-                <td>@rs.StrokesGainedTeeToGreen</td>
-                <td>@rs.StrokesGainedC1xPutting</td>
-                <td>@rs.StrokesGainedC2Putting</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="table-scroll-container">
+    <div class="table-scroll-top"></div>
+    <div class="table-scroll-wrapper">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Player</th>
+                    <th>Place</th>
+                    <th>Division</th>
+                    <th>Tournament</th>
+                    <th>Round</th>
+                    <th>Round Score</th>
+                    <th>Fairway</th>
+                    <th>C1 Reg</th>
+                    <th>C2 Reg</th>
+                    <th>Parked</th>
+                    <th>Scramble</th>
+                    <th>C1 Putt</th>
+                    <th>C1x Putt</th>
+                    <th>C2 Putt</th>
+                    <th>OB Rate</th>
+                    <th>Birdie-</th>
+                    <th>Birdie</th>
+                    <th>Par</th>
+                    <th>Bogey+</th>
+                    <th>Dbl Bogey+</th>
+                    <th>Eagle-</th>
+                    <th>Putt Dist</th>
+                    <th>SG Total</th>
+                    <th>SG Putt</th>
+                    <th>SG T2G</th>
+                    <th>SG C1x</th>
+                    <th>SG C2</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var rs in Model)
+                {
+                    <tr>
+                        <td>@rs.Player.Name</td>
+                        <td>@rs.RunningPlace</td>
+                        <td>@rs.Round?.Tournament?.Division</td>
+                        <td>@rs.Round?.Tournament?.Name</td>
+                        <td>@rs.Round?.RoundNumber</td>
+                        <td>@rs.RoundToPar</td>
+                        <td>@rs.Fairway%</td>
+                        <td>@rs.C1InReg%</td>
+                        <td>@rs.C2InReg%</td>
+                        <td>@rs.Parked%</td>
+                        <td>@rs.Scramble%</td>
+                        <td>@rs.C1Putting%</td>
+                        <td>@rs.C1xPutting%</td>
+                        <td>@rs.C2Putting%</td>
+                        <td>@rs.ObRate%</td>
+                        <td>@rs.BirdieMinus%</td>
+                        <td>@rs.Birdie%</td>
+                        <td>@rs.Par%</td>
+                        <td>@rs.BogeyPlus%</td>
+                        <td>@rs.DoubleBogeyPlus%</td>
+                        <td>@rs.EagleMinus%</td>
+                        <td>@rs.PuttDistance</td>
+                        <td>@rs.StrokesGainedTotal</td>
+                        <td>@rs.StrokesGainedPutting</td>
+                        <td>@rs.StrokesGainedTeeToGreen</td>
+                        <td>@rs.StrokesGainedC1xPutting</td>
+                        <td>@rs.StrokesGainedC2Putting</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="table-scroll-bottom"></div>
+</div>

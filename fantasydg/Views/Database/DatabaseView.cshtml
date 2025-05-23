@@ -14,27 +14,61 @@
         font-size: 0.95rem;
     }
 
-        table.player-stats th,
-        table.player-stats td {
-            border: 1px solid #ccc;
-            padding: 6px 10px;
-            text-align: center;
-        }
+    table.player-stats th,
+    table.player-stats td {
+        border: 1px solid #ccc;
+        padding: 6px 10px;
+        text-align: center;
+    }
 
-        table.player-stats thead {
-            background-color: #f5f5f5;
-        }
+    table.player-stats thead {
+        background-color: #f5f5f5;
+    }
 
-        table.player-stats tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
+    table.player-stats tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
 
-        table.player-stats th {
-            position: sticky;
-            top: 0;
-            background: #eee;
-            z-index: 1;
-        }
+    table.player-stats th {
+        position: sticky;
+        top: 0;
+        background: #eee;
+        z-index: 1;
+    }
+
+    .table-scroll-container {
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+    .table-scroll-top,
+    .table-scroll-bottom {
+        overflow-x: auto;
+        overflow-y: hidden;
+        height: 20px;
+    }
+
+    .table-scroll-wrapper {
+        overflow-x: auto;
+        overflow-y: hidden;
+        margin-bottom: -20px; /* Hides the inner bottom scrollbar if necessary */
+    }
+
+    .table-scroll-top::after,
+    .table-scroll-bottom::after {
+        content: '';
+        display: block;
+        height: 1px;
+    }
+
+    .table-scroll-wrapper table {
+        font-size: 0.85rem; /* Adjust as needed (e.g., 0.75rem for extra small) */
+    }
+
+    .table-scroll-wrapper table th,
+    .table-scroll-wrapper table td {
+        white-space: nowrap; /* Prevents wrapping if desired */
+    }
 </style>
 
 <form method="get" asp-action="DatabaseView" asp-controller="Database" class="filter-form">
@@ -42,7 +76,7 @@
     <select name="name" onchange="this.form.submit()">
         @foreach (var t in ViewBag.Tournaments as List<fantasydg.Models.Tournament>)
         {
-            if (Context.Request.Query["name"] == t.Name)
+            if (t.Name == (string)ViewBag.SelectedTournament)
             {
                 <option value="@t.Name" selected>@t.Name</option>
             }
@@ -54,10 +88,10 @@
     </select>
 
     <label for="division">Division:</label>
-    <select id="division" name="division" onchange="this.form.submit()">
-        @foreach (var d in ViewBag.Divisions)
+    <select id="divisionDropdown" name="division" onchange="this.form.submit()">
+        @foreach (var d in ViewBag.Divisions as List<string>)
         {
-            if (Context.Request.Query["division"] == d)
+            if (d == (string)ViewBag.SelectedDivision)
             {
                 <option value="@d" selected>@d</option>
             }
@@ -73,19 +107,17 @@
         <option value="">All</option>
         @if (ViewBag.Rounds is List<int> rounds)
         {
-            <select name="round" onchange="this.form.submit()">
-                @foreach (var r in rounds)
+            foreach (var r in rounds)
+            {
+                if (r == (int?)ViewBag.SelectedRound)
                 {
-                    if (Context.Request.Query["round"] == r.ToString())
-                    {
-                        <option value="@r" selected>@r</option>
-                    }
-                    else
-                    {
-                        <option value="@r">@r</option>
-                    }
+                    <option value="@r" selected>@r</option>
                 }
-            </select>
+                else
+                {
+                    <option value="@r">@r</option>
+                }
+            }
         }
     </select>
 </form>
@@ -100,3 +132,37 @@ else
 {
     @await Html.PartialAsync("_TournamentTable", (IEnumerable<fantasydg.Models.PlayerTournament>)Model)
 }
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const topScroll = document.querySelector('.table-scroll-top');
+        const bottomScroll = document.querySelector('.table-scroll-bottom');
+        const wrapper = document.querySelector('.table-scroll-wrapper');
+
+        // Create fake scrollbars with the same width as the table
+        function syncScrollBar(scrollDiv) {
+            const fakeScroll = document.createElement('div');
+            fakeScroll.style.width = wrapper.scrollWidth + 'px';
+            fakeScroll.style.height = '1px';
+            scrollDiv.appendChild(fakeScroll);
+        }
+
+        syncScrollBar(topScroll);
+        syncScrollBar(bottomScroll);
+
+        topScroll.addEventListener('scroll', () => {
+            wrapper.scrollLeft = topScroll.scrollLeft;
+            bottomScroll.scrollLeft = topScroll.scrollLeft;
+        });
+
+        bottomScroll.addEventListener('scroll', () => {
+            wrapper.scrollLeft = bottomScroll.scrollLeft;
+            topScroll.scrollLeft = bottomScroll.scrollLeft;
+        });
+
+        wrapper.addEventListener('scroll', () => {
+            topScroll.scrollLeft = wrapper.scrollLeft;
+            bottomScroll.scrollLeft = wrapper.scrollLeft;
+        });
+    });
+</script>
