@@ -4,15 +4,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public class Tournament
 {
-    [Key]
+    [Key, Column(Order = 0)]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public int Id { get; set; }
+    [Key, Column(Order = 1)]
     public string Division { get; set; } = null!;
 
     public DateTime Date { get; set; }
     public string? Name { get; set; }
-    public int Rounds { get; set; }
     public double Weight { get; set; }
 
-    public List<Round> RoundList { get; set; } = new();
+    public ICollection<Round> Rounds { get; set; }
+    public ICollection<PlayerTournament> PlayerTournaments { get; set; }
 }

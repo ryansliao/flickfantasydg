@@ -13,47 +13,60 @@ namespace fantasydg.Models.Repository
             _db = db;
         }
 
-        public async Task<List<Player>> GetFilteredPlayersAsync(string name, string division, int? round)
+        // Get tournament-level stats
+        public async Task<List<PlayerTournament>> GetPlayerTournamentsAsync(string name, string division)
         {
-            var query = _db.Players
-                .Include(p => p.Round)
-                .ThenInclude(r => r.Tournament)
-                .AsQueryable();
-
-            if (!string.IsNullOrEmpty(division) && division != "All")
-                query = query.Where(p => p.Round.Tournament.Division == division);
-
-            if (!string.IsNullOrEmpty(name))
-                query = query.Where(p => p.Round.Tournament.Name == name);
-
-            if (!string.IsNullOrEmpty(division))
-                query = query.Where(p => p.Round.Tournament.Division == division);
-
-            if (round.HasValue)
-                query = query.Where(p => p.Round.RoundNumber == round);
-
-            return await query
-                .OrderBy(p => p.Round.Tournament.Date)
-                .ThenBy(p => p.Round.RoundNumber)
-                .ThenBy(p => p.TournamentScore)
+            return await _db.PlayerTournaments
+                .Include(pt => pt.Player)
+                .Include(pt => pt.Tournament)
+                .Where(pt => pt.Tournament.Name == name && pt.Division == division)
+                .OrderBy(pt => pt.TotalToPar)
                 .ToListAsync();
         }
 
-        public async Task<List<string>> GetDistinctDivisionsAsync()
+        // Get round-level stats
+        public async Task<List<RoundScore>> GetRoundScoresAsync(string name, string division, int round)
+        {
+            return await _db.RoundScores
+                .Include(rs => rs.Player)
+                .Include(rs => rs.Round)
+                    .ThenInclude(r => r.Tournament)
+                .Where(rs => rs.Round.Tournament.Name == name
+                          && rs.Division == division
+                          && rs.Round.RoundNumber == round)
+                .OrderBy(rs => rs.RunningPlace)
+                .ToListAsync();
+        }
+
+        public async Task<List<Tournament>> GetAllTournamentsAsync()
+        {
+            var all = await _db.Tournaments
+                .OrderByDescending(t => t.Date)
+                .ToListAsync(); // Execute SQL first
+
+            return all
+                .GroupBy(t => t.Name)
+                .Select(g => g.OrderByDescending(t => t.Date).First())
+                .ToList(); // Now this is safe in-memory
+        }
+
+        public async Task<List<string>> GetDivisionsForTournamentAsync(string name)
         {
             return await _db.Tournaments
+                .Where(t => t.Name == name)
                 .Select(t => t.Division)
                 .Distinct()
-                .OrderByDescending(d => d)
                 .ToListAsync();
         }
 
-        public async Task<List<int>> GetRoundsForTournamentAsync(string name, string division)
+        public async Task<List<RoundScore>> GetRoundsForTournamentAsync(string name, string division)
         {
-            return await _db.Rounds
-                .Where(r => r.Tournament!.Name == name && r.Division == division)
-                .Select(r => r.RoundNumber)
-                .Distinct()
+            return await _db.RoundScores
+                .Include(rs => rs.Player)
+                .Include(rs => rs.Round)
+                    .ThenInclude(r => r.Tournament)
+                .Where(rs => rs.Round.Tournament.Name == name &&
+                             rs.Division == division)
                 .OrderBy(r => r)
                 .ToListAsync();
         }

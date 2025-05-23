@@ -1,0 +1,28 @@
+﻿@model fantasydg.Models.TournamentInputView
+
+@{
+    ViewData["Title"] = "Add Tournament";
+}
+
+<h2>Add a Tournament</h2>
+
+<form asp-action="Input" method="post">
+    <div class="form-group mb-3">
+        <label asp-for="TournamentId" class="form-label">Tournament ID</label>
+        <input asp-for="TournamentId" class="form-control" placeholder="Enter PDGA Tournament ID" />
+        <span asp-validation-for="TournamentId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="text-danger mt-2">@ViewBag.ErrorMessage</div>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

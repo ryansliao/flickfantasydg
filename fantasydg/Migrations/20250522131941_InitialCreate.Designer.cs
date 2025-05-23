@@ -12,8 +12,8 @@ using fantasydg.Data;
 namespace fantasydg.Migrations
 {
     [DbContext(typeof(DGDbContext))]
-    [Migration("20250520220941_AddCompositeKeyToTournament")]
-    partial class AddCompositeKeyToTournament
+    [Migration("20250522131941_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,7 +28,12 @@ namespace fantasydg.Migrations
             modelBuilder.Entity("fantasydg.Models.Player", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("RoundId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.Property<double>("Birdie")
                         .HasColumnType("float");
@@ -81,19 +86,31 @@ namespace fantasydg.Migrations
                     b.Property<int>("PuttDistance")
                         .HasColumnType("int");
 
-                    b.Property<int>("RoundId")
-                        .HasColumnType("int");
-
                     b.Property<int>("RoundScore")
                         .HasColumnType("int");
 
                     b.Property<double>("Scramble")
                         .HasColumnType("float");
 
+                    b.Property<double>("StrokesGainedC1xPutting")
+                        .HasColumnType("float");
+
+                    b.Property<double>("StrokesGainedC2Putting")
+                        .HasColumnType("float");
+
+                    b.Property<double>("StrokesGainedPutting")
+                        .HasColumnType("float");
+
+                    b.Property<double>("StrokesGainedTeeToGreen")
+                        .HasColumnType("float");
+
+                    b.Property<double>("StrokesGainedTotal")
+                        .HasColumnType("float");
+
                     b.Property<int>("TournamentScore")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id", "RoundId");
 
                     b.HasIndex("RoundId");
 
@@ -110,7 +127,7 @@ namespace fantasydg.Migrations
 
                     b.Property<string>("Division")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Exists")
                         .HasColumnType("bit");
@@ -118,12 +135,15 @@ namespace fantasydg.Migrations
                     b.Property<int>("RoundNumber")
                         .HasColumnType("int");
 
-                    b.Property<int>("TournamentId")
+                    b.Property<string>("TournamentDivision")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("TournamentId")
                         .HasColumnType("int");
 
                     b.HasKey("RoundId");
 
-                    b.HasIndex("TournamentId", "Division");
+                    b.HasIndex("TournamentId", "TournamentDivision");
 
                     b.ToTable("Rounds");
                 });
@@ -168,9 +188,7 @@ namespace fantasydg.Migrations
                 {
                     b.HasOne("fantasydg.Models.Tournament", "Tournament")
                         .WithMany("RoundList")
-                        .HasForeignKey("TournamentId", "Division")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TournamentId", "TournamentDivision");
 
                     b.Navigation("Tournament");
                 });

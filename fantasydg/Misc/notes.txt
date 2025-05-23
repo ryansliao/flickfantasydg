@@ -2,14 +2,8 @@
 	- maybe look to change method of averaging round stats to just tracking tournament stats
 		- if the overall stats page is constantly updated
 
-- implement tournament view and round view and use the tournament api pages
--round.tournament is empty
--There are two round 1s
--tournament.roundlist is empty
--tournament.rounds is 0
-
--show all rounds option (add tournament end stats)
-
+- round dropdown is not populating
+- login -> add team -> add players
 
 - Move to Azure Cloud.
 - Implement third party authentication.

@@ -48,7 +48,8 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Tournament}/{action=Input}/{id?}");
+    pattern: "{controller=Database}/{action=DatabaseView}/{id?}");
+
 app.MapRazorPages();
 
 app.Run();

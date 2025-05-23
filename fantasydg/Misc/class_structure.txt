@@ -1,0 +1,7 @@
+| Entity              | Relationship Type                       | Explanation                               |
+| ------------------- | --------------------------------------- | ----------------------------------------- |
+| Player ↔ Tournament | Many-to-Many via PlayerTournament       | A player can play in multiple tournaments |
+| Tournament → Rounds | One-to-Many                             | Each tournament has multiple rounds       |
+| Round ↔ Player      | Many-to-Many via RoundScore             | Each round tracks scores per player       |
+| PlayerTournament    | Has per-tournament stats for the player |                                           |
+| RoundScore          | Has per-round stats for the player      |                                           |

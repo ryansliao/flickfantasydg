@@ -1,0 +1,102 @@
+﻿@model IEnumerable<object>
+
+@{
+    ViewBag.Title = "Tournament Database";
+    var roundView = Model != null && Model.Any() && Model.First().GetType().Name == "RoundScore";
+}
+
+<h2>Database View</h2>
+
+<style>
+    table.player-stats {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+    }
+
+        table.player-stats th,
+        table.player-stats td {
+            border: 1px solid #ccc;
+            padding: 6px 10px;
+            text-align: center;
+        }
+
+        table.player-stats thead {
+            background-color: #f5f5f5;
+        }
+
+        table.player-stats tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table.player-stats th {
+            position: sticky;
+            top: 0;
+            background: #eee;
+            z-index: 1;
+        }
+</style>
+
+<form method="get" asp-action="DatabaseView" asp-controller="Database" class="filter-form">
+    <label for="name">Tournament:</label>
+    <select name="name" onchange="this.form.submit()">
+        @foreach (var t in ViewBag.Tournaments as List<fantasydg.Models.Tournament>)
+        {
+            if (Context.Request.Query["name"] == t.Name)
+            {
+                <option value="@t.Name" selected>@t.Name</option>
+            }
+            else
+            {
+                <option value="@t.Name">@t.Name</option>
+            }
+        }
+    </select>
+
+    <label for="division">Division:</label>
+    <select id="division" name="division" onchange="this.form.submit()">
+        @foreach (var d in ViewBag.Divisions)
+        {
+            if (Context.Request.Query["division"] == d)
+            {
+                <option value="@d" selected>@d</option>
+            }
+            else
+            {
+                <option value="@d">@d</option>
+            }
+        }
+    </select>
+
+    <label for="round">Round:</label>
+    <select name="round" onchange="this.form.submit()">
+        <option value="">All</option>
+        @if (ViewBag.Rounds is List<int> rounds)
+        {
+            <select name="round" onchange="this.form.submit()">
+                @foreach (var r in rounds)
+                {
+                    if (Context.Request.Query["round"] == r.ToString())
+                    {
+                        <option value="@r" selected>@r</option>
+                    }
+                    else
+                    {
+                        <option value="@r">@r</option>
+                    }
+                }
+            </select>
+        }
+    </select>
+</form>
+
+<hr />
+
+@if (roundView)
+{
+    @await Html.PartialAsync("_RoundTable", (IEnumerable<fantasydg.Models.RoundScore>)Model)
+}
+else
+{
+    @await Html.PartialAsync("_TournamentTable", (IEnumerable<fantasydg.Models.PlayerTournament>)Model)
+}
