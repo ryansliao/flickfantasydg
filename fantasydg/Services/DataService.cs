@@ -32,7 +32,7 @@ namespace fantasydg.Services
                 var url = $"https://www.pdga.com/apps/tournament/live-api/live_results_fetch_event?TournID={tournamentId}";
                 var json = await _httpClient.GetStringAsync(url);
                 
-                var name = JObject.Parse(json)?["data"]?["Name"]?.ToString() ?? $"Tournament {tournamentId}";
+                var name = JObject.Parse(json)?["data"]?["MultiLineName"]?["main"]?.ToString() ?? $"Tournament {tournamentId}";
                 var dateStr = JObject.Parse(json)?["data"]?["StartDate"]?.ToString();
 
                 DateTime? date = null;
@@ -253,8 +253,13 @@ namespace fantasydg.Services
         {
             Dictionary<int, RoundScore> finalPlayerMap = null;
             int actualRoundNumber = 0;
+            bool httpError = false;
             for (int pdgaRound = 1; pdgaRound <= 12; pdgaRound++)
             {
+                // If a round doesn't exist, skip to round 12
+                if (httpError && pdgaRound < 12)
+                    continue; 
+
                 try
                 {
                     // Parse round information API response
@@ -448,6 +453,7 @@ namespace fantasydg.Services
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error processing round {RoundNumber} for tournament {TournamentId}.", pdgaRound, tournamentId);
+                    httpError = true;
                     continue;
                 }
             }
