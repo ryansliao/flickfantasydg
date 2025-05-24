@@ -1,6 +1,7 @@
 ﻿using fantasydg.Data;
 using fantasydg.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace fantasydg.Models.Repository
 {
@@ -13,7 +14,7 @@ namespace fantasydg.Models.Repository
             _db = db;
         }
 
-        // Get tournament-level stats
+        // Get PlayerTournament table
         public async Task<List<PlayerTournament>> GetPlayerTournamentsAsync(string name, string division)
         {
             return await _db.PlayerTournaments
@@ -24,7 +25,7 @@ namespace fantasydg.Models.Repository
                 .ToListAsync();
         }
 
-        // Get round-level stats
+        // Get RoundScores table
         public async Task<List<RoundScore>> GetRoundScoresAsync(string name, string division, int round)
         {
             return await _db.RoundScores
@@ -39,6 +40,7 @@ namespace fantasydg.Models.Repository
                 .ToListAsync();
         }
 
+        // Get Tournaments table
         public async Task<List<Tournament>> GetAllTournamentsAsync()
         {
             var all = await _db.Tournaments
@@ -51,6 +53,7 @@ namespace fantasydg.Models.Repository
                 .ToList(); // Now this is safe in-memory
         }
 
+        // Get divisions in the Tournament table
         public async Task<List<string>> GetDivisionsForTournamentAsync(string name)
         {
             return await _db.Tournaments
@@ -60,6 +63,7 @@ namespace fantasydg.Models.Repository
                 .ToListAsync();
         }
 
+        // Get Rounds table
         public async Task<List<int>> GetRoundsForTournamentAsync(string name, string division)
         {
             return await _db.Rounds

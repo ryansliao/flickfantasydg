@@ -1,16 +1,13 @@
-- round stats are not matching with tournament stats (avg rounds vs. total)
-	- maybe look to change method of averaging round stats to just tracking tournament stats
-		- if the overall stats page is constantly updated
-
+Tasks:
 - label code
 - player views
 - sort by function for each column
 - make the first column and header fixed as you scroll
 - add some loading visual on the tournament input view
-
 - login -> add team -> add players
 - make sure each table is correct
-
 - Move to Azure Cloud.
 - Implement third party authentication.
 - split database into a different file
+
+Debug Notes:
