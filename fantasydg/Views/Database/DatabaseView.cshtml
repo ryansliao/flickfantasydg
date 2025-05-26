@@ -9,31 +9,39 @@
 
 <style>
     .filter-form {
-        margin-bottom: 0.25rem; /* reduce space below filters */
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        margin-bottom: 0.25rem;
     }
 
+    /* Contains table and scrolls */
     .table-scroll-container {
         margin-top: 0;
         padding-bottom: 10px;
-        max-height: 80vh; /* or fixed value like 600px */
-        overflow-y: auto; /* enables vertical scroll */
+        max-height: 80vh;
+        overflow-y: auto;
+        overflow-x: auto;
+    }
+    
+    /* The entire table */
+    stats-table {
+        padding: 6px 10px;
+        border-collapse: collapse;
+        table-layout: fixed;
+        margin-bottom: -20px;
+        overflow-y: auto;
         overflow-x: auto;
     }
 
-    freeze-table {
-        width: 100%;
-        font-size: 0.9rem;
-    }
-
-    .freeze-table th,
-    .freeze-table td {
-        padding: 6px 10px;
-        white-space: nowrap;
-        border-collapse: collapse;
-    }
-
-    /* Apply sticky to each header cell the same way */
-    .freeze-table thead th {
+    /* Column headers */
+    .stats-table thead th {
+        font-size: 0.85rem;
+        white-space: normal;
+        vertical-align: middle;
+        text-align: center;
+        padding: 5px 7px;
+        line-height: 15px;
         position: sticky;
         top: 0;
         background: rgba(225, 225, 225, 0.98);
@@ -41,93 +49,75 @@
     }
 
     /* First column */
-    .freeze-table th:first-child,
-    .freeze-table td:first-child {
+    .stats-table th:first-child,
+    .stats-table td:first-child {
         position: sticky;
         left: 0;
         background: rgba(240, 240, 240, 0.98);
-        z-index: 3;
+        z-index: 2;
         min-width: 60px;
         max-width: 60px;
     }
 
     /* Second column */
-    .freeze-table th:nth-child(2),
-    .freeze-table td:nth-child(2) {
+    .stats-table th:nth-child(2),
+    .stats-table td:nth-child(2) {
         position: sticky;
         left: 60px;
+        min-width: 200px;
+        max-width: 200px;
         background: rgba(240, 240, 240, 0.98);
         z-index: 2;
-        min-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
+        white-space: nowrap;
     }
 
-    /* Raise headers in sticky columns */
-    .freeze-table thead th:first-child {
-        z-index: 4;
-        background: rgba(225, 225, 225, 0.98);
+    /* Columns excluding the first two */
+    .stats-table th:nth-child(n+3),
+    .stats-table td:nth-child(n+3) {
+        min-width: 75px;
+        max-width: 75px;
+        text-align: center;
     }
 
-    .freeze-table thead th:nth-child(2) {
+    /* First header of column headers */
+    .stats-table thead th:first-child {
         z-index: 3;
         background: rgba(225, 225, 225, 0.98);
     }
 
-    /* Row striping */
-    .freeze-table tbody tr:nth-child(odd) {
+    /* Second header of column headers */
+    .stats-table thead th:nth-child(2) {
+        text-align: left;
+        z-index: 3;
+        background: rgba(225, 225, 225, 0.98);
+    }
+
+    /* Table rows */
+    .stats-table tbody tr:nth-child(odd) {
         background-color: white;
     }
 
-    .freeze-table tbody tr:nth-child(even) {
+    .stats-table tbody tr:nth-child(even) {
         background-color: #f9f9f9;
     }
 
-    .table-scroll-wrapper table {
+    /* Table cells */
+    .stats-table td {
         font-size: 0.9rem;
-        overflow-y: auto;
-        overflow-x: auto;
-        max-height: 80vh;
-    }
-
-    /* Wrap header text */
-    .table-scroll-wrapper table th {
-        white-space: normal;
-        word-break: keep-all; /* prevent breaking words */
-        overflow-wrap: break-word; /* allow breaking at spaces only */
-        vertical-align: middle;
-        text-align: center;
-        padding: 5px 7px;
-        line-height: 1.2;
-    }
-        
-        /* Player columns text aligns left */
-        .table-scroll-wrapper table th:nth-child(2) {
-            text-align: left;
-            min-width: 60px;
-        }
-
-    /* Prevent wrapping in table cells */
-    .table-scroll-wrapper table td {
         white-space: nowrap;
-        min-width: 60px;
         padding: 5px 7px;
-        line-height: 1.2;
+        line-height: 15px;
         text-overflow: ellipsis;
         text-align: center;
     }
-
-        /* Player text aligns left */
-        .table-scroll-wrapper table td:nth-child(2) {
-            text-align: left;
-            min-width: 150px;
-        }
-
-    .table-scroll-wrapper {
-        margin-bottom: -20px; /* Hides the inner bottom scrollbar if necessary */
-    }
+  
 </style>
 
-<form method="get" asp-action="DatabaseView" asp-controller="Database" class="filter-form" style="display: flex; gap: 1rem; align-items: center;">
-    <div class="filter-item" style="padding-right: 1rem; border-right: 1px solid #ccc;">
+<form method="get" asp-action="DatabaseView" asp-controller="Database" class="filter-form">
+    <div class="filter-item">
         <label for="name">Tournament:</label>
         <select name="name" onchange="this.form.submit()">
             @foreach (var t in ViewBag.Tournaments as List<fantasydg.Models.Tournament>)
@@ -144,7 +134,7 @@
         </select>
     </div>
 
-    <div class="filter-item" style="padding-right: 1rem; border-right: 1px solid #ccc;">
+    <div class="filter-item">
         <label for="division">Division:</label>
         <select id="divisionDropdown" name="division" onchange="this.form.submit()">
             @foreach (var d in ViewBag.Divisions as List<string>)
