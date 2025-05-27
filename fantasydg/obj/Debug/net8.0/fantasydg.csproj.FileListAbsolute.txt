@@ -176,3 +176,4 @@ C:\Users\RyanS\source\repos\fantasydg\fantasydg\obj\Debug\net8.0\refint\fantasyd
 C:\Users\RyanS\source\repos\fantasydg\fantasydg\obj\Debug\net8.0\fantasydg.pdb
 C:\Users\RyanS\source\repos\fantasydg\fantasydg\obj\Debug\net8.0\fantasydg.genruntimeconfig.cache
 C:\Users\RyanS\source\repos\fantasydg\fantasydg\obj\Debug\net8.0\ref\fantasydg.dll
+C:\Users\RyanS\source\repos\fantasydg\fantasydg\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.Google.dll
