@@ -1,2 +1,2 @@
-# [Flick Fantasy Disc Golf]
+# Flick Fantasy Disc Golf
 ## ASP.NET Core Web Application
