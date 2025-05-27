@@ -1,9 +1,11 @@
 Tasks:
+- google authentication
+- azure cloud
+- user/league/team/players schema
 - player views
 - sort by function for each column
 - add some loading visual on the tournament input view
-- login -> add team -> add players
-- Move to Azure Cloud.
-- Implement third party authentication.
 
 Debug Notes:
+https://localhost:7038/Identity/Account/ExternalLogin?handler=Callback
+https://localhost:7038/Identity/Account/RegisterConfirmation?Email=ryansliao.1107@gmail.com

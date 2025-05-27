@@ -25,6 +25,22 @@ namespace fantasydg.Controllers
             _logger = logger;
         }
 
+        // Intialization settings
+        [HttpGet("/")]
+        public async Task<IActionResult> Index()
+        {
+            var allTournaments = await _repository.GetAllTournamentsAsync();
+            var latest = allTournaments.FirstOrDefault();
+
+            if (latest == null)
+                return RedirectToAction("DatabaseView"); // fallback if DB is empty
+
+            var divisions = await _repository.GetDivisionsForTournamentAsync(latest.Id);
+            var defaultDivision = divisions.Contains("MPO") ? "MPO" : divisions.FirstOrDefault();
+
+            return Redirect($"/tournaments/{latest.Id}/{defaultDivision}");
+        }
+
         // Prompt the tournament input view
         public async Task<IActionResult> Input(TournamentInputView? model)
         {
@@ -38,9 +54,9 @@ namespace fantasydg.Controllers
                     await _dataService.FetchTournaments(model.TournamentId, division);
                 }
 
-                // Find the name of the tournament just entered
-                var name = await GetTournamentName(model.TournamentId);
-                return RedirectToAction("DatabaseView", new { name = name, division = "MPO" });
+                // Find the id of the tournament just entered
+                var tournamentId = await GetTournamentName(model.TournamentId);
+                return RedirectToAction("DatabaseView", new { tournament = tournamentId, division = "MPO" });
             }
 
             return View();
@@ -56,26 +72,29 @@ namespace fantasydg.Controllers
         }
 
         // Access the database and populates the views
-        public async Task<IActionResult> DatabaseView(string? name = null, string? division = null, int? round = null)
-        {
+        [HttpGet("/tournaments/{tournamentId:int}/{division?}/{round?}")]
+        public async Task<IActionResult> DatabaseView(int tournamentId, string? division = null, int? round = null)
+        {            
             // Select all tournaments
             var allTournaments = await _repository.GetAllTournamentsAsync();
-            ViewBag.Tournaments = allTournaments // Tournament name dropdown
+            ViewBag.Tournaments = allTournaments // Tournament dropdown
                 .OrderByDescending(t => t.Date)
                 .ToList();
 
-            if (string.IsNullOrEmpty(name))
-                name = allTournaments.FirstOrDefault()?.Name;
+            var selectedTournament = allTournaments.FirstOrDefault(t => t.Id == tournamentId);
+            if (selectedTournament == null)
+            {
+                _logger.LogWarning("Invalid tournament ID: {TournamentId}", tournamentId);
+                return View("DatabaseView", new List<PlayerTournament>());
+            }
 
-            ViewBag.SelectedTournament = name; // Selected tournament dropdown item
+            var tournamentName = selectedTournament.Name;
+            ViewBag.SelectedTournamentId = tournamentId; // Selected tournament dropdown item
 
             // Select all divisions for each tournament if it exists in database
-            if (!string.IsNullOrEmpty(name))
-                ViewBag.Divisions = (await _repository.GetDivisionsForTournamentAsync(name)) // Division name dropdown for existing tournaments
-                    .OrderByDescending(d => d) 
-                    .ToList();
-            else
-                ViewBag.Divisions = new List<string>(); // Division name dropdown for null or empty tournaments
+            ViewBag.Divisions = (await _repository.GetDivisionsForTournamentAsync(tournamentId)) // Division name dropdown for existing tournaments
+                .OrderByDescending(d => d) 
+                .ToList();
 
             if (string.IsNullOrEmpty(division))
                 division = (ViewBag.Divisions as List<string>)?.Contains("MPO") == true ? "MPO" : (ViewBag.Divisions as List<string>)?.FirstOrDefault();
@@ -85,9 +104,9 @@ namespace fantasydg.Controllers
             // Select all existing rounds for each tournament and division
             List<int> validRounds = new();
 
-            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(division))
+            if (!string.IsNullOrEmpty(division))
             {
-                validRounds = await _repository.GetRoundsForTournamentAsync(name, division);
+                validRounds = await _repository.GetRoundsForTournamentAsync(tournamentId, division);
             }
             ViewBag.Rounds = validRounds; // Round number dropdown for null or empty tournaments
 
@@ -100,12 +119,12 @@ namespace fantasydg.Controllers
             // Selects RoundScore and PlayerTournament views and displays them in the web app
             if (round.HasValue)
             {
-                var roundScores = await _repository.GetRoundScoresAsync(name, division, round.Value);
+                var roundScores = await _repository.GetRoundScoresAsync(tournamentId, division, round.Value);
                 return View("DatabaseView", roundScores);
             }
             else
             {
-                var playerTournaments = await _repository.GetPlayerTournamentsAsync(name, division);
+                var playerTournaments = await _repository.GetPlayerTournamentsAsync(tournamentId, division);
                 return View("DatabaseView", playerTournaments);
             }
         }

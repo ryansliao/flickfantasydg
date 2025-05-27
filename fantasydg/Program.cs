@@ -55,7 +55,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Database}/{action=DatabaseView}/{id?}");
+    pattern: "{controller=Database}/{action=Index}/{id?}");
 
 app.MapRazorPages();
 

@@ -15,24 +15,24 @@ namespace fantasydg.Models.Repository
         }
 
         // Get PlayerTournament table
-        public async Task<List<PlayerTournament>> GetPlayerTournamentsAsync(string name, string division)
+        public async Task<List<PlayerTournament>> GetPlayerTournamentsAsync(int id, string division)
         {
             return await _db.PlayerTournaments
                 .Include(pt => pt.Player)
                 .Include(pt => pt.Tournament)
-                .Where(pt => pt.Tournament.Name == name && pt.Division == division)
+                .Where(pt => pt.Tournament.Id == id && pt.Division == division)
                 .OrderBy(pt => pt.TotalToPar)
                 .ToListAsync();
         }
 
         // Get RoundScores table
-        public async Task<List<RoundScore>> GetRoundScoresAsync(string name, string division, int round)
+        public async Task<List<RoundScore>> GetRoundScoresAsync(int id, string division, int round)
         {
             return await _db.RoundScores
                 .Include(rs => rs.Player)
                 .Include(rs => rs.Round)
                     .ThenInclude(r => r.Tournament)
-                .Where(rs => rs.Round.Tournament.Name == name
+                .Where(rs => rs.Round.Tournament.Id == id
                           && rs.Division == division
                           && rs.Round.RoundNumber == round)
                 .OrderBy(rs => rs.RunningPlace)
@@ -54,21 +54,21 @@ namespace fantasydg.Models.Repository
         }
 
         // Get divisions in the Tournament table
-        public async Task<List<string>> GetDivisionsForTournamentAsync(string name)
+        public async Task<List<string>> GetDivisionsForTournamentAsync(int id)
         {
             return await _db.Tournaments
-                .Where(t => t.Name == name)
+                .Where(t => t.Id == id)
                 .Select(t => t.Division)
                 .Distinct()
                 .ToListAsync();
         }
 
         // Get Rounds table
-        public async Task<List<int>> GetRoundsForTournamentAsync(string name, string division)
+        public async Task<List<int>> GetRoundsForTournamentAsync(int id, string division)
         {
             return await _db.Rounds
                 .Include(r => r.Tournament)
-                .Where(r => r.Tournament.Name == name && r.Division == division)
+                .Where(r => r.Tournament.Id == id && r.Division == division)
                 .Select(r => r.RoundNumber)
                 .Distinct()
                 .OrderBy(n => n)
