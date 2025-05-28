@@ -1,11 +1,25 @@
 Tasks:
-- google authentication
-- azure cloud
-- user/league/team/players schema
-- player views
-- sort by function for each column
-- add some loading visual on the tournament input view
+- User/League/Team Database Schema
+- Views:
+	- Homepage
+	- League (General information, standings)
+		- League Settings
+			- Invite Users
+			- Scoring
+		- Team (Choose starting players / bench)
+			- Team Settings
+			- Individual Player (A player's info and stats)
+		- Available Players (List of players not on any team)
+		- Results (Will resemble current database view)
+	- User Profile/Settings
+		- Username change
+		- Email change
+- Google Authentication for User Accounts
+- Upload WebApp + Database to Azure Cloud
+- Table Functionality
+	- Sort By Columns
+	- Player Search
+
 
 Debug Notes:
-https://localhost:7038/Identity/Account/ExternalLogin?handler=Callback
-https://localhost:7038/Identity/Account/RegisterConfirmation?Email=ryansliao.1107@gmail.com
+- Delete database and merge contexts

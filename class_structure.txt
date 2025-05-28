@@ -1,7 +1,8 @@
-| Entity              | Relationship Type                       | Explanation                               |
-| ------------------- | --------------------------------------- | ----------------------------------------- |
-| Player ↔ Tournament | Many-to-Many via PlayerTournament       | A player can play in multiple tournaments |
-| Tournament → Rounds | One-to-Many                             | Each tournament has multiple rounds       |
-| Round ↔ Player      | Many-to-Many via RoundScore             | Each round tracks scores per player       |
-| PlayerTournament    | Has per-tournament stats for the player |                                           |
-| RoundScore          | Has per-round stats for the player      |                                           |
+User		 | [Username], Email, (Leagues, Teams)						| One-to-Many
+League		 | [LeagueId], Name, PlayerNumber, (Users, Teams)				| One-to-Many via Teams
+Team		 | [TeamId], Name, (Players, Leagues) 						| One-to-Many via Players
+Player		 | [PlayerId], Name, TeamId, (PlayerTournaments)				| Many-to-Many via PlayerTournament      
+Tournament	 | [TournamentId, Division], Date, Name, Weight, (Rounds, PlayerTournaments)	| One-to-Many                             
+Round		 | [RoundId], RoundNumber, TournamentId, Division, (Tournament) 		| Many-to-Many via RoundScore             
+PlayerTournament | [RoundId, PlayerId], Stats, (Player, Tournament) 			  	| Has per-tournament stats for the player 
+RoundScore       | [PlayerId, TournamentId, Division], Stats, (Round, Player)		  	| Has per-round stats for the player      
