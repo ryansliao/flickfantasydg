@@ -12,28 +12,39 @@ namespace fantasydg.Controllers
 {
     public class DatabaseController : Controller
     {
-        private readonly DGDbContext _db;
+        private readonly ApplicationDbContext _db;
         private readonly DataService _dataService;
+        private readonly LeagueService _leagueService;
         private readonly DatabaseRepository _repository;
         private readonly ILogger<DataService> _logger;
 
-        public DatabaseController(DGDbContext db, DataService dataService, DatabaseRepository repository, ILogger<DataService> logger)
+        public DatabaseController(ApplicationDbContext db, DataService dataService, LeagueService leagueService, DatabaseRepository repository, ILogger<DataService> logger)
         {
             _db = db;
             _dataService = dataService;
+            _leagueService = leagueService;
             _repository = repository;
             _logger = logger;
         }
 
         // Intialization settings
         [HttpGet("/")]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
+        {
+            return View("Home"); // Always show home page now
+        }
+
+        public async Task<IActionResult> Database()
         {
             var allTournaments = await _repository.GetAllTournamentsAsync();
             var latest = allTournaments.FirstOrDefault();
 
             if (latest == null)
-                return RedirectToAction("DatabaseView"); // fallback if DB is empty
+            {
+                // No tournaments yet — show a message or send to Input form
+                TempData["Message"] = "No tournaments found. Please enter a tournament ID to get started.";
+                return RedirectToAction("Input");
+            }
 
             var divisions = await _repository.GetDivisionsForTournamentAsync(latest.Id);
             var defaultDivision = divisions.Contains("MPO") ? "MPO" : divisions.FirstOrDefault();
@@ -56,7 +67,8 @@ namespace fantasydg.Controllers
 
                 // Find the id of the tournament just entered
                 var tournamentId = await GetTournamentName(model.TournamentId);
-                return RedirectToAction("DatabaseView", new { tournament = tournamentId, division = "MPO" });
+                var defaultDivision = "MPO";
+                return Redirect($"/tournaments/{model.TournamentId}/{defaultDivision}");
             }
 
             return View();
@@ -69,6 +81,13 @@ namespace fantasydg.Controllers
                 .Where(t => t.Id == tournamentId && t.Division == "MPO")
                 .Select(t => t.Name)
                 .FirstOrDefaultAsync();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _leagueService.DeleteLeagueCascadeAsync(id);
+            return RedirectToAction("Index"); // or wherever your list of leagues is
         }
 
         // Access the database and populates the views

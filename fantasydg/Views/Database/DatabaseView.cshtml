@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Tournament Database";
+    bool hasData = Model != null && Model.Any();
     var roundView = Model != null && Model.Any() && Model.First().GetType().Name == "RoundScore";
 }
 
@@ -177,14 +178,22 @@
     </div>
 </form>
 <hr />
-
-@if (roundView)
+@if (!hasData)
 {
-    @await Html.PartialAsync("_RoundTable", (IEnumerable<fantasydg.Models.RoundScore>)Model)
+    <div class="alert alert-warning mt-4">
+        No data available. Please enter a tournament to begin.
+    </div>
 }
 else
 {
-    @await Html.PartialAsync("_TournamentTable", (IEnumerable<fantasydg.Models.PlayerTournament>)Model)
+    @if (roundView)
+    {
+        @await Html.PartialAsync("_RoundTable", (IEnumerable<fantasydg.Models.RoundScore>)Model)
+    }
+    else
+    {
+        @await Html.PartialAsync("_TournamentTable", (IEnumerable<fantasydg.Models.PlayerTournament>)Model)
+    }
 }
 
 <script>

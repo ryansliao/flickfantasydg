@@ -4,6 +4,14 @@
     ViewData["Title"] = "Tournament Input";
 }
 
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info mt-3">
+        @TempData["Message"]
+    </div>
+}
+
 <h2>Add/Update Tournament</h2>
 
 <form asp-action="Input" method="post">

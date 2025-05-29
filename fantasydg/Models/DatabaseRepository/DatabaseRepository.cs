@@ -7,9 +7,9 @@ namespace fantasydg.Models.Repository
 {
     public class DatabaseRepository
     {
-        private readonly DGDbContext _db;
+        private readonly ApplicationDbContext _db;
 
-        public DatabaseRepository(DGDbContext db)
+        public DatabaseRepository(ApplicationDbContext db)
         {
             _db = db;
         }

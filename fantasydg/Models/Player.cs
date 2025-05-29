@@ -11,5 +11,6 @@ namespace fantasydg.Models
 
         public string? Name { get; set; }
         public ICollection<PlayerTournament> PlayerTournaments { get; set; }
+        public ICollection<TeamPlayer> TeamPlayers { get; set; }
     }
 }

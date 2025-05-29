@@ -23,3 +23,5 @@ Tasks:
 
 Debug Notes:
 - Delete database and merge contexts
+- Implement new schema items
+- Merge login and register functions

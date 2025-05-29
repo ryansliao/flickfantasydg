@@ -14,10 +14,10 @@ namespace fantasydg.Services
     public partial class DataService
     {
         private readonly HttpClient _httpClient;
-        private readonly DGDbContext _db;
+        private readonly ApplicationDbContext _db;
         private readonly ILogger<DataService> _logger;
 
-        public DataService(HttpClient httpClient, DGDbContext db, ILogger<DataService> logger)
+        public DataService(HttpClient httpClient, ApplicationDbContext db, ILogger<DataService> logger)
         {
             _httpClient = httpClient;
             _db = db;

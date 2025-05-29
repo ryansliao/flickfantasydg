@@ -3,6 +3,8 @@ using fantasydg.Models.Repository;
 using fantasydg.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -18,10 +20,8 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddDbContext<DGDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -31,6 +31,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddHttpClient<DataService>();
 builder.Services.AddScoped<DatabaseRepository>();
+builder.Services.AddScoped<LeagueService>();
 
 var app = builder.Build();
 
@@ -55,7 +56,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Database}/{action=Index}/{id?}");
+    pattern: "{controller}/{action}/{id?}");
 
 app.MapRazorPages();
 

@@ -1,8 +1,10 @@
-User		 | [Username], Email, (Leagues, Teams)						| One-to-Many
-League		 | [LeagueId], Name, PlayerNumber, (Users, Teams)				| One-to-Many via Teams
+ApplicationUser	 | (League, Team, LeagueMember)							| One-to-Many
+League		 | [LeagueId], Name, PlayerNumber, (Member, Team)				| One-to-Many via Teams
+LeagueMember	 | [LeagueId, UserId], (League, User)
+TeamPlayer	 | [TeamId, PlayerId], LeagueId, (Team, Player)
 Team		 | [TeamId], Name, (Players, Leagues) 						| One-to-Many via Players
-Player		 | [PlayerId], Name, TeamId, (PlayerTournaments)				| Many-to-Many via PlayerTournament      
-Tournament	 | [TournamentId, Division], Date, Name, Weight, (Rounds, PlayerTournaments)	| One-to-Many                             
+Player		 | [PlayerId], Name, TeamId, (PlayerTournament, TeamPlayer)			| Many-to-Many via PlayerTournament      
+Tournament	 | [TournamentId, Division], Date, Name, Weight, (Rounds, PlayerTournament)	| One-to-Many                             
 Round		 | [RoundId], RoundNumber, TournamentId, Division, (Tournament) 		| Many-to-Many via RoundScore             
 PlayerTournament | [RoundId, PlayerId], Stats, (Player, Tournament) 			  	| Has per-tournament stats for the player 
 RoundScore       | [PlayerId, TournamentId, Division], Stats, (Round, Player)		  	| Has per-round stats for the player      
