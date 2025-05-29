@@ -1,4 +1,17 @@
-﻿<!DOCTYPE html>
+﻿@inject fantasydg.Data.ApplicationDbContext dbContext
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<fantasydg.Models.ApplicationUser> userManager
+
+@{
+    var userId = userManager.GetUserId(User);
+    var userLeagues = dbContext.LeagueMembers
+        .Where(lm => lm.UserId == userId)
+        .Select(lm => lm.League)
+        .OrderBy(l => l.Name)
+        .ToList();
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,19 +21,25 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/fantasydg.styles.css" asp-append-version="true" />
     <style>
-    .nav-tabs .nav-link {
-        color: black;             /* 🔹 Inactive tabs */
+    .navbar-nav > .nav-item {
+        margin-right: 2px;
     }
 
-    .nav-tabs .nav-link.active {
-        color: black !important;  /* 🔹 Active tab */
-        background-color: white;
-        border-color: #dee2e6 #dee2e6 white;
+    .navbar-nav .nav-link {
+        transition: background-color 0.2s ease;
+        border-radius: 0.25rem;
+        height: 40px;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
     }
 
-    .nav-tabs .nav-link:hover {
-        color: #333; 
-    }
+        .navbar-nav .nav-link:hover {
+            background-color: #f0f0f0;
+            color: #000;
+            font-weight: bold;
+        }
 
     .nav-link .nav-link:hover {
         color: #333; 
@@ -31,15 +50,30 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Database" asp-action="Index">Flick Fantasy DG</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Flick Fantasy</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link text-dark dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Leagues</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/League/Create">Create League</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                @foreach (var league in userLeagues)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("View", "League", new { id = league.LeagueId })">
+                                            @league.Name
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-action="Database">Database</a>
+                            <a class="nav-link text-dark" asp-controller="Database" asp-action="Database">Database</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Database" asp-action="Input">Input</a>

@@ -1,0 +1,19 @@
+﻿@model fantasydg.Models.League
+
+@{
+    var userId = User?.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+}
+
+<h2>@Model.Name</h2>
+
+@if (userId == Model.OwnerId)
+{
+    <a class="btn btn-secondary" href="@Url.Action("Settings", "League", new { id = Model.LeagueId })">Settings</a>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-warning">@TempData["ErrorMessage"]</div>
+}
+
+<p>Members: @Model.Members?.Count</p>

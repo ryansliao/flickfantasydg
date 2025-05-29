@@ -232,22 +232,49 @@ namespace fantasydg.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LeagueId"));
 
-                    b.Property<string>("CreatorId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("PlayerNumber")
                         .HasColumnType("int");
 
                     b.HasKey("LeagueId");
 
-                    b.HasIndex("CreatorId");
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Leagues");
+                });
+
+            modelBuilder.Entity("fantasydg.Models.LeagueInvitation", b =>
+                {
+                    b.Property<int>("LeagueInvitationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LeagueInvitationId"));
+
+                    b.Property<int>("LeagueId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LeagueInvitationId");
+
+                    b.HasIndex("LeagueId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("LeagueInvitations");
                 });
 
             modelBuilder.Entity("fantasydg.Models.LeagueMember", b =>
@@ -263,6 +290,33 @@ namespace fantasydg.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("LeagueMembers");
+                });
+
+            modelBuilder.Entity("fantasydg.Models.LeagueOwnershipTransfer", b =>
+                {
+                    b.Property<int>("LeagueOwnershipTransferId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LeagueOwnershipTransferId"));
+
+                    b.Property<int>("LeagueId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NewOwnerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("LeagueOwnershipTransferId");
+
+                    b.HasIndex("LeagueId");
+
+                    b.HasIndex("NewOwnerId");
+
+                    b.ToTable("LeagueOwnershipTransfers");
                 });
 
             modelBuilder.Entity("fantasydg.Models.Player", b =>
@@ -613,13 +667,32 @@ namespace fantasydg.Migrations
 
             modelBuilder.Entity("fantasydg.Models.League", b =>
                 {
-                    b.HasOne("fantasydg.Models.ApplicationUser", "Creator")
-                        .WithMany("LeaguesCreated")
-                        .HasForeignKey("CreatorId")
+                    b.HasOne("fantasydg.Models.ApplicationUser", "Owner")
+                        .WithMany("LeaguesOwned")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Creator");
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("fantasydg.Models.LeagueInvitation", b =>
+                {
+                    b.HasOne("fantasydg.Models.League", "League")
+                        .WithMany()
+                        .HasForeignKey("LeagueId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("fantasydg.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("League");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("fantasydg.Models.LeagueMember", b =>
@@ -639,6 +712,25 @@ namespace fantasydg.Migrations
                     b.Navigation("League");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("fantasydg.Models.LeagueOwnershipTransfer", b =>
+                {
+                    b.HasOne("fantasydg.Models.League", "League")
+                        .WithMany()
+                        .HasForeignKey("LeagueId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("fantasydg.Models.ApplicationUser", "NewOwner")
+                        .WithMany()
+                        .HasForeignKey("NewOwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("League");
+
+                    b.Navigation("NewOwner");
                 });
 
             modelBuilder.Entity("fantasydg.Models.PlayerTournament", b =>
@@ -732,7 +824,7 @@ namespace fantasydg.Migrations
                 {
                     b.Navigation("LeagueMemberships");
 
-                    b.Navigation("LeaguesCreated");
+                    b.Navigation("LeaguesOwned");
 
                     b.Navigation("TeamsOwned");
                 });

@@ -15,6 +15,8 @@ namespace fantasydg.Data
         public DbSet<Team> Teams { get; set; }
         public DbSet<TeamPlayer> TeamPlayers { get; set; }
         public DbSet<LeagueMember> LeagueMembers { get; set; }
+        public DbSet<LeagueInvitation> LeagueInvitations { get; set; }
+        public DbSet<LeagueOwnershipTransfer> LeagueOwnershipTransfers { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
@@ -58,9 +60,9 @@ namespace fantasydg.Data
                 .HasKey(lm => new { lm.LeagueId, lm.UserId });
 
             modelBuilder.Entity<League>()
-                .HasOne(l => l.Creator)
-                .WithMany(u => u.LeaguesCreated)
-                .HasForeignKey(l => l.CreatorId);
+                .HasOne(l => l.Owner)
+                .WithMany(u => u.LeaguesOwned)
+                .HasForeignKey(l => l.OwnerId);
 
             modelBuilder.Entity<LeagueMember>()
                 .HasOne(lm => lm.League)
@@ -106,7 +108,19 @@ namespace fantasydg.Data
 
             modelBuilder.Entity<TeamPlayer>()
                 .HasIndex(tp => new { tp.LeagueId, tp.PlayerId })
-                .IsUnique(); // Prevent same player on multiple teams in a league
+                .IsUnique();
+
+            modelBuilder.Entity<LeagueInvitation>()
+                .HasOne(i => i.League)
+                .WithMany()
+                .HasForeignKey(i => i.LeagueId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<LeagueOwnershipTransfer>()
+                .HasOne(l => l.League)
+                .WithMany()
+                .HasForeignKey(l => l.LeagueId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -1,0 +1,38 @@
+﻿@model fantasydg.Models.League
+
+<h2>@Model.Name - Settings</h2>
+<p>Owner: @Model.Owner.UserName</p>
+<p>Members: @Model.Members?.Count</p>
+
+<div class="d-flex flex-column gap-3 mt-3">
+    <form asp-action="Invite" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="leagueId" value="@Model.LeagueId" />
+
+        <div class="form-group">
+            <label for="usernameOrEmail">Username or Email</label>
+            <input name="usernameOrEmail" class="form-control" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Send Invite</button>
+    </form>
+
+    @if (TempData["InviteResult"] != null)
+    {
+        <div class="alert alert-info mt-2">@TempData["InviteResult"]</div>
+    }
+
+    @if (User?.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value == Model.OwnerId)
+    {
+        <a asp-controller="League" asp-action="TransferOwnership" asp-route-leagueId="@Model.LeagueId" class="btn btn-warning align-self-start w-auto">
+            Transfer Ownership
+        </a>
+    }
+
+    <form asp-action="DeleteLeague" method="post" onsubmit="return confirm('Are you sure you want to delete this league?');" class="mb-0 align-self-start w-auto">
+        <input type="hidden" name="leagueId" value="@Model.LeagueId" />
+        <button type="submit" class="btn btn-danger w-auto">
+            Delete League
+        </button>
+    </form>
+</div>

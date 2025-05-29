@@ -1,0 +1,45 @@
+﻿@{
+    var invites = ViewBag.Invitations as List<fantasydg.Models.LeagueInvitation> ?? new();
+    var transfers = ViewBag.OwnershipTransfers as List<fantasydg.Models.LeagueOwnershipTransfer> ?? new();
+}
+
+<h2>Notifications</h2>
+
+@if (!invites.Any() && !transfers.Any())
+{
+    <p>No notifications at this time.</p>
+}
+
+@if (invites.Any())
+{
+    <h4>League Invitations</h4>
+    <ul class="list-group mb-4">
+        @foreach (var invite in invites)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                You have been invited to join <strong>@invite.League.Name</strong>
+                <form asp-controller="League" asp-action="AcceptInvitation" method="post" class="mb-0">
+                    <input type="hidden" name="invitationId" value="@invite.LeagueInvitationId" />
+                    <button class="btn btn-sm btn-success">Accept</button>
+                </form>
+            </li>
+        }
+    </ul>
+}
+
+@if (transfers.Any())
+{
+    <h4>Ownership Transfer Requests</h4>
+    <ul class="list-group">
+        @foreach (var transfer in transfers)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                You're being offered ownership of <strong>@transfer.League.Name</strong>
+                <form asp-controller="League" asp-action="AcceptOwnershipTransfer" method="post" class="mb-0">
+                    <input type="hidden" name="transferId" value="@transfer.LeagueOwnershipTransferId" />
+                    <button class="btn btn-sm btn-success">Accept</button>
+                </form>
+            </li>
+        }
+    </ul>
+}

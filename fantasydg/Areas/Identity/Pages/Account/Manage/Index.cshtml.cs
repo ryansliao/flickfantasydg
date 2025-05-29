@@ -30,7 +30,9 @@ namespace fantasydg.Areas.Identity.Pages.Account.Manage
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
-        public string Username { get; set; }
+        [Required]
+        [Display(Name = "Username")]
+        public string UserName { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -56,21 +58,25 @@ namespace fantasydg.Areas.Identity.Pages.Account.Manage
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Phone]
-            [Display(Name = "Phone number")]
-            public string PhoneNumber { get; set; }
+            [Required]
+            [Display(Name = "Username")]
+            public string UserName { get; set; }
+
+            [Required]
+            [EmailAddress]
+            [Display(Name = "Email")]
+            public string Email { get; set; }
         }
 
         private async Task LoadAsync(ApplicationUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
-            Username = userName;
+            var email = await _userManager.GetEmailAsync(user);
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                UserName = userName,
+                Email = email
             };
         }
 
@@ -100,13 +106,29 @@ namespace fantasydg.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            if (Input.PhoneNumber != phoneNumber)
+            var currentUserName = await _userManager.GetUserNameAsync(user);
+            if (Input.UserName != currentUserName)
             {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
+                var result = await _userManager.SetUserNameAsync(user, Input.UserName);
+                if (!result.Succeeded)
                 {
-                    StatusMessage = "Unexpected error when trying to set phone number.";
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                    await LoadAsync(user); // reload existing data
+                    return Page(); // re-render with validation messages
+                }
+            }
+
+            var currentEmail = await _userManager.GetEmailAsync(user);
+            if (Input.Email != currentEmail)
+            {
+                var result = await _userManager.SetEmailAsync(user, Input.Email);
+                if (!result.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when setting email.";
                     return RedirectToPage();
                 }
             }

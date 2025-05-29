@@ -27,13 +27,6 @@ namespace fantasydg.Controllers
             _logger = logger;
         }
 
-        // Intialization settings
-        [HttpGet("/")]
-        public IActionResult Index()
-        {
-            return View("Home"); // Always show home page now
-        }
-
         public async Task<IActionResult> Database()
         {
             var allTournaments = await _repository.GetAllTournamentsAsync();

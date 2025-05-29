@@ -1,0 +1,26 @@
+﻿@model fantasydg.Models.League
+
+@{
+    ViewData["Title"] = "Transfer League Ownership";
+}
+
+<h2>Transfer Ownership of @Model.Name</h2>
+
+<form asp-action="RequestOwnershipTransfer" method="post">
+    <input type="hidden" name="leagueId" value="@Model.LeagueId" />
+    <div class="form-group">
+        <label for="newOwnerId">Select a member to transfer ownership to:</label>
+        <select name="newOwnerId" class="form-control" required>
+            @foreach (var member in Model.Members)
+            {
+                if (member.UserId != Model.OwnerId)
+                {
+                    <option value="@member.UserId">@member.User.UserName</option>
+                }
+            }
+        </select>
+    </div>
+    <button class="btn btn-warning mt-3">Send Ownership Request</button>
+</form>
+
+<a class="btn btn-secondary mt-2" href="@Url.Action("Settings", "League", new { id = Model.LeagueId })">Back to Settings</a>

@@ -1,0 +1,20 @@
+﻿@model List<fantasydg.Models.League>
+
+<h2>My Leagues</h2>
+
+@if (!Model.Any())
+{
+    <p>You are not part of any leagues yet.</p>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var league in Model)
+        {
+            <a class="list-group-item list-group-item-action"
+               href="@Url.Action("View", "League", new { id = league.LeagueId })">
+                @league.Name
+            </a>
+        }
+    </div>
+}
