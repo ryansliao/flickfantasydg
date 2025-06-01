@@ -21,6 +21,18 @@ Tasks:
 
 
 Debug Notes:
-- Delete database and merge contexts
-- Implement new schema items
-- Merge login and register functions
+- Accepting Invitations (https://localhost:7038/League/AcceptInvitation)
+- .edmx files???
+
+Accomplished Tasks:
+- Added a homepage.
+- Updated DB schema.
+- Google Authentication.
+- Local Authentication w/ username.
+- Password Changes?
+- Username Changes?
+- Create League
+- League View
+- League Ownership Transfer
+- League Invites
+- Notifications

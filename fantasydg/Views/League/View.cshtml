@@ -17,3 +17,11 @@
 }
 
 <p>Members: @Model.Members?.Count</p>
+
+<form asp-action="LeaveLeague" asp-controller="League" method="post"
+      onsubmit="return confirm('Are you sure you want to leave this league?');">
+    <input type="hidden" name="leagueId" value="@Model.LeagueId" />
+    <button type="submit" class="btn btn-outline-danger">
+        Leave League
+    </button>
+</form>

@@ -181,7 +181,7 @@ namespace fantasydg.Controllers
             _db.LeagueInvitations.Remove(invite);
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("Notifications");
+            return RedirectToAction("Notifications", "Account");
         }
 
         [HttpPost]
@@ -231,6 +231,37 @@ namespace fantasydg.Controllers
 
             TempData["SuccessMessage"] = $"You are now the owner of {transfer.League.Name}.";
             return RedirectToAction("View", "League", new { id = transfer.LeagueId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LeaveLeague(int leagueId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var league = await _db.Leagues
+                .Include(l => l.Members)
+                .FirstOrDefaultAsync(l => l.LeagueId == leagueId);
+
+            if (league == null)
+                return NotFound();
+
+            if (league.OwnerId == userId)
+            {
+                TempData["ErrorMessage"] = "You must transfer ownership before leaving the league.";
+                return RedirectToAction("View", new { id = leagueId });
+            }
+
+            var membership = await _db.LeagueMembers
+                .FirstOrDefaultAsync(m => m.LeagueId == leagueId && m.UserId == userId);
+
+            if (membership == null)
+                return NotFound();
+
+            _db.LeagueMembers.Remove(membership);
+            await _db.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "You have left the league.";
+            return RedirectToAction("Index");
         }
 
         [HttpPost]

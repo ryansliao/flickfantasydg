@@ -18,7 +18,7 @@
         {
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 You have been invited to join <strong>@invite.League.Name</strong>
-                <form asp-controller="League" asp-action="AcceptInvitation" method="post" class="mb-0">
+                <form asp-controller="League" asp-action="AcceptInvite" method="post" class="mb-0">
                     <input type="hidden" name="invitationId" value="@invite.LeagueInvitationId" />
                     <button class="btn btn-sm btn-success">Accept</button>
                 </form>

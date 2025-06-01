@@ -7,12 +7,40 @@
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\views\\shared\\components\\notificationbell\\default.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\shared\\components\\notificationbell\\default.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\views\\league\\view.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\league\\view.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\views\\league\\settings.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\league\\settings.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\controllers\\leaguecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\controllers\\leaguecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\views\\account\\notifications.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\account\\notifications.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\models\\notificationbell.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\notificationbell.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\models\\notificationviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\notificationviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\models\\tournamentdropdownitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\tournamentdropdownitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\views\\shared\\components\\notificationbell\\default.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\shared\\components\\notificationbell\\default.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -23,36 +51,12 @@
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\league\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\views\\account\\notifications.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\account\\notifications.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\models\\notificationbell.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\notificationbell.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\controllers\\leaguecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\controllers\\leaguecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\views\\database\\databaseview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\database\\databaseview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\models\\notificationviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\notificationviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\views\\league\\settings.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\league\\settings.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\views\\league\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -77,10 +81,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\views\\league\\transferownership.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\league\\transferownership.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\views\\league\\view.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\league\\view.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\fantasydg\\fantasydg\\areas\\identity\\pages\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -232,17 +232,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 3,
               "Title": "LeagueController.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Controllers\\LeagueController.cs",
               "RelativeDocumentMoniker": "fantasydg\\Controllers\\LeagueController.cs",
               "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Controllers\\LeagueController.cs",
               "RelativeToolTip": "fantasydg\\Controllers\\LeagueController.cs",
-              "ViewState": "AgIAAEYAAAAAAAAAAAAkwDYAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAN4AAAAAAAAAAAAiwAcBAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-29T18:27:39.981Z",
               "IsPinned": true,
@@ -254,15 +254,91 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "DatabaseView.cshtml",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Database\\DatabaseView.cshtml",
-              "RelativeDocumentMoniker": "fantasydg\\Views\\Database\\DatabaseView.cshtml",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Database\\DatabaseView.cshtml",
-              "RelativeToolTip": "fantasydg\\Views\\Database\\DatabaseView.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 11,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\League\\Index.cshtml",
+              "RelativeDocumentMoniker": "fantasydg\\Views\\League\\Index.cshtml",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\League\\Index.cshtml",
+              "RelativeToolTip": "fantasydg\\Views\\League\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T00:46:50.569Z",
+              "WhenOpened": "2025-05-29T18:26:27.609Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "fantasydg\\Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "fantasydg\\Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-29T07:09:48.946Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "NotificationBell.cs",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Models\\NotificationBell.cs",
+              "RelativeDocumentMoniker": "fantasydg\\Models\\NotificationBell.cs",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Models\\NotificationBell.cs",
+              "RelativeToolTip": "fantasydg\\Models\\NotificationBell.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAB4AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-29T21:58:24.559Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "NotificationViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Models\\NotificationViewModel.cs",
+              "RelativeDocumentMoniker": "fantasydg\\Models\\NotificationViewModel.cs",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Models\\NotificationViewModel.cs",
+              "RelativeToolTip": "fantasydg\\Models\\NotificationViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAABJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-29T21:25:53.616Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Notifications.cshtml",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Account\\Notifications.cshtml",
+              "RelativeDocumentMoniker": "fantasydg\\Views\\Account\\Notifications.cshtml",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Account\\Notifications.cshtml",
+              "RelativeToolTip": "fantasydg\\Views\\Account\\Notifications.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-29T19:33:27.163Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Settings.cshtml",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\League\\Settings.cshtml",
+              "RelativeDocumentMoniker": "fantasydg\\Views\\League\\Settings.cshtml",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\League\\Settings.cshtml",
+              "RelativeToolTip": "fantasydg\\Views\\League\\Settings.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAAALAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-29T18:27:04.113Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "View.cshtml",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\League\\View.cshtml",
+              "RelativeDocumentMoniker": "fantasydg\\Views\\League\\View.cshtml",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\League\\View.cshtml*",
+              "RelativeToolTip": "fantasydg\\Views\\League\\View.cshtml*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-29T18:47:50.518Z",
               "EditorCaption": ""
             },
             {
@@ -273,40 +349,14 @@
               "RelativeDocumentMoniker": "fantasydg\\Views\\Shared\\_Layout.cshtml",
               "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Shared\\_Layout.cshtml",
               "RelativeToolTip": "fantasydg\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAABsAAAAAAAAAAAAlwCoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAAABcAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-05-29T22:09:42.357Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "_LoginPartial.cshtml",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
-              "RelativeDocumentMoniker": "fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
-              "RelativeToolTip": "fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-27T17:10:13.223Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Default.cshtml",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Shared\\Components\\NotificationBell\\Default.cshtml",
-              "RelativeDocumentMoniker": "fantasydg\\Views\\Shared\\Components\\NotificationBell\\Default.cshtml",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Shared\\Components\\NotificationBell\\Default.cshtml",
-              "RelativeToolTip": "fantasydg\\Views\\Shared\\Components\\NotificationBell\\Default.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAA2AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-29T22:03:22.933Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 8,
               "Title": "TournamentDropdownItem.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Models\\TournamentDropdownItem.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\TournamentDropdownItem.cs",
@@ -319,33 +369,44 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\League\\Index.cshtml",
-              "RelativeDocumentMoniker": "fantasydg\\Views\\League\\Index.cshtml",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\League\\Index.cshtml",
-              "RelativeToolTip": "fantasydg\\Views\\League\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAJAAAAAAAAAA==",
+              "DocumentIndex": 7,
+              "Title": "_LoginPartial.cshtml",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
+              "RelativeDocumentMoniker": "fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
+              "RelativeToolTip": "fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-29T18:26:27.609Z",
+              "WhenOpened": "2025-05-27T17:10:13.223Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Home\\Index.cshtml",
-              "RelativeDocumentMoniker": "fantasydg\\Views\\Home\\Index.cshtml",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Home\\Index.cshtml",
-              "RelativeToolTip": "fantasydg\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAA4AAAAAAAAAA==",
+              "DocumentIndex": 9,
+              "Title": "Default.cshtml",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Shared\\Components\\NotificationBell\\Default.cshtml",
+              "RelativeDocumentMoniker": "fantasydg\\Views\\Shared\\Components\\NotificationBell\\Default.cshtml",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Shared\\Components\\NotificationBell\\Default.cshtml",
+              "RelativeToolTip": "fantasydg\\Views\\Shared\\Components\\NotificationBell\\Default.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-29T07:09:48.946Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T22:03:22.933Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 12,
+              "Title": "DatabaseView.cshtml",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Database\\DatabaseView.cshtml",
+              "RelativeDocumentMoniker": "fantasydg\\Views\\Database\\DatabaseView.cshtml",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Database\\DatabaseView.cshtml",
+              "RelativeToolTip": "fantasydg\\Views\\Database\\DatabaseView.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-23T00:46:50.569Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
               "Title": "AccountController.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Controllers\\AccountController.cs",
               "RelativeDocumentMoniker": "fantasydg\\Controllers\\AccountController.cs",
@@ -353,64 +414,11 @@
               "RelativeToolTip": "fantasydg\\Controllers\\AccountController.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T19:36:19.226Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T19:36:19.226Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "NotificationBell.cs",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Models\\NotificationBell.cs",
-              "RelativeDocumentMoniker": "fantasydg\\Models\\NotificationBell.cs",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Models\\NotificationBell.cs",
-              "RelativeToolTip": "fantasydg\\Models\\NotificationBell.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABMAAAA9AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T21:58:24.559Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Notifications.cshtml",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Account\\Notifications.cshtml",
-              "RelativeDocumentMoniker": "fantasydg\\Views\\Account\\Notifications.cshtml",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\Account\\Notifications.cshtml",
-              "RelativeToolTip": "fantasydg\\Views\\Account\\Notifications.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-29T19:33:27.163Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Settings.cshtml",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\League\\Settings.cshtml",
-              "RelativeDocumentMoniker": "fantasydg\\Views\\League\\Settings.cshtml",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\League\\Settings.cshtml",
-              "RelativeToolTip": "fantasydg\\Views\\League\\Settings.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAACCAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-29T18:27:04.113Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "NotificationViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Models\\NotificationViewModel.cs",
-              "RelativeDocumentMoniker": "fantasydg\\Models\\NotificationViewModel.cs",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Models\\NotificationViewModel.cs",
-              "RelativeToolTip": "fantasydg\\Models\\NotificationViewModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T21:25:53.616Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "Create.cshtml",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\League\\Create.cshtml",
               "RelativeDocumentMoniker": "fantasydg\\Views\\League\\Create.cshtml",
@@ -418,12 +426,11 @@
               "RelativeToolTip": "fantasydg\\Views\\League\\Create.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-29T18:41:07.151Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T18:41:07.151Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "fantasydg\\Data\\ApplicationDbContext.cs",
@@ -431,12 +438,11 @@
               "RelativeToolTip": "fantasydg\\Data\\ApplicationDbContext.cs",
               "ViewState": "AgIAAFwAAAAAAAAAAAAmwG4AAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-27T02:10:08.772Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-27T02:10:08.772Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "LeagueOwnershipTransfer.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Models\\LeagueOwnershipTransfer.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\LeagueOwnershipTransfer.cs",
@@ -444,12 +450,11 @@
               "RelativeToolTip": "fantasydg\\Models\\LeagueOwnershipTransfer.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T20:45:47.356Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T20:45:47.356Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "LeagueMember.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Models\\LeagueMember.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\LeagueMember.cs",
@@ -457,12 +462,11 @@
               "RelativeToolTip": "fantasydg\\Models\\LeagueMember.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T06:07:16.446Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T06:07:16.446Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "LeagueInvitation.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Models\\LeagueInvitation.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\LeagueInvitation.cs",
@@ -470,12 +474,11 @@
               "RelativeToolTip": "fantasydg\\Models\\LeagueInvitation.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T19:27:50.476Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T19:27:50.476Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
               "Title": "TransferOwnership.cshtml",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\League\\TransferOwnership.cshtml",
               "RelativeDocumentMoniker": "fantasydg\\Views\\League\\TransferOwnership.cshtml",
@@ -483,21 +486,7 @@
               "RelativeToolTip": "fantasydg\\Views\\League\\TransferOwnership.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-29T20:49:53.214Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "View.cshtml",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\League\\View.cshtml",
-              "RelativeDocumentMoniker": "fantasydg\\Views\\League\\View.cshtml",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\Views\\League\\View.cshtml",
-              "RelativeToolTip": "fantasydg\\Views\\League\\View.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAACEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-29T18:47:50.518Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T20:49:53.214Z"
             },
             {
               "$type": "Document",
@@ -509,8 +498,7 @@
               "RelativeToolTip": "fantasydg\\Areas\\Identity\\Pages\\Account\\Login.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-29T20:36:12.573Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T20:36:12.573Z"
             },
             {
               "$type": "Document",
@@ -522,8 +510,7 @@
               "RelativeToolTip": "fantasydg\\Areas\\Identity\\Pages\\Account\\Register.cshtml.cs",
               "ViewState": "AgIAAFQAAAAAAAAAAAAuwHAAAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T20:07:56.163Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T20:07:56.163Z"
             },
             {
               "$type": "Document",
@@ -535,8 +522,7 @@
               "RelativeToolTip": "fantasydg\\Areas\\Identity\\Pages\\Account\\Manage\\Index.cshtml.cs",
               "ViewState": "AgIAADIAAAAAAAAAAAAqwE0AAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T20:15:58.369Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T20:15:58.369Z"
             },
             {
               "$type": "Document",
@@ -548,8 +534,7 @@
               "RelativeToolTip": "fantasydg\\Areas\\Identity\\Pages\\Account\\Login.cshtml.cs",
               "ViewState": "AgIAAGoAAAAAAAAAAAA7wHYAAABOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T20:35:19.123Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T20:35:19.123Z"
             },
             {
               "$type": "Document",
@@ -561,8 +546,7 @@
               "RelativeToolTip": "fantasydg\\Areas\\Identity\\Pages\\Account\\ExternalLogin.cshtml.cs",
               "ViewState": "AgIAAIIAAAAAAAAAAAAIwI0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T17:53:31.47Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T17:53:31.47Z"
             },
             {
               "$type": "Document",
@@ -574,8 +558,7 @@
               "RelativeToolTip": "fantasydg\\Program.cs",
               "ViewState": "AgIAABIAAAAAAAAAAAAAACUAAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-27T01:41:28.906Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-27T01:41:28.906Z"
             },
             {
               "$type": "Document",
@@ -587,8 +570,7 @@
               "RelativeToolTip": "fantasydg\\Areas\\Identity\\Pages\\Account\\Manage\\ManageNavPages.cs",
               "ViewState": "AgIAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T17:53:32.297Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T17:53:32.297Z"
             },
             {
               "$type": "Document",
@@ -600,8 +582,7 @@
               "RelativeToolTip": "fantasydg\\Areas\\Identity\\Pages\\Account\\Manage\\_ManageNav.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAACIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-29T17:53:32.144Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T17:53:32.144Z"
             },
             {
               "$type": "Document",
@@ -613,8 +594,7 @@
               "RelativeToolTip": "fantasydg\\Areas\\Identity\\Pages\\Account\\Register.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-29T20:10:48.459Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T20:10:48.459Z"
             },
             {
               "$type": "Document",
@@ -626,8 +606,7 @@
               "RelativeToolTip": "fantasydg\\Areas\\Identity\\Pages\\Account\\Manage\\Index.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-29T20:14:55.429Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T20:14:55.429Z"
             },
             {
               "$type": "Document",
@@ -639,8 +618,7 @@
               "RelativeToolTip": "fantasydg\\Models\\ApplicationUser.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAA5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T06:01:57.102Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T06:01:57.102Z"
             },
             {
               "$type": "Document",
@@ -652,8 +630,7 @@
               "RelativeToolTip": "fantasydg\\Views\\Database\\Input.cshtml",
               "ViewState": "AgIAAAEAAAAAAAAAAAAAAAoAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-22T23:59:02.304Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-22T23:59:02.304Z"
             },
             {
               "$type": "Document",
@@ -665,8 +642,7 @@
               "RelativeToolTip": "fantasydg\\Models\\League.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T19:03:47.381Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T19:03:47.381Z"
             },
             {
               "$type": "Document",
@@ -678,8 +654,7 @@
               "RelativeToolTip": "fantasydg\\Services\\LeagueService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T06:43:52.653Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T06:43:52.653Z"
             },
             {
               "$type": "Document",
