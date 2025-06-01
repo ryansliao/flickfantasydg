@@ -59,33 +59,35 @@ namespace fantasydg.Controllers
             return View();
         }
 
-        // POST: /League/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(League league)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             league.OwnerId = userId;
-
-            league.Members = new List<LeagueMember>
-            {
-                new LeagueMember { UserId = userId }
-            };
-            league.Teams = new List<Team>();
             league.PlayerNumber = 0;
 
             ModelState.Remove(nameof(league.OwnerId)); // fix lingering error
 
             if (!ModelState.IsValid)
             {
-                // log errors
                 return View(league);
             }
 
+            // First save the league
             _db.Leagues.Add(league);
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("View", new { id = league.LeagueId });
+            // Now add the creator as a member using the generated LeagueId
+            _db.LeagueMembers.Add(new LeagueMember
+            {
+                LeagueId = league.LeagueId,
+                UserId = userId
+            });
+
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Create", "Team", new { leagueId = league.LeagueId });
         }
 
         public async Task<IActionResult> View(int id)
@@ -181,6 +183,13 @@ namespace fantasydg.Controllers
             _db.LeagueInvitations.Remove(invite);
             await _db.SaveChangesAsync();
 
+            // Redirect to team creation if team doesn't exist
+            bool hasTeam = await _db.Teams.AnyAsync(t => t.LeagueId == invite.LeagueId && t.OwnerId == invite.UserId);
+            if (!hasTeam)
+            {
+                return RedirectToAction("Create", "Team", new { leagueId = invite.LeagueId });
+            }
+
             return RedirectToAction("Notifications", "Account");
         }
 
@@ -266,24 +275,27 @@ namespace fantasydg.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteLeague(int leagueId)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var league = await _db.Leagues
                 .Include(l => l.Members)
                 .Include(l => l.Teams)
-                .ThenInclude(t => t.TeamPlayers)
-                .FirstOrDefaultAsync(l => l.LeagueId == id);
+                .FirstOrDefaultAsync(l => l.LeagueId == leagueId && l.OwnerId == userId);
 
             if (league == null)
                 return NotFound();
 
             // Cascade delete members and teams
             _db.TeamPlayers.RemoveRange(league.Teams.SelectMany(t => t.TeamPlayers));
-            _db.Teams.RemoveRange(league.Teams);
             _db.LeagueMembers.RemoveRange(league.Members);
+            _db.Teams.RemoveRange(league.Teams);
+            Console.WriteLine($"Deleting league: {league?.Name}, ID: {league?.LeagueId}");
             _db.Leagues.Remove(league);
 
             await _db.SaveChangesAsync();
+            TempData["SuccessMessage"] = "League deleted successfully.";
             return RedirectToAction("Index");
         }
     }

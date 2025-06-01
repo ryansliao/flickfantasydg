@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Create Team";
+    int leagueId = (int)ViewBag.LeagueId;
+}
+
+<h2>Create Your Team</h2>
+
+<form asp-action="Create" method="post">
+    <input type="hidden" name="leagueId" value="@leagueId" />
+    <label>Team Name:</label>
+    <input type="text" name="name" required />
+    <button type="submit">Create Team</button>
+</form>

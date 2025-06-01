@@ -60,9 +60,16 @@ namespace fantasydg.Data
                 .HasKey(lm => new { lm.LeagueId, lm.UserId });
 
             modelBuilder.Entity<League>()
-                .HasOne(l => l.Owner)
-                .WithMany(u => u.LeaguesOwned)
-                .HasForeignKey(l => l.OwnerId);
+                .HasMany(l => l.Members)
+                .WithOne(m => m.League)
+                .HasForeignKey(m => m.LeagueId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<League>()
+                .HasMany(l => l.Teams)
+                .WithOne(t => t.League)
+                .HasForeignKey(t => t.LeagueId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<LeagueMember>()
                 .HasOne(lm => lm.League)

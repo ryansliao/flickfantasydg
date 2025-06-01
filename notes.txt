@@ -21,8 +21,6 @@ Tasks:
 
 
 Debug Notes:
-- Accepting Invitations (https://localhost:7038/League/AcceptInvitation)
-- .edmx files???
 
 Accomplished Tasks:
 - Added a homepage.

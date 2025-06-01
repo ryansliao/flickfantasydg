@@ -1,0 +1,12 @@
+﻿@model fantasydg.Models.Team
+
+<h2>@Model.Name</h2>
+<p>League: @Model.League.Name</p>
+
+<h3>Players:</h3>
+<ul>
+    @foreach (var tp in Model.TeamPlayers)
+    {
+        <li>@tp.Player.Name</li>
+    }
+</ul>
