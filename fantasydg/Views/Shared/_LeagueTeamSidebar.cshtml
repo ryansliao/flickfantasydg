@@ -1,0 +1,25 @@
+﻿@model (string LeagueName, int LeagueId, int? TeamId)
+
+<div class="d-flex flex-column p-3 bg-light shadow-sm"
+     style="width: 220px; position: sticky; top: 56px; overflow-y: auto; z-index: 0;">
+
+    <h5 class="mb-4">@Model.LeagueName</h5>
+
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"]!.ToString() == "League" ? "active" : "")"
+               asp-controller="League" asp-action="View" asp-route-id="@Model.LeagueId">
+                League View
+            </a>
+        </li>
+        @if (Model.TeamId.HasValue)
+        {
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]!.ToString() == "Team" ? "active" : "")"
+                   asp-controller="Team" asp-action="View" asp-route-teamId="@Model.TeamId">
+                    Team View
+                </a>
+            </li>
+        }
+    </ul>
+</div>

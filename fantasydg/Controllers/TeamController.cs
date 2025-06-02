@@ -3,6 +3,7 @@ using fantasydg.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace fantasydg.Controllers
 {
@@ -53,13 +54,17 @@ namespace fantasydg.Controllers
 
         public async Task<IActionResult> View(int teamId)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var team = await _db.Teams
                 .Include(t => t.League)
                 .Include(t => t.TeamPlayers)
                 .ThenInclude(tp => tp.Player)
-                .FirstOrDefaultAsync(t => t.TeamId == teamId);
+                .FirstOrDefaultAsync(t => t.TeamId == teamId && t.OwnerId == userId);
 
             if (team == null) return NotFound();
+
+            ViewBag.LeagueName = team.League?.Name;
+            ViewBag.TeamId = team.TeamId;
 
             return View(team);
         }

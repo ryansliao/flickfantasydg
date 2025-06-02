@@ -1,4 +1,17 @@
 Tasks:
+- Add functionality to views.
+- Upload WebApp + Database to Azure Cloud
+- Table Functionality
+	- Sort By Columns
+	- Player Search
+
+- ViewBags need to be stored in database since they are not permanently being stored.
+- Once you leave and join the same league, you don't create a team again.
+- Incorporate some javascript.
+
+
+Debug Notes:
+
 - Views:
 	- Homepage
 	- League (General information, standings)
@@ -14,23 +27,3 @@ Tasks:
 		- Username change
 		- Email change
 		- Forgot Password
-- Upload WebApp + Database to Azure Cloud
-- Table Functionality
-	- Sort By Columns
-	- Player Search
-
-
-Debug Notes:
-
-Accomplished Tasks:
-- Added a homepage.
-- Updated DB schema.
-- Google Authentication.
-- Local Authentication w/ username.
-- Password Changes?
-- Username Changes?
-- Create League
-- League View
-- League Ownership Transfer
-- League Invites
-- Notifications

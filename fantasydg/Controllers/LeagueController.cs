@@ -100,6 +100,13 @@ namespace fantasydg.Controllers
             if (league == null)
                 return NotFound();
 
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var team = await _db.Teams.FirstOrDefaultAsync(t => t.LeagueId == id && t.OwnerId == userId);
+            ViewBag.IsOwner = league.OwnerId == userId;
+            ViewBag.MemberCount = league.Members?.Count ?? 0;
+            ViewBag.TeamId = team?.TeamId;
+            ViewBag.LeagueName = league.Name;
+
             return View(league);
         }
 
@@ -269,6 +276,15 @@ namespace fantasydg.Controllers
             _db.LeagueMembers.Remove(membership);
             await _db.SaveChangesAsync();
 
+            var team = await _db.Teams.FirstOrDefaultAsync(t => t.LeagueId == leagueId && t.OwnerId == userId);
+            if (team != null)
+            {
+                var teamPlayers = _db.TeamPlayers.Where(tp => tp.TeamId == team.TeamId);
+                _db.TeamPlayers.RemoveRange(teamPlayers);
+                _db.Teams.Remove(team);
+                await _db.SaveChangesAsync();
+            }
+
             TempData["SuccessMessage"] = "You have left the league.";
             return RedirectToAction("Index");
         }
@@ -288,7 +304,15 @@ namespace fantasydg.Controllers
                 return NotFound();
 
             // Cascade delete members and teams
-            _db.TeamPlayers.RemoveRange(league.Teams.SelectMany(t => t.TeamPlayers));
+            var allTeamPlayers = league.Teams
+                ?.SelectMany(t => t.TeamPlayers ?? new List<TeamPlayer>())
+                .ToList();
+
+            if (allTeamPlayers != null && allTeamPlayers.Any())
+            {
+                _db.TeamPlayers.RemoveRange(allTeamPlayers);
+            }
+
             _db.LeagueMembers.RemoveRange(league.Members);
             _db.Teams.RemoveRange(league.Teams);
             Console.WriteLine($"Deleting league: {league?.Name}, ID: {league?.LeagueId}");

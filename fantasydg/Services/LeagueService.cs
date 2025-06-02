@@ -25,7 +25,12 @@ namespace fantasydg.Services
             var members = _db.LeagueMembers.Where(lm => lm.LeagueId == leagueId);
             _db.LeagueMembers.RemoveRange(members);
 
-            var league = await _db.Leagues.FindAsync(leagueId);
+            var league = await _db.Leagues
+                .Include(l => l.Members)
+                .Include(l => l.Teams)
+                    .ThenInclude(t => t.TeamPlayers)
+                .FirstOrDefaultAsync(l => l.LeagueId == leagueId);
+
             if (league != null)
                 _db.Leagues.Remove(league);
 
