@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\fantasydg.csproj": {}
+    "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\fantasydg.csproj": {}
   },
   "projects": {
-    "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\fantasydg.csproj": {
+    "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\fantasydg.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\fantasydg.csproj",
-        "projectName": "fantasydg",
-        "projectPath": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\fantasydg.csproj",
+        "projectUniqueName": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\fantasydg.csproj",
+        "projectName": "flickfantasydg",
+        "projectPath": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\fantasydg.csproj",
         "packagesPath": "C:\\Users\\RyanS\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\RyanS\\source\\repos\\fantasydg\\fantasydg\\obj\\",
+        "outputPath": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

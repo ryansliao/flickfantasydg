@@ -15,147 +15,147 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
-build_property.RootNamespace = fantasydg
-build_property.RootNamespace = fantasydg
-build_property.ProjectDir = C:\Users\RyanS\source\repos\fantasydg\fantasydg\
+build_property.RootNamespace = flickfantasydg
+build_property.RootNamespace = flickfantasydg
+build_property.ProjectDir = C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\RyanS\source\repos\fantasydg\fantasydg
+build_property.MSBuildProjectDirectory = C:\Users\RyanS\source\repos\flickfantasydg\fantasydg
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 8.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Areas/Identity/Pages/Account/ExternalLogin.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Areas/Identity/Pages/Account/ExternalLogin.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxFeHRlcm5hbExvZ2luLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Areas/Identity/Pages/Account/ForgotPassword.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Areas/Identity/Pages/Account/ForgotPassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxGb3Jnb3RQYXNzd29yZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Areas/Identity/Pages/Account/Login.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Areas/Identity/Pages/Account/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Areas/Identity/Pages/Account/Manage/Index.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Areas/Identity/Pages/Account/Manage/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxNYW5hZ2VcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Areas/Identity/Pages/Account/Manage/_ManageNav.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Areas/Identity/Pages/Account/Manage/_ManageNav.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxNYW5hZ2VcX01hbmFnZU5hdi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Areas/Identity/Pages/Account/Manage/_ViewImports.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Areas/Identity/Pages/Account/Manage/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxNYW5hZ2VcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Areas/Identity/Pages/Account/Register.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Areas/Identity/Pages/Account/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Areas/Identity/Pages/Account/ResetPassword.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Areas/Identity/Pages/Account/ResetPassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxSZXNldFBhc3N3b3JkLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Areas/Identity/Pages/Account/_ViewImports.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Areas/Identity/Pages/Account/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxfVmlld0ltcG9ydHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Areas/Identity/Pages/_ValidationScriptsPartial.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Areas/Identity/Pages/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZhbGlkYXRpb25TY3JpcHRzUGFydGlhbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Areas/Identity/Pages/_ViewImports.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Areas/Identity/Pages/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Areas/Identity/Pages/_ViewStart.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Areas/Identity/Pages/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Account/Notifications.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Account/Notifications.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxOb3RpZmljYXRpb25zLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Database/DatabaseView.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Database/DatabaseView.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGF0YWJhc2VcRGF0YWJhc2VWaWV3LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Database/Input.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Database/Input.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGF0YWJhc2VcSW5wdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Database/_RoundTable.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Database/_RoundTable.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGF0YWJhc2VcX1JvdW5kVGFibGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Database/_TournamentTable.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Database/_TournamentTable.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGF0YWJhc2VcX1RvdXJuYW1lbnRUYWJsZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Home/Index.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/League/Create.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/League/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVhZ3VlXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/League/Index.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/League/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVhZ3VlXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/League/Settings.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/League/LeagueView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVhZ3VlXExlYWd1ZVZpZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/League/Settings.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVhZ3VlXFNldHRpbmdzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/League/TransferOwnership.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/League/TransferOwnership.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVhZ3VlXFRyYW5zZmVyT3duZXJzaGlwLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/League/View.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVhZ3VlXFZpZXcuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Shared/Components/NotificationBell/Default.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Shared/Components/NotificationBell/Default.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcTm90aWZpY2F0aW9uQmVsbFxEZWZhdWx0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Shared/Error.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Shared/_LeagueTeamSidebar.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Shared/_LeagueTeamSidebar.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MZWFndWVUZWFtU2lkZWJhci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Shared/_LoginPartial.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Shared/_LoginPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpblBhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Team/Create.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Team/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVhbVxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Team/View.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVhbVxWaWV3LmNzaHRtbA==
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Team/TeamView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVhbVxUZWFtVmlldy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/_ViewImports.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/_ViewStart.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/fantasydg/fantasydg/Views/Shared/_Layout.cshtml]
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = b-abpvprd4d9
+build_metadata.AdditionalFiles.CssScope = b-dcy1ltjhed

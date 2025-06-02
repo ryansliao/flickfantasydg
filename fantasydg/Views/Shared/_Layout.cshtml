@@ -13,92 +13,92 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Flick Fantasy Disc Golf</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/fantasydg.styles.css" asp-append-version="true" />
-    <style>
-    .navbar-nav > .nav-item {
-        margin-right: 2px;
-    }
-
-    .navbar-nav .nav-link {
-        transition: background-color 0.2s ease;
-        border-radius: 0.25rem;
-        height: 40px;
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-    }
-
-        .navbar-nav .nav-link:hover {
-            background-color: #f0f0f0;
-            color: #000;
-            font-weight: bold;
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@ViewData["Title"] - Flick Fantasy Disc Golf</title>
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/flickfantasydg.styles.css" asp-append-version="true" />
+        <style>
+        .navbar-nav > .nav-item {
+            margin-right: 2px;
         }
 
-    .nav-link .nav-link:hover {
-        color: #333; 
-    }
-    </style>
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Flick Fantasy</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link text-dark dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Leagues</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/League/Create">Create League</a></li>
-                                <li><hr class="dropdown-divider" /></li>
-                                @foreach (var league in userLeagues)
-                                {
-                                    <li>
-                                        <a class="dropdown-item" href="@Url.Action("View", "League", new { id = league.LeagueId })">
-                                            @league.Name
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Database" asp-action="Database">Database</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Database" asp-action="Input">Input</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
+        .navbar-nav .nav-link {
+            transition: background-color 0.2s ease;
+            border-radius: 0.25rem;
+            height: 40px;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+            .navbar-nav .nav-link:hover {
+                background-color: #f0f0f0;
+                color: #000;
+                font-weight: bold;
+            }
+
+        .nav-link .nav-link:hover {
+            color: #333; 
+        }
+        </style>
+    </head>
+    <body>
+        <header>
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                <div class="container-fluid">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Flick Fantasy</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-dark dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Leagues</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/League/Create">Create League</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    @foreach (var league in userLeagues)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" href="@Url.Action("View", "League", new { id = league.LeagueId })">
+                                                @league.Name
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Database" asp-action="Database">Database</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Database" asp-action="Input">Input</a>
+                            </li>
+                        </ul>
+                        <partial name="_LoginPartial" />
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
+            </nav>
+        </header>
         <div class="container">
-            &copy; @DateTime.Now.Year - Flick Fantasy DG
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
         </div>
-    </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @RenderSection("Scripts", required: false)
-</body>
+        <footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; @DateTime.Now.Year - Flick Fantasy DG
+            </div>
+        </footer>
+
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        @RenderSection("Scripts", required: false)
+    </body>
 </html>

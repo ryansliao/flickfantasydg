@@ -47,7 +47,7 @@ namespace fantasydg.Controllers
 
             if (league.OwnerId != userId)
             {
-                return RedirectToAction("View", new { id = league.LeagueId });
+                return RedirectToAction("View", "League", new { id = league.LeagueId });
             }
 
             return View(league);
@@ -71,7 +71,7 @@ namespace fantasydg.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(league);
+                return View("LeagueView", league);
             }
 
             // First save the league
@@ -107,7 +107,7 @@ namespace fantasydg.Controllers
             ViewBag.TeamId = team?.TeamId;
             ViewBag.LeagueName = league.Name;
 
-            return View(league);
+            return View("LeagueView", league);
         }
 
         [HttpGet]
@@ -264,7 +264,7 @@ namespace fantasydg.Controllers
             if (league.OwnerId == userId)
             {
                 TempData["ErrorMessage"] = "You must transfer ownership before leaving the league.";
-                return RedirectToAction("View", new { id = leagueId });
+                return RedirectToAction("View", "League", new { id = league.LeagueId });
             }
 
             var membership = await _db.LeagueMembers

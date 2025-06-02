@@ -66,7 +66,7 @@ namespace fantasydg.Controllers
             ViewBag.LeagueName = team.League?.Name;
             ViewBag.TeamId = team.TeamId;
 
-            return View(team);
+            return View("TeamView", team);
         }
     }
 
