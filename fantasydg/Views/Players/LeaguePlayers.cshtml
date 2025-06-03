@@ -6,6 +6,12 @@
 }
 
 <style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+    }
+
     .filter-form {
         display: flex;
         gap: 1rem;
@@ -13,28 +19,55 @@
         margin-bottom: 0.25rem;
     }
 
-    .table-responsive {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+    .players-page-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 132px);
     }
 
+    .players-content-row {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    /* Sidebar stays 220px and scrollable */
+    #sidebar {
+        width: 220px;
+        overflow-y: auto;
+        flex-shrink: 0;
+    }
+
+    /* Main content grows to fill and scrolls */
+    #mainContent {
+        flex: 1;
+        margin-left: 5px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        min-width: 0;
+    }
+    
     /* Contains table and scrolls */
     .table-scroll-container {
         margin-top: 0;
         padding-bottom: 10px;
-        max-height: 80vh;
+        max-height: calc(100vh - 120px); /* Adjust based on real header + footer height */
         overflow-y: auto;
         overflow-x: auto;
+        width: 100%;
     }
-    
+
     /* The entire table */
     stats-table {
         padding: 6px 10px;
         border-collapse: collapse;
         table-layout: fixed;
+        width: 100%;
         margin-bottom: -20px;
         overflow-y: auto;
         overflow-x: auto;
+        margin-bottom: 0;
     }
 
     /* Column headers */
@@ -119,12 +152,13 @@
   
 </style>
 
-<div class="container-fluid">
-    <div class="row flex-nowrap">
-        <div class="col-auto p-0">
+
+<div class="players-page-wrapper">
+    <div class="players-content-row">
+        <div id="sidebar">
             @await Html.PartialAsync("_LeagueTeamSidebar", ((string)ViewBag.LeagueName!, (int)ViewBag.LeagueId!, (int?)ViewBag.TeamId))
         </div>
-        <div class="col ps-3" style="min-width: 0; overflow-x: hidden;">
+        <div id="mainContent">
             <h2 class="mt-2">Available Players</h2>
 
             <form method="get" asp-action="Players" asp-controller="League" class="filter-form">
@@ -169,18 +203,16 @@
                     </div>
                 </div>
             </form>
-            <div class="table-responsive">
-                @if (!hasData)
-                {
-                    <div class="alert alert-warning mt-4">
-                        No data available. Please enter a tournament to begin.
-                    </div>
-                }
-                else
-                {
-                    @await Html.PartialAsync("~/Views/Players/PlayersTable.cshtml", Model.Players)
-                }
-            </div>
+            @if (!hasData)
+            {
+                <div class="alert alert-warning mt-4">
+                    No data available. Please enter a tournament to begin.
+                </div>
+            }
+            else
+            {
+                @await Html.PartialAsync("~/Views/Players/PlayersTable.cshtml", Model.Players)
+            }
         </div>
     </div>
 </div>
