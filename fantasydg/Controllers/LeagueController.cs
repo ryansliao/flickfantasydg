@@ -1,10 +1,12 @@
 ﻿using fantasydg.Data;
 using fantasydg.Models;
+using fantasydg.Models.Repository;
+using fantasydg.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
+using NuGet.Protocol.Core.Types;
 using System.Security.Claims;
-using flickfantasydg.Models;
 
 namespace fantasydg.Controllers
 {
@@ -12,10 +14,14 @@ namespace fantasydg.Controllers
     public class LeagueController : Controller
     {
         private readonly ApplicationDbContext _db;
+        private readonly LeagueService _leagueService;
+        private readonly DatabaseRepository _repository;
 
-        public LeagueController(ApplicationDbContext db)
+        public LeagueController(ApplicationDbContext db, LeagueService leagueService, DatabaseRepository repository)
         {
             _db = db;
+            _leagueService = leagueService;
+            _repository = repository;
         }
 
         // View all leagues the current user is part of
@@ -34,7 +40,7 @@ namespace fantasydg.Controllers
 
         // View and manage settings for a specific league
         [Authorize]
-        public async Task<IActionResult> Settings(int id)
+        public async Task<IActionResult> Settings(League model, int id)
         {
             var league = await _db.Leagues
                 .Include(l => l.Owner)
@@ -44,12 +50,41 @@ namespace fantasydg.Controllers
             if (league == null)
                 return NotFound();
 
-            var userId = User?.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (league.OwnerId != userId)
             {
                 return RedirectToAction("View", "League", new { id = league.LeagueId });
             }
+
+            // Update weights
+            league.PlacementWeight = model.PlacementWeight;
+            league.FairwayWeight = model.FairwayWeight;
+            league.C1InRegWeight = model.C1InRegWeight;
+            league.C2InRegWeight = model.C2InRegWeight;
+            league.ParkedWeight = model.ParkedWeight;
+            league.ScrambleWeight = model.ScrambleWeight;
+            league.C1PuttWeight = model.C1PuttWeight;
+            league.C1xPuttWeight = model.C1xPuttWeight;
+            league.C2PuttWeight = model.C2PuttWeight;
+            league.OBWeight = model.OBWeight;
+            league.BirdieWeight = model.BirdieWeight;
+            league.BirdieMinusWeight = model.BirdieMinusWeight;
+            league.EagleMinusWeight = model.EagleMinusWeight;
+            league.ParWeight = model.ParWeight;
+            league.BogeyPlusWeight = model.BogeyPlusWeight;
+            league.DoubleBogeyPlusWeight = model.DoubleBogeyPlusWeight;
+            league.TotalPuttDistWeight = model.TotalPuttDistWeight;
+            league.AvgPuttDistWeight = model.AvgPuttDistWeight;
+            league.LongThrowInWeight = model.LongThrowInWeight;
+            league.TotalSGWeight = model.TotalSGWeight;
+            league.PuttingSGWeight = model.PuttingSGWeight;
+            league.TeeToGreenSGWeight = model.TeeToGreenSGWeight;
+            league.C1xSGWeight = model.C1xSGWeight;
+            league.C2SGWeight = model.C2SGWeight;
+
+            await _db.SaveChangesAsync();
+            await _leagueService.UpdateFantasyPointsForLeagueAsync(league.LeagueId);
 
             return View(league);
         }
@@ -158,6 +193,70 @@ namespace fantasydg.Controllers
             ViewBag.Standings = ordered;
 
             return View("LeagueView", league);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Players(int leagueId, int? tournamentId = null, string? division = null, int? round = null)
+        {
+            var allTournaments = await _repository.GetAllTournamentsAsync();
+            ViewBag.Tournaments = allTournaments.OrderByDescending(t => t.Date).ToList();
+
+            if (!tournamentId.HasValue)
+                tournamentId = allTournaments.FirstOrDefault()?.Id;
+
+            var selectedTournament = allTournaments.FirstOrDefault(t => t.Id == tournamentId);
+            if (selectedTournament == null)
+            {
+                ViewBag.FantasyMap = new Dictionary<(int, int, string), float>();
+                return View("~/Views/Players/LeagueView.cshtml", new List<PlayerTournament>());
+            }
+
+            tournamentId = selectedTournament.Id;
+            ViewBag.SelectedTournamentId = tournamentId;
+
+            var divisions = await _repository.GetDivisionsForTournamentAsync(tournamentId.Value);
+            ViewBag.Divisions = divisions.OrderByDescending(d => d).ToList();
+
+            if (string.IsNullOrEmpty(division))
+                division = divisions.Contains("MPO") ? "MPO" : divisions.FirstOrDefault();
+
+            ViewBag.SelectedDivision = division;
+
+            var league = await _db.Leagues
+                .Include(l => l.Teams)
+                .ThenInclude(t => t.TeamPlayers)
+                .FirstOrDefaultAsync(l => l.LeagueId == leagueId);
+
+            if (league == null) return NotFound();
+
+            // filter unassigned PlayerTournaments
+            var assignedIds = await _db.TeamPlayers
+                .Where(tp => tp.LeagueId == leagueId)
+                .Select(tp => tp.PlayerId)
+                .Distinct()
+                .ToListAsync();
+
+            var unassigned = await _db.PlayerTournaments
+                .Include(pt => pt.Player)
+                .Include(pt => pt.Tournament)
+                .Where(pt => !assignedIds.Contains(pt.PlayerId) && pt.Tournament.Division == division && pt.TournamentId == tournamentId.Value)
+                .ToListAsync();
+
+            var model = new LeaguePlayersViewModel
+            {
+                League = league,
+                Players = unassigned
+            };
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var team = await _db.Teams
+                .FirstOrDefaultAsync(t => t.LeagueId == leagueId && t.OwnerId == userId);
+
+            ViewBag.LeagueId = leagueId;
+            ViewBag.LeagueName = league.Name;
+            ViewBag.TeamId = team.TeamId;
+
+            return View("~/Views/Players/LeaguePlayers.cshtml", model);
         }
 
         [HttpPost]

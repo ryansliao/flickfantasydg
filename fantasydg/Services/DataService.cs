@@ -217,6 +217,8 @@ namespace fantasydg.Services
                     }
                     else
                     {
+                        existing.Place = pt.Place;
+                        existing.TotalToPar = pt.TotalToPar;
                         existing.Fairway = pt.Fairway;
                         existing.C1InReg = pt.C1InReg;
                         existing.C2InReg = pt.C2InReg;
@@ -452,9 +454,16 @@ namespace fantasydg.Services
                             existing.StrokesGainedC2Putting = rs.StrokesGainedC2Putting;
 
                             _db.Entry(existing).State = EntityState.Modified;
-                        }
+                        }                       
+                    }
 
-                        finalPlayerMap = playerMap; // Saving the final round playerMap
+                    if (pdgaRound == 12 && playerMap.Count > 0)
+                    {
+                        finalPlayerMap = playerMap; // ✅ now overwritten by round 12
+                    }
+                    else if (playerMap.Count > 0)
+                    {
+                        finalPlayerMap = playerMap; // ✅ previous logic for earlier valid rounds
                     }
 
                     await _db.SaveChangesAsync(); // Save RoundScore object to database

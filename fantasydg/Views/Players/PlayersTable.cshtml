@@ -1,0 +1,74 @@
+﻿@model IEnumerable<fantasydg.Models.PlayerTournament>
+
+@{
+    var fantasyMap = ViewBag.FantasyMap as Dictionary<(int, int, string), float> ?? new();
+    var leagueName = ViewBag.LeagueName as string;
+}
+
+<div class="table-scroll-container">
+    <div class="table-scroll-top"></div>
+    <table class="stats-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Player
+                <th>Pts.</th>
+                <th>Total</th>
+                <th>Birdie-</th>
+                <th>Eagle-</th>
+                <th>Bogey+</th>
+                <th>Dbl Bogey+</th>
+                <th>Fairway</th>
+                <th>C1 Reg</th>
+                <th>C2 Reg</th>
+                <th>Parked</th>
+                <th>Scramble</th>
+                <th>Out of Bounds</th>
+                <th>C1x Putting</th>
+                <th>C2 Putting</th>
+                <th>Total Putt</th>
+                <th>Long Throw-In</th>
+                <th>Avg. Putt</th>
+                <th>Strokes Gained</th>
+                <th>SG Putting</th>
+                <th>SG Tee→Grn</th>
+                <th>SG C1x</th>
+                <th>SG C2</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pt in Model.OrderBy(pt => pt.Place))
+            {
+                var key = (pt.PlayerId, pt.TournamentId, pt.Tournament.Division);
+                var points = fantasyMap.TryGetValue(key, out var value) ? value : 0;
+
+                <tr>
+                    <td>@pt.Place</td>
+                    <td>@pt.Player.Name</td>
+                    <td><strong>@points</strong></td>
+                    <td>@pt.TotalToPar</td>
+                    <td>@pt.BirdieMinus%</td>
+                    <td>@pt.EagleMinus%</td>
+                    <td>@pt.BogeyPlus%</td>
+                    <td>@pt.DoubleBogeyPlus%</td>
+                    <td>@pt.Fairway%</td>
+                    <td>@pt.C1InReg%</td>
+                    <td>@pt.C2InReg%</td>
+                    <td>@pt.Parked%</td>
+                    <td>@pt.Scramble%</td>
+                    <td>@pt.ObRate%</td>
+                    <td>@pt.C1xPutting%</td>
+                    <td>@pt.C2Putting%</td>
+                    <td>@pt.TotalPuttDistance</td>
+                    <td>@pt.LongThrowIn</td>
+                    <td>@pt.AvgPuttDistance</td>
+                    <td>@pt.StrokesGainedTotal</td>
+                    <td>@pt.StrokesGainedPutting</td>
+                    <td>@pt.StrokesGainedTeeToGreen</td>
+                    <td>@pt.StrokesGainedC1xPutting</td>
+                    <td>@pt.StrokesGainedC2Putting</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

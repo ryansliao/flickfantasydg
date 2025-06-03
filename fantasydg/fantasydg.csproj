@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <AssemblyName>flickfantasydg</AssemblyName>
-    <RootNamespace>flickfantasydg</RootNamespace>
+    <AssemblyName>fantasydg</AssemblyName>
+    <RootNamespace>fantasydg</RootNamespace>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-fantasydg-24d8282a-594d-4f0f-8dd1-ad3c23223a33</UserSecretsId>

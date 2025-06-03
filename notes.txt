@@ -5,10 +5,7 @@ Tasks:
 	- Sort By Columns
 	- Player Search
 
-- ViewBags need to be stored in database since they are not permanently being stored.
-- Once you leave and join the same league, you don't create a team again.
-- Incorporate some javascript.
-
+- fantasy pts
 
 Debug Notes:
 

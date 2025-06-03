@@ -15,6 +15,7 @@ namespace fantasydg.Data
         public DbSet<Team> Teams { get; set; }
         public DbSet<TeamPlayer> TeamPlayers { get; set; }
         public DbSet<LeagueMember> LeagueMembers { get; set; }
+        public DbSet<LeaguePlayerFantasyPoints> LeaguePlayerFantasyPoints { get; set; }
         public DbSet<LeagueInvitation> LeagueInvitations { get; set; }
         public DbSet<LeagueOwnershipTransfer> LeagueOwnershipTransfers { get; set; }
 
@@ -116,6 +117,24 @@ namespace fantasydg.Data
             modelBuilder.Entity<TeamPlayer>()
                 .HasIndex(tp => new { tp.LeagueId, tp.PlayerId })
                 .IsUnique();
+
+            modelBuilder.Entity<LeaguePlayerFantasyPoints>()
+                .HasKey(lp => new { lp.LeagueId, lp.PlayerId, lp.TournamentId });
+
+            modelBuilder.Entity<LeaguePlayerFantasyPoints>()
+                .HasOne(lp => lp.League)
+                .WithMany()
+                .HasForeignKey(lp => lp.LeagueId);
+
+            modelBuilder.Entity<LeaguePlayerFantasyPoints>()
+                .HasOne(lp => lp.Player)
+                .WithMany()
+                .HasForeignKey(lp => lp.PlayerId);
+
+            modelBuilder.Entity<LeaguePlayerFantasyPoints>()
+                .HasOne(lp => lp.Tournament)
+                .WithMany()
+                .HasForeignKey(lp => new { lp.TournamentId, lp.Division });
 
             modelBuilder.Entity<LeagueInvitation>()
                 .HasOne(i => i.League)

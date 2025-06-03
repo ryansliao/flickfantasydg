@@ -1,4 +1,4 @@
-﻿namespace flickfantasydg.Models
+﻿namespace fantasydg.Models
 {
     public class LeagueStandingView
     {
