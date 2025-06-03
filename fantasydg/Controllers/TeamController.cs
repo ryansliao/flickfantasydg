@@ -28,6 +28,13 @@ namespace fantasydg.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(string name, int leagueId)
         {
+            if (string.IsNullOrWhiteSpace(name) || name.Length > 20)
+            {
+                TempData["InvalidTeamName"] = "Your team name must be 20 characters or less.";
+                ViewBag.LeagueId = leagueId;
+                return View();
+            }
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized();
 

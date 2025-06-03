@@ -6,6 +6,7 @@ Tasks:
 	- Player Search
 
 - fantasy pts
+- javascript integration
 
 Debug Notes:
 
@@ -16,9 +17,11 @@ Debug Notes:
 			- Invite Users
 			- Scoring
 		- Team (Choose starting players / bench)
+			- Team Dropdown
 			- Team Settings
 			- Individual Player (A player's info and stats)
 		- Available Players (List of players not on any team)
+			-Detailed Views Data Grid
 		- Results (Will resemble current database view)
 	- User Profile/Settings
 		- Username change

@@ -31,7 +31,7 @@
 
             @if (ViewBag.Standings != null)
             {
-                <table class="table table-striped mt-4">
+                <table class="table table-striped mt-4" style="width: 50%">
                     <thead>
                         <tr>
                             <th>Placement</th>
@@ -59,7 +59,7 @@
                 <div class="alert alert-warning">@TempData["ErrorMessage"]</div>
             }
 
-            @if (ViewBag.IsOwner && ViewBag.MemberCount > 1)
+            @if (ViewBag.MemberCount > 1)
             {
                 <form asp-action="LeaveLeague" asp-controller="League" method="post"
                       onsubmit="return confirm('Are you sure you want to leave this league?');">

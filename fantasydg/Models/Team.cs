@@ -1,8 +1,13 @@
-﻿namespace fantasydg.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace fantasydg.Models
 {
     public class Team
     {
         public int TeamId { get; set; }
+
+        [Required]
+        [StringLength(20, ErrorMessage = "Team name cannot exceed 20 characters.")]
         public string Name { get; set; }
 
         // The league this team belongs to

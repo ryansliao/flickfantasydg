@@ -40,12 +40,12 @@
             @foreach (var pt in Model.OrderBy(pt => pt.Place))
             {
                 var key = (pt.PlayerId, pt.TournamentId, pt.Tournament.Division);
-                var points = fantasyMap.TryGetValue(key, out var value) ? value : 0;
+                float points = fantasyMap.ContainsKey(key) ? fantasyMap[key] : 0f;
 
                 <tr>
                     <td>@pt.Place</td>
                     <td>@pt.Player.Name</td>
-                    <td><strong>@points</strong></td>
+                    <td>@points.ToString("0.0")</td>
                     <td>@pt.TotalToPar</td>
                     <td>@pt.BirdieMinus%</td>
                     <td>@pt.EagleMinus%</td>

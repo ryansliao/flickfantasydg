@@ -21,11 +21,11 @@ namespace fantasydg.Services
 
             if (league == null) return;
 
-            var playerIds = league.Teams
-                .SelectMany(t => t.TeamPlayers)
-                .Select(tp => tp.PlayerId)
+            var playerIds = await _db.PlayerTournaments
+                .Where(pt => pt.Tournament != null) // defensive
+                .Select(pt => pt.PlayerId)
                 .Distinct()
-                .ToList();
+                .ToListAsync();
 
             // Fetch all PlayerTournament entries for those players
             var playerTournaments = await _db.PlayerTournaments
@@ -93,6 +93,15 @@ namespace fantasydg.Services
             score += pt.StrokesGainedC2Putting * league.C2SGWeight;
 
             return (float)Math.Round(score, 2);
+        }
+        public async Task<Dictionary<(int playerId, int tournamentId, string division), float>> GetFantasyPointsMapAsync(int leagueId)
+        {
+            return await _db.LeaguePlayerFantasyPoints
+                .Where(fp => fp.LeagueId == leagueId)
+                .ToDictionaryAsync(
+                    fp => (fp.PlayerId, fp.TournamentId, fp.Division),
+                    fp => fp.Points
+                );
         }
 
         public async Task DeleteLeagueCascadeAsync(int leagueId)

@@ -38,57 +38,7 @@ namespace fantasydg.Controllers
             return View(leagues);
         }
 
-        // View and manage settings for a specific league
-        [Authorize]
-        public async Task<IActionResult> Settings(League model, int id)
-        {
-            var league = await _db.Leagues
-                .Include(l => l.Owner)
-                .Include(l => l.Members).ThenInclude(m => m.User)
-                .FirstOrDefaultAsync(l => l.LeagueId == id);
-
-            if (league == null)
-                return NotFound();
-
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (league.OwnerId != userId)
-            {
-                return RedirectToAction("View", "League", new { id = league.LeagueId });
-            }
-
-            // Update weights
-            league.PlacementWeight = model.PlacementWeight;
-            league.FairwayWeight = model.FairwayWeight;
-            league.C1InRegWeight = model.C1InRegWeight;
-            league.C2InRegWeight = model.C2InRegWeight;
-            league.ParkedWeight = model.ParkedWeight;
-            league.ScrambleWeight = model.ScrambleWeight;
-            league.C1PuttWeight = model.C1PuttWeight;
-            league.C1xPuttWeight = model.C1xPuttWeight;
-            league.C2PuttWeight = model.C2PuttWeight;
-            league.OBWeight = model.OBWeight;
-            league.BirdieWeight = model.BirdieWeight;
-            league.BirdieMinusWeight = model.BirdieMinusWeight;
-            league.EagleMinusWeight = model.EagleMinusWeight;
-            league.ParWeight = model.ParWeight;
-            league.BogeyPlusWeight = model.BogeyPlusWeight;
-            league.DoubleBogeyPlusWeight = model.DoubleBogeyPlusWeight;
-            league.TotalPuttDistWeight = model.TotalPuttDistWeight;
-            league.AvgPuttDistWeight = model.AvgPuttDistWeight;
-            league.LongThrowInWeight = model.LongThrowInWeight;
-            league.TotalSGWeight = model.TotalSGWeight;
-            league.PuttingSGWeight = model.PuttingSGWeight;
-            league.TeeToGreenSGWeight = model.TeeToGreenSGWeight;
-            league.C1xSGWeight = model.C1xSGWeight;
-            league.C2SGWeight = model.C2SGWeight;
-
-            await _db.SaveChangesAsync();
-            await _leagueService.UpdateFantasyPointsForLeagueAsync(league.LeagueId);
-
-            return View(league);
-        }
-
+        
         // GET: /League/Create
         public IActionResult Create()
         {
@@ -177,7 +127,12 @@ namespace fantasydg.Controllers
                             pt.DoubleBogeyPlus * league.DoubleBogeyPlusWeight +
                             pt.TotalPuttDistance * league.TotalPuttDistWeight +
                             pt.AvgPuttDistance * league.AvgPuttDistWeight +
-                            pt.LongThrowIn * league.LongThrowInWeight
+                            pt.LongThrowIn * league.LongThrowInWeight +
+                            pt.StrokesGainedTotal * league.TotalSGWeight +
+                            pt.StrokesGainedPutting * league.PuttingSGWeight +
+                            pt.StrokesGainedTeeToGreen * league.TeeToGreenSGWeight +
+                            pt.StrokesGainedC1xPutting * league.C1xSGWeight +
+                            pt.StrokesGainedC2Putting * league.C2SGWeight
                         )
                 })
                 .OrderByDescending(t => t.Points)
@@ -229,6 +184,11 @@ namespace fantasydg.Controllers
 
             if (league == null) return NotFound();
 
+            await _leagueService.UpdateFantasyPointsForLeagueAsync(leagueId);
+
+            var fantasyMap = await _leagueService.GetFantasyPointsMapAsync(leagueId);
+            ViewBag.FantasyMap = fantasyMap;
+
             // filter unassigned PlayerTournaments
             var assignedIds = await _db.TeamPlayers
                 .Where(tp => tp.LeagueId == leagueId)
@@ -239,7 +199,10 @@ namespace fantasydg.Controllers
             var unassigned = await _db.PlayerTournaments
                 .Include(pt => pt.Player)
                 .Include(pt => pt.Tournament)
-                .Where(pt => !assignedIds.Contains(pt.PlayerId) && pt.Tournament.Division == division && pt.TournamentId == tournamentId.Value)
+                .Where(pt =>
+                    !assignedIds.Contains(pt.PlayerId)
+                    && pt.Tournament.Division == division
+                    && pt.TournamentId == tournamentId.Value)
                 .ToListAsync();
 
             var model = new LeaguePlayersViewModel
@@ -259,55 +222,111 @@ namespace fantasydg.Controllers
             return View("~/Views/Players/LeaguePlayers.cshtml", model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UpdateScoringSettings(
-            int leagueId,
-            double PlacementWeight,
-            double FairwayWeight, 
-            double C1InRegWeight, 
-            double C2InRegWeight, 
-            double ParkedWeight, 
-            double ScrambleWeight,
-            double C1PuttWeight,
-            double C1xPuttWeight,
-            double C2PuttWeight,
-            double OBWeight,
-            double ParWeight,
-            double BirdieWeight,
-            double BirdieMinusWeight,
-            double EagleMinusWeight,
-            double BogeyPlusWeight,
-            double DoubleBogeyPlusWeight,
-            double TotalPuttDistWeight,
-            double AvgPuttDistWeight,
-            double LongThrowInWeight
-            )
+        // View and manage settings for a specific league
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Settings(int id)
         {
-            var league = await _db.Leagues.FindAsync(leagueId);
+            var league = await _db.Leagues
+                .Include(l => l.Owner)
+                .Include(l => l.Members).ThenInclude(m => m.User)
+                .FirstOrDefaultAsync(l => l.LeagueId == id);
+
             if (league == null) return NotFound();
-            league.PlacementWeight = PlacementWeight;
-            league.FairwayWeight = FairwayWeight;
-            league.C1InRegWeight = C1InRegWeight;
-            league.C2InRegWeight = C2InRegWeight;
-            league.ParkedWeight = ParkedWeight;
-            league.ScrambleWeight = ScrambleWeight;
-            league.C1PuttWeight = C1PuttWeight;
-            league.C1xPuttWeight = C1xPuttWeight;
-            league.C2PuttWeight = C2PuttWeight;
-            league.OBWeight = OBWeight;
-            league.ParWeight = ParWeight;
-            league.BirdieWeight = BirdieWeight;
-            league.BirdieMinusWeight = BirdieMinusWeight;
-            league.EagleMinusWeight = EagleMinusWeight;
-            league.BogeyPlusWeight = BogeyPlusWeight;
-            league.DoubleBogeyPlusWeight = DoubleBogeyPlusWeight;
-            league.TotalPuttDistWeight = TotalPuttDistWeight;
-            league.AvgPuttDistWeight = AvgPuttDistWeight;
-            league.LongThrowInWeight = LongThrowInWeight;
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (league.OwnerId != userId)
+            {
+                return RedirectToAction("View", "League", new { id = league.LeagueId });
+            }
+
+            ViewBag.LeagueName = league.Name;
+            ViewBag.TeamId = await _db.Teams
+                .Where(t => t.LeagueId == league.LeagueId && t.OwnerId == userId)
+                .Select(t => (int?)t.TeamId)
+                .FirstOrDefaultAsync();
+
+            return View(league);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveSettings(League model, int id)
+        {
+            var league = await _db.Leagues.FindAsync(model.LeagueId);
+            if (league == null) return NotFound();
+
+            // Update weights
+            league.PlacementWeight = model.PlacementWeight;
+            league.FairwayWeight = model.FairwayWeight;
+            league.C1InRegWeight = model.C1InRegWeight;
+            league.C2InRegWeight = model.C2InRegWeight;
+            league.ParkedWeight = model.ParkedWeight;
+            league.ScrambleWeight = model.ScrambleWeight;
+            league.C1PuttWeight = model.C1PuttWeight;
+            league.C1xPuttWeight = model.C1xPuttWeight;
+            league.C2PuttWeight = model.C2PuttWeight;
+            league.OBWeight = model.OBWeight;
+            league.BirdieWeight = model.BirdieWeight;
+            league.BirdieMinusWeight = model.BirdieMinusWeight;
+            league.EagleMinusWeight = model.EagleMinusWeight;
+            league.ParWeight = model.ParWeight;
+            league.BogeyPlusWeight = model.BogeyPlusWeight;
+            league.DoubleBogeyPlusWeight = model.DoubleBogeyPlusWeight;
+            league.TotalPuttDistWeight = model.TotalPuttDistWeight;
+            league.AvgPuttDistWeight = model.AvgPuttDistWeight;
+            league.LongThrowInWeight = model.LongThrowInWeight;
+            league.TotalSGWeight = model.TotalSGWeight;
+            league.PuttingSGWeight = model.PuttingSGWeight;
+            league.TeeToGreenSGWeight = model.TeeToGreenSGWeight;
+            league.C1xSGWeight = model.C1xSGWeight;
+            league.C2SGWeight = model.C2SGWeight;
 
             await _db.SaveChangesAsync();
+            await _leagueService.UpdateFantasyPointsForLeagueAsync(league.LeagueId);
+
             TempData["ScoringSaved"] = "Scoring settings updated!";
-            return RedirectToAction("Settings", new { id = leagueId });
+            return RedirectToAction("Settings", new { id = league.LeagueId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateScoringSettings(League model)
+        {
+            var league = await _db.Leagues.FindAsync(model.LeagueId);
+            if (league == null) return NotFound();
+
+            league.PlacementWeight = model.PlacementWeight;
+            league.FairwayWeight = model.FairwayWeight;
+            league.C1InRegWeight = model.C1InRegWeight;
+            league.C2InRegWeight = model.C2InRegWeight;
+            league.ParkedWeight = model.ParkedWeight;
+            league.ScrambleWeight = model.ScrambleWeight;
+            league.C1PuttWeight = model.C1PuttWeight;
+            league.C1xPuttWeight = model.C1xPuttWeight;
+            league.C2PuttWeight = model.C2PuttWeight;
+            league.OBWeight = model.OBWeight;
+            league.ParWeight = model.ParWeight;
+            league.BirdieWeight = model.BirdieWeight;
+            league.BirdieMinusWeight = model.BirdieMinusWeight;
+            league.EagleMinusWeight = model.EagleMinusWeight;
+            league.BogeyPlusWeight = model.BogeyPlusWeight;
+            league.DoubleBogeyPlusWeight = model.DoubleBogeyPlusWeight;
+            league.TotalPuttDistWeight = model.TotalPuttDistWeight;
+            league.AvgPuttDistWeight = model.AvgPuttDistWeight;
+            league.LongThrowInWeight = model.LongThrowInWeight;
+            league.TotalSGWeight = model.TotalSGWeight;
+            league.PuttingSGWeight = model.PuttingSGWeight;
+            league.TeeToGreenSGWeight = model.TeeToGreenSGWeight;
+            league.C1xSGWeight = model.C1xSGWeight;
+            league.C2SGWeight = model.C2SGWeight;
+
+            await _db.SaveChangesAsync();
+            await _leagueService.UpdateFantasyPointsForLeagueAsync(model.LeagueId);
+            TempData["ScoringSaved"] = "Scoring settings updated!";
+
+            return RedirectToAction("Settings", new { id = model.LeagueId });
         }
 
         [HttpGet]
