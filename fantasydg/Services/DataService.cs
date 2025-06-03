@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
+using System.Security.Principal;
 using static System.Formats.Asn1.AsnWriter;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -139,7 +140,7 @@ namespace fantasydg.Services
                     {
                         int statId = stat["statId"]?.Value<int>() ?? 0;
                         double statValue = stat["statValue"]?.Type == JTokenType.Null ? 0.0 : stat["statValue"]?.Value<double>() ?? 0.0;
-                        int statCount = stat["statCount"]?.Type == JTokenType.Null ? 0 : stat["statCount"]?.Value<int>() ?? 0;
+                        int statCount = stat["statValue"]?.Type == JTokenType.Null ? 0 : stat["statValue"]?.Value<int>() ?? 0;
 
                         switch (statId)
                         {
@@ -158,7 +159,9 @@ namespace fantasydg.Services
                             case 13: pt.Par = Math.Round(statValue, 0); break;
                             case 14: pt.Birdie = Math.Round(statValue, 0); break;
                             case 15: pt.EagleMinus = Math.Round(statValue, 1); break;
-                            case 16: pt.PuttDistance = statCount; break;
+                            case 16: pt.TotalPuttDistance = statCount; break;
+                            case 17: pt.LongThrowIn = statCount; break;
+                            case 18: pt.AvgPuttDistance = Math.Round(statValue, 1); break;
                             default: continue;
                         }
                     }
@@ -229,7 +232,9 @@ namespace fantasydg.Services
                         existing.Par = pt.Par;
                         existing.Birdie = pt.Birdie;
                         existing.EagleMinus = pt.EagleMinus;
-                        existing.PuttDistance = pt.PuttDistance;
+                        existing.TotalPuttDistance = pt.TotalPuttDistance;
+                        existing.LongThrowIn = pt.LongThrowIn;
+                        existing.AvgPuttDistance = pt.AvgPuttDistance;
                         existing.StrokesGainedTotal = pt.StrokesGainedTotal;
                         existing.StrokesGainedPutting = pt.StrokesGainedPutting;
                         existing.StrokesGainedTeeToGreen = pt.StrokesGainedTeeToGreen;
@@ -351,7 +356,7 @@ namespace fantasydg.Services
                         {
                             int statId = stat["statId"]?.Value<int>() ?? 0;
                             double statValue = stat["statValue"]?.Type == JTokenType.Null ? 0.0 : stat["statValue"]?.Value<double>() ?? 0.0;
-                            int statCount = stat["statCount"]?.Type == JTokenType.Null ? 0 : stat["statCount"]?.Value<int>() ?? 0;
+                            int statCount = stat["statValue"]?.Type == JTokenType.Null ? 0 : stat["statValue"]?.Value<int>() ?? 0;
 
                             switch (statId)
                             {
@@ -370,7 +375,9 @@ namespace fantasydg.Services
                                 case 13: rs.Par = Math.Round(statValue, 0); break;
                                 case 14: rs.Birdie = Math.Round(statValue, 0); break;
                                 case 15: rs.EagleMinus = Math.Round(statValue, 1); break;
-                                case 16: rs.PuttDistance = statCount; break;
+                                case 16: rs.TotalPuttDistance = statCount; break;
+                                case 17: rs.LongThrowIn = statCount; break;
+                                case 18: rs.AvgPuttDistance = Math.Round(statValue, 1); break;
                                 default: continue;
                             }
                         }
@@ -435,7 +442,9 @@ namespace fantasydg.Services
                             existing.Par = rs.Par;
                             existing.Birdie = rs.Birdie;
                             existing.EagleMinus = rs.EagleMinus;
-                            existing.PuttDistance = rs.PuttDistance;
+                            existing.TotalPuttDistance = rs.TotalPuttDistance;
+                            existing.LongThrowIn = rs.LongThrowIn;
+                            existing.AvgPuttDistance = rs.AvgPuttDistance;
                             existing.StrokesGainedTotal = rs.StrokesGainedTotal;
                             existing.StrokesGainedPutting = rs.StrokesGainedPutting;
                             existing.StrokesGainedTeeToGreen = rs.StrokesGainedTeeToGreen;

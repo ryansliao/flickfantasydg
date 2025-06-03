@@ -7,12 +7,12 @@ Stat 6: C1 Putting %
 Stat 7: C1x Putting %
 Stat 8: C2 Putting %
 Stat 9: OB Rate %
-Stat 10: Birdie+ %
+Stat 10: Birdie- %
 Stat 11: 2x Bogey+ %
 Stat 12: Bogey+ %
 Stat 13: Par %
 Stat 14: Birdie %
-Stat 15: Eagle+ %
+Stat 15: Eagle- %
 Stat 16: Total Putt Distance
 Stat 17: Long Throw-In
 Stat 18: Avg. Putt

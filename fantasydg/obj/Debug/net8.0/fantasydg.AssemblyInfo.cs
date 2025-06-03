@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("flickfantasydg")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+253fb79214e1017127032ef1a509dece167962d8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ed7ea1a35dac74a952825ceef28e3c6c46eb4625")]
 [assembly: System.Reflection.AssemblyProductAttribute("flickfantasydg")]
 [assembly: System.Reflection.AssemblyTitleAttribute("flickfantasydg")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

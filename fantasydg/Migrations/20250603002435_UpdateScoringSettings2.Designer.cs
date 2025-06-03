@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasydg.Data;
 
@@ -11,9 +12,11 @@ using fantasydg.Data;
 namespace fantasydg.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250603002435_UpdateScoringSettings2")]
+    partial class UpdateScoringSettings2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -294,9 +297,6 @@ namespace fantasydg.Migrations
                     b.Property<double>("ParkedWeight")
                         .HasColumnType("float");
 
-                    b.Property<double>("PlacementWeight")
-                        .HasColumnType("float");
-
                     b.Property<int>("PlayerNumber")
                         .HasColumnType("int");
 
@@ -418,9 +418,6 @@ namespace fantasydg.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasColumnOrder(2);
 
-                    b.Property<double>("AvgPuttDistance")
-                        .HasColumnType("float");
-
                     b.Property<double>("Birdie")
                         .HasColumnType("float");
 
@@ -454,9 +451,6 @@ namespace fantasydg.Migrations
                     b.Property<double>("Fairway")
                         .HasColumnType("float");
 
-                    b.Property<int>("LongThrowIn")
-                        .HasColumnType("int");
-
                     b.Property<double>("ObRate")
                         .HasColumnType("float");
 
@@ -467,6 +461,9 @@ namespace fantasydg.Migrations
                         .HasColumnType("float");
 
                     b.Property<int>("Place")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PuttDistance")
                         .HasColumnType("int");
 
                     b.Property<double>("Scramble")
@@ -486,9 +483,6 @@ namespace fantasydg.Migrations
 
                     b.Property<double>("StrokesGainedTotal")
                         .HasColumnType("float");
-
-                    b.Property<int>("TotalPuttDistance")
-                        .HasColumnType("int");
 
                     b.Property<int>("TotalToPar")
                         .HasColumnType("int");
@@ -535,9 +529,6 @@ namespace fantasydg.Migrations
                         .HasColumnType("int")
                         .HasColumnOrder(1);
 
-                    b.Property<double>("AvgPuttDistance")
-                        .HasColumnType("float");
-
                     b.Property<double>("Birdie")
                         .HasColumnType("float");
 
@@ -575,9 +566,6 @@ namespace fantasydg.Migrations
                     b.Property<double>("Fairway")
                         .HasColumnType("float");
 
-                    b.Property<int>("LongThrowIn")
-                        .HasColumnType("int");
-
                     b.Property<double>("ObRate")
                         .HasColumnType("float");
 
@@ -586,6 +574,9 @@ namespace fantasydg.Migrations
 
                     b.Property<double>("Parked")
                         .HasColumnType("float");
+
+                    b.Property<int>("PuttDistance")
+                        .HasColumnType("int");
 
                     b.Property<int>("RoundToPar")
                         .HasColumnType("int");
@@ -613,9 +604,6 @@ namespace fantasydg.Migrations
 
                     b.Property<double>("StrokesGainedTotal")
                         .HasColumnType("float");
-
-                    b.Property<int>("TotalPuttDistance")
-                        .HasColumnType("int");
 
                     b.HasKey("RoundId", "PlayerId");
 

@@ -1,4 +1,5 @@
-﻿@model fantasydg.Models.League
+﻿@using flickfantasydg.Models
+@model fantasydg.Models.League
 
 @{
     var userId = User?.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
@@ -13,19 +14,51 @@
         </div>
 
         <div class="col pt-3">
-            <h2>@Model.Name</h2>
 
-            @if (userId == Model.OwnerId)
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">@ViewBag.LeagueName</h2>
+
+                @if (ViewBag.IsOwner == true)
+                {
+                    <a href="@Url.Action("Settings", "League", new { id = Model.LeagueId })" class="btn btn-outline-secondary">
+                        ⚙️ Settings
+                    </a>
+                }
+            </div>
+
+            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+
+            <h3>Standings</h3>
+
+            @if (ViewBag.Standings != null)
             {
-                <a class="btn btn-secondary" href="@Url.Action("Settings", "League", new { id = Model.LeagueId })">Settings</a>
+                <table class="table table-striped mt-4">
+                    <thead>
+                        <tr>
+                            <th>Placement</th>
+                            <th>Member</th>
+                            <th>Team</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in (List<LeagueStandingView>)ViewBag.Standings)
+                        {
+                            <tr>
+                                <td>@s.Placement</td>
+                                <td>@s.MemberName</td>
+                                <td>@s.TeamName</td>
+                                <td>@s.FantasyPoints.ToString("F2")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             }
 
             @if (TempData["ErrorMessage"] != null)
             {
                 <div class="alert alert-warning">@TempData["ErrorMessage"]</div>
             }
-
-            <p>Members: @Model.Members?.Count</p>
 
             @if (ViewBag.IsOwner && ViewBag.MemberCount > 1)
             {

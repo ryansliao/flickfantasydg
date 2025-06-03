@@ -303,9 +303,7 @@ C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\flickfanta
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\fantasydg.RazorAssemblyInfo.cache
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\fantasydg.RazorAssemblyInfo.cs
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\fantasydg.sourcelink.json
-C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\scopedcss\bundle\flickfantasydg.styles.css
-C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\scopedcss\projectbundle\flickfantasydg.bundle.scp.css
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\staticwebassets.development.json
@@ -317,3 +315,5 @@ C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\refint\fli
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\flickfantasydg.pdb
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\fantasydg.genruntimeconfig.cache
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\ref\flickfantasydg.dll
+C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\scopedcss\projectbundle\flickfantasydg.bundle.scp.css

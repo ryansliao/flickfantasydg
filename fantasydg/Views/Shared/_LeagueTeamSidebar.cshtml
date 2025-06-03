@@ -3,13 +3,14 @@
 <div class="d-flex flex-column p-3 bg-light shadow-sm"
      style="width: 220px; position: sticky; top: 56px; overflow-y: auto; z-index: 0;">
 
-    <h5 class="mb-4">@Model.LeagueName</h5>
+    <h5 class="mb-1">@Model.LeagueName</h5>
+    <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
             <a class="nav-link @(ViewContext.RouteData.Values["controller"]!.ToString() == "League" ? "active" : "")"
                asp-controller="League" asp-action="View" asp-route-id="@Model.LeagueId">
-                League View
+                League
             </a>
         </li>
         @if (Model.TeamId.HasValue)
@@ -17,7 +18,7 @@
             <li class="nav-item">
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]!.ToString() == "Team" ? "active" : "")"
                    asp-controller="Team" asp-action="View" asp-route-teamId="@Model.TeamId">
-                    Team View
+                    Team
                 </a>
             </li>
         }

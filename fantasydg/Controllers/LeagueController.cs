@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using flickfantasydg.Models;
 
 namespace fantasydg.Controllers
 {
@@ -107,7 +108,107 @@ namespace fantasydg.Controllers
             ViewBag.TeamId = team?.TeamId;
             ViewBag.LeagueName = league.Name;
 
+            var standings = await _db.Teams
+                .Where(t => t.LeagueId == id)
+                .Include(t => t.Owner)
+                .Include(t => t.TeamPlayers)
+                    .ThenInclude(tp => tp.Player)
+                    .ThenInclude(p => p.PlayerTournaments)
+                .ToListAsync();
+
+            var ordered = standings
+                .Select(t => new
+                {
+                    Team = t,
+                    OwnerName = t.Owner.UserName,
+                    Points = t.TeamPlayers
+                        .SelectMany(tp => tp.Player.PlayerTournaments)
+                        .Sum(pt =>
+                            pt.Place * league.PlacementWeight +
+                            pt.Fairway * league.FairwayWeight +
+                            pt.C1InReg * league.C1InRegWeight +
+                            pt.C2InReg * league.C2InRegWeight +
+                            pt.Parked * league.ParkedWeight +
+                            pt.Scramble * league.ScrambleWeight +
+                            pt.C1Putting * league.C1PuttWeight +
+                            pt.C1xPutting * league.C1xPuttWeight +
+                            pt.C2Putting * league.C2PuttWeight +
+                            pt.ObRate * league.OBWeight +
+                            pt.Par * league.ParWeight +
+                            pt.Birdie * league.BirdieWeight +
+                            pt.BirdieMinus * league.BirdieMinusWeight +
+                            pt.EagleMinus * league.EagleMinusWeight +
+                            pt.BogeyPlus * league.BogeyPlusWeight +
+                            pt.DoubleBogeyPlus * league.DoubleBogeyPlusWeight +
+                            pt.TotalPuttDistance * league.TotalPuttDistWeight +
+                            pt.AvgPuttDistance * league.AvgPuttDistWeight +
+                            pt.LongThrowIn * league.LongThrowInWeight
+                        )
+                })
+                .OrderByDescending(t => t.Points)
+                .Select((s, index) => new LeagueStandingView
+                {
+                    Placement = index + 1,
+                    MemberName = s.OwnerName,
+                    TeamName = s.Team.Name,
+                    FantasyPoints = s.Points
+                })
+                .ToList();
+
+            ViewBag.Standings = ordered;
+
             return View("LeagueView", league);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateScoringSettings(
+            int leagueId,
+            double PlacementWeight,
+            double FairwayWeight, 
+            double C1InRegWeight, 
+            double C2InRegWeight, 
+            double ParkedWeight, 
+            double ScrambleWeight,
+            double C1PuttWeight,
+            double C1xPuttWeight,
+            double C2PuttWeight,
+            double OBWeight,
+            double ParWeight,
+            double BirdieWeight,
+            double BirdieMinusWeight,
+            double EagleMinusWeight,
+            double BogeyPlusWeight,
+            double DoubleBogeyPlusWeight,
+            double TotalPuttDistWeight,
+            double AvgPuttDistWeight,
+            double LongThrowInWeight
+            )
+        {
+            var league = await _db.Leagues.FindAsync(leagueId);
+            if (league == null) return NotFound();
+            league.PlacementWeight = PlacementWeight;
+            league.FairwayWeight = FairwayWeight;
+            league.C1InRegWeight = C1InRegWeight;
+            league.C2InRegWeight = C2InRegWeight;
+            league.ParkedWeight = ParkedWeight;
+            league.ScrambleWeight = ScrambleWeight;
+            league.C1PuttWeight = C1PuttWeight;
+            league.C1xPuttWeight = C1xPuttWeight;
+            league.C2PuttWeight = C2PuttWeight;
+            league.OBWeight = OBWeight;
+            league.ParWeight = ParWeight;
+            league.BirdieWeight = BirdieWeight;
+            league.BirdieMinusWeight = BirdieMinusWeight;
+            league.EagleMinusWeight = EagleMinusWeight;
+            league.BogeyPlusWeight = BogeyPlusWeight;
+            league.DoubleBogeyPlusWeight = DoubleBogeyPlusWeight;
+            league.TotalPuttDistWeight = TotalPuttDistWeight;
+            league.AvgPuttDistWeight = AvgPuttDistWeight;
+            league.LongThrowInWeight = LongThrowInWeight;
+
+            await _db.SaveChangesAsync();
+            TempData["ScoringSaved"] = "Scoring settings updated!";
+            return RedirectToAction("Settings", new { id = leagueId });
         }
 
         [HttpGet]

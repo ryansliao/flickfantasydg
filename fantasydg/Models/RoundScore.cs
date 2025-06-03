@@ -32,7 +32,9 @@ namespace fantasydg.Models
         public double Par { get; set; }
         public double Birdie { get; set; }
         public double EagleMinus { get; set; }
-        public int PuttDistance { get; set; }
+        public int TotalPuttDistance { get; set; }
+        public int LongThrowIn { get; set; }
+        public double AvgPuttDistance { get; set; }
         public double StrokesGainedTotal { get; set; }
         public double StrokesGainedTeeToGreen { get; set; }
         public double StrokesGainedPutting { get; set; }
