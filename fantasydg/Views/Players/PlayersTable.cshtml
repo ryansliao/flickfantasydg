@@ -14,7 +14,8 @@
     <div class="alert alert-info">@TempData["PlayerAddResult"]</div>
 }
 
-<div class="table-scroll-container">
+<div id="loadingSpinner">Loading table...</div>
+<div id="tableWrapper" class="d-none table-scroll-container">
     <div class="table-scroll-top"></div>
     <table id="playersTable" class="stats-table">
         <thead>
@@ -22,7 +23,7 @@
                 <th>Add</th>
                 <th>#</th>
                 <th>Player</th>
-                <th>Fant. Pts.</th>
+                <th>Pts.</th>
                 <th>Total</th>
                 <th>Birdie-</th>
                 <th>Eagle-</th>
@@ -90,3 +91,35 @@
         </tbody>
     </table>
 </div>
+
+<!-- DataTables Setup (only include once per page if possible) -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $('#playersTable').DataTable({
+        scrollX: true,
+        scrollY: 'calc(100vh - 324px)',
+        scrollCollapse: true,
+        paging: false,
+        searching: true,
+        ordering: true,
+        autoWidth: false,
+        info: false,
+        order: [[1, 'asc']],
+        fixedColumns: {
+            leftColumns: 3
+        },
+        columnDefs: [
+            { orderable: false, targets: 0, width: "40px" },
+            { targets: 1, width: "40px" },
+            { targets: 2, width: "150px" },
+            { targets: "_all", width: "50px" }
+        ],
+        initComplete: function () {
+            $('#loadingSpinner').hide();
+            $('#tableWrapper').removeClass('d-none');
+        }
+    });
+</script>

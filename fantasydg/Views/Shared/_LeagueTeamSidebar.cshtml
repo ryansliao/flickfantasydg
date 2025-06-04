@@ -6,38 +6,40 @@
     var action = route["action"]?.ToString();
 }
 
-<div class="bg-light shadow-sm"
+<div class="sidebar bg-light"
      style="top: 57px; bottom: 61px; width: 220px; padding: 1rem; overflow-y: auto;">
 
     <h5 class="mb-1">@Model.LeagueName</h5>
     <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
-    <ul class="nav nav-pills flex-column mb-auto">
-        <!-- League -->
-        <li class="nav-item">
-            <a class="nav-link @(controller == "League" && action == "View" ? "active" : "")"
-               asp-controller="League" asp-action="View" asp-route-id="@Model.LeagueId">
-                League
-            </a>
-        </li>
-
-        <!-- Team -->
-        @if (Model.TeamId.HasValue)
-        {
+    <div class="list-group list-group-flush">
+        <ul class="nav nav-pills flex-column mb-auto">
+            <!-- League -->
             <li class="nav-item">
-                <a class="nav-link @(controller == "Team" && action == "View" ? "active" : "")"
-                   asp-controller="Team" asp-action="View" asp-route-teamId="@Model.TeamId">
-                    Team
+                <a class="nav-link @(controller == "League" && action == "View" ? "active" : "")"
+                   asp-controller="League" asp-action="View" asp-route-id="@Model.LeagueId">
+                    League
                 </a>
             </li>
-        }
 
-        <!-- Players -->
-        <li class="nav-item">
-            <a class="nav-link @(controller == "League" && action == "Players" ? "active" : "")"
-               asp-controller="League" asp-action="Players" asp-route-leagueId="@Model.LeagueId">
-                Players
-            </a>
-        </li>
-    </ul>
+            <!-- Team -->
+            @if (Model.TeamId.HasValue)
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(controller == "Team" && action == "View" ? "active" : "")"
+                       asp-controller="Team" asp-action="View" asp-route-teamId="@Model.TeamId">
+                        Team
+                    </a>
+                </li>
+            }
+
+            <!-- Players -->
+            <li class="nav-item">
+                <a class="nav-link @(controller == "League" && action == "Players" ? "active" : "")"
+                   asp-controller="League" asp-action="Players" asp-route-leagueId="@Model.LeagueId">
+                    Players
+                </a>
+            </li>
+        </ul>
+    </div>
 </div>

@@ -10,14 +10,10 @@
     body, html {
         margin: 0;
         padding: 0;
-        height: 100vh;
     }
 
-    .filter-form {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        margin-bottom: 0.25rem;
+    .d-none {
+        display: none !important;
     }
 
     .players-page-wrapper {
@@ -32,14 +28,24 @@
         overflow: hidden;
     }
 
-    /* Sidebar stays 220px and scrollable */
     #sidebar {
         width: 220px;
         overflow-y: auto;
         flex-shrink: 0;
     }
 
-    /* Main content grows to fill and scrolls */
+    .sidebar a.btn-light,
+    .sidebar button.btn-light {
+        transition: all 0.2s ease;
+    }
+
+        .sidebar a.btn-light:hover,
+        .sidebar button.btn-light:hover {
+            background-color: #e2e6ea;
+            font-weight: bold;
+            color: #000;
+        }
+
     #mainContent {
         flex: 1;
         margin-left: 10px;
@@ -48,137 +54,86 @@
         overflow: hidden;
         min-width: 0;
     }
-    
-    /* Contains table and scrolls */
+
     .table-scroll-container {
-        margin-top: 0;
-        padding-bottom: 10px;
-        max-height: calc(100vh - 120px); /* Adjust based on real header + footer height */
-        overflow-y: auto;
-        overflow-x: auto;
-        width: 100%;
+        flex: none;
+        overflow: visible;
+        padding-bottom: 20px;
     }
 
-    /* The entire table */
-    stats-table {
-        padding: 6px 10px;
-        border-collapse: collapse;
-        table-layout: fixed;
+    /* Table setup */
+    .stats-table {
         width: 100%;
-        margin-bottom: -20px;
-        overflow-y: auto;
-        overflow-x: auto;
-        margin-bottom: 0;
+        table-layout: fixed;
+        border-collapse: collapse;
+        box-sizing: border-box;
+        vertical-align: middle;
     }
+
+        /* General table styling */
+        .stats-table th,
+        .stats-table td,
+        div.DTFC_LeftWrapper table.dataTable th,
+        div.DTFC_LeftWrapper table.dataTable td {
+            font-size: 0.8rem;
+            padding: 2px 4px;
+            line-height: 1.1;
+            height: auto;
+            min-height: 0;
+            box-sizing: border-box;
+            vertical-align: middle;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+        }
+
+        /* Table buttons */
+        .stats-table button.btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+            width: 20px;
+            height: 20px;
+            font-size: 0.9rem;
+            line-height: 1;
+        }
+
+    div.dataTables_filter {
+        margin-bottom: 10px;
+    }
+
+    /* DataTables scroll container */
+    div.dataTables_scrollBody {
+        overflow-x: auto !important;
+        overflow-y: scroll !important;
+    }
+
+        /* Alternating rows */
+        table.dataTable.stripe tbody tr:nth-child(odd),
+        div.dataTables_scrollBody table tbody tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        table.dataTable.stripe tbody tr:nth-child(even),
+        div.dataTables_scrollBody table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
 
     /* Column headers */
-    .stats-table thead th {
+    table.dataTable thead th,
+    div.DTFC_LeftWrapper table.dataTable thead th {
+        background-color: #e1e1e1;
+        color: #000;
+        font-weight: bold;
         font-size: 0.8rem;
-        white-space: normal;
+        text-wrap: wrap;
+        text-align: center !important;
         vertical-align: middle;
-        text-align: center;
-        padding: 5px 7px;
-        line-height: 15px;
-        position: sticky;
-        top: 0;
-        background: rgba(225, 225, 225);
-        z-index: 2;
-    }
-
-    /* First column */
-    .stats-table th:nth-child(1),
-    .stats-table td:nth-child(1) {
-        position: sticky;
-        left: 0;
-        background: rgba(240, 240, 240);
-        z-index: 2;
-        min-width: 40px;
-        max-width: 40px;
-    }
-
-    /* Second column */
-    .stats-table th:nth-child(2),
-    .stats-table td:nth-child(2) {
-        position: sticky;
-        left: 40px;
-        background: rgba(240, 240, 240);
-        z-index: 2;
-        min-width: 40px;
-        max-width: 40px;
-    }
-
-    /* Third column */
-    .stats-table th:nth-child(3),
-    .stats-table td:nth-child(3) {
-        position: sticky;
-        left: 80px;
-        min-width: 150px;
-        max-width: 150px;
-        background: rgba(240, 240, 240);
-        z-index: 2;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        text-align: left;
-        white-space: nowrap;
-    }
-
-    /* Columns excluding the first three */
-    .stats-table th:nth-child(n+4),
-    .stats-table td:nth-child(n+4) {
-        min-width: 60px;
-        max-width: 60px;
-        text-align: center;
-    }
-
-    /* First header of column headers */
-    .stats-table thead th:nth-child(1) {
-        z-index: 3;
-        background: rgba(225, 225, 225);
-    }
-
-    /* Second header of column headers */
-    .stats-table thead th:nth-child(2) {
-        z-index: 3;
-        background: rgba(225, 225, 225);
-    }
-
-    /* Third header of column headers */
-    .stats-table thead th:nth-child(3) {
-        text-align: left;
-        z-index: 3;
-        background: rgba(225, 225, 225);
-    }
-
-    /* Table rows */
-    .stats-table tbody tr:nth-child(odd) {
-        background-color: white;
-    }
-
-    .stats-table tbody tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-
-    /* Table cells */
-    .stats-table td {
-        font-size: 0.9rem;
-        white-space: nowrap;
-        padding: 5px 7px;
-        line-height: 20px;
-        text-overflow: ellipsis;
-        text-align: center;
-    }
-
-    /* Table buttons */
-    .stats-table button.btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        margin: 0;
-        width: 20px;
-        height: 20px;
-        font-size: 0.9rem;
-        line-height: 1;
+        padding: 4px 5px;
+        line-height: 1.1;
     }
   
 </style>
@@ -250,15 +205,6 @@
 
 
 <script>
-    $(document).ready(function () {
-        $('#playersTable').DataTable({
-            paging: true,
-            searching: true,
-            ordering: true,
-            pageLength: 25
-        });
-    });
-
     function updatePlayerTable() {
         const tournamentId = document.getElementById('tournamentDropdown')?.value;
         const division = document.getElementById('divisionDropdown')?.value;

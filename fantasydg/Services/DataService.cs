@@ -137,6 +137,8 @@ namespace fantasydg.Services
                         Division = division
                     };
 
+                    playerTournaments[resultId] = pt;
+
                     // Assign final round place and score to PlayerTournament attributes
                     if (finalRoundStats.TryGetValue(pt.PDGANumber, out var stats))
                     {
@@ -194,23 +196,24 @@ namespace fantasydg.Services
                     if (result == null || sgList == null)
                         continue;
 
-                    int PDGANumber = result["resultId"]?.Value<int>() ?? 0;
-                    if (!playerTournaments.TryGetValue(PDGANumber, out var pt)) continue; // Skips player IDs not found in the existing dictionary
-
-                    // Assign API strokes gained stats to PlayerTournament attributes
-                    foreach (var stat in sgList)
+                    int resultId = result["resultId"]?.Value<int>() ?? 0;
+                    if (playerTournaments.TryGetValue(resultId, out var pt))
                     {
-                        int statId = stat["statId"]?.Value<int>() ?? 0;
-                        double statValue = stat["statValue"]?.Type == JTokenType.Null ? 0.0 : stat["statValue"]?.Value<double>() ?? 0.0;
-
-                        switch (statId)
+                        // Assign API strokes gained stats to PlayerTournament attributes
+                        foreach (var stat in sgList)
                         {
-                            case 100: pt.StrokesGainedTotal = Math.Round(statValue, 2); break;
-                            case 101: pt.StrokesGainedPutting = Math.Round(statValue, 2); break;
-                            case 102: pt.StrokesGainedTeeToGreen = Math.Round(statValue, 2); break;
-                            case 104: pt.StrokesGainedC1xPutting = Math.Round(statValue, 2); break;
-                            case 105: pt.StrokesGainedC2Putting = Math.Round(statValue, 2); break;
-                            default: continue;
+                            int statId = stat["statId"]?.Value<int>() ?? 0;
+                            double statValue = stat["statValue"]?.Type == JTokenType.Null ? 0.0 : stat["statValue"]?.Value<double>() ?? 0.0;
+
+                            switch (statId)
+                            {
+                                case 100: pt.StrokesGainedTotal = Math.Round(statValue, 2); break;
+                                case 101: pt.StrokesGainedPutting = Math.Round(statValue, 2); break;
+                                case 102: pt.StrokesGainedTeeToGreen = Math.Round(statValue, 2); break;
+                                case 104: pt.StrokesGainedC1xPutting = Math.Round(statValue, 2); break;
+                                case 105: pt.StrokesGainedC2Putting = Math.Round(statValue, 2); break;
+                                default: continue;
+                            }
                         }
                     }
                 }
