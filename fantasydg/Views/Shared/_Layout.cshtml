@@ -60,16 +60,16 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link text-dark dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Leagues</a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/League/Create">Create League</a></li>
-                                    <li><hr class="dropdown-divider" /></li>
-                                    @foreach (var league in userLeagues)
-                                    {
-                                        <li>
-                                            <a class="dropdown-item" href="@Url.Action("View", "League", new { id = league.LeagueId })">
-                                                @league.Name
-                                            </a>
-                                        </li>
-                                    }
+                                <li><a class="dropdown-item" href="/League/Create">Create League</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                @foreach (var league in userLeagues)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("View", "League", new { id = league.LeagueId })">
+                                            @league.Name
+                                        </a>
+                                    </li>
+                                }
                                 </ul>
                             </li>
                             <li class="nav-item">

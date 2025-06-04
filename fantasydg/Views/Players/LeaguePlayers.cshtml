@@ -2,7 +2,7 @@
 @model LeaguePlayersViewModel
 
 @{
-    ViewBag.Title = "Players";
+    ViewBag.Title = "Available Players";
     bool hasData = Model != null && Model.Players != null && Model.Players.Any();
 }
 
@@ -42,7 +42,7 @@
     /* Main content grows to fill and scrolls */
     #mainContent {
         flex: 1;
-        margin-left: 5px;
+        margin-left: 10px;
         display: flex;
         flex-direction: column;
         overflow: hidden;
@@ -73,7 +73,7 @@
 
     /* Column headers */
     .stats-table thead th {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         white-space: normal;
         vertical-align: middle;
         text-align: center;
@@ -86,23 +86,34 @@
     }
 
     /* First column */
-    .stats-table th:first-child,
-    .stats-table td:first-child {
+    .stats-table th:nth-child(1),
+    .stats-table td:nth-child(1) {
         position: sticky;
         left: 0;
         background: rgba(240, 240, 240);
         z-index: 2;
-        min-width: 60px;
-        max-width: 60px;
+        min-width: 40px;
+        max-width: 40px;
     }
 
     /* Second column */
     .stats-table th:nth-child(2),
     .stats-table td:nth-child(2) {
         position: sticky;
-        left: 60px;
-        min-width: 200px;
-        max-width: 200px;
+        left: 40px;
+        background: rgba(240, 240, 240);
+        z-index: 2;
+        min-width: 40px;
+        max-width: 40px;
+    }
+
+    /* Third column */
+    .stats-table th:nth-child(3),
+    .stats-table td:nth-child(3) {
+        position: sticky;
+        left: 80px;
+        min-width: 150px;
+        max-width: 150px;
         background: rgba(240, 240, 240);
         z-index: 2;
         overflow: hidden;
@@ -111,22 +122,28 @@
         white-space: nowrap;
     }
 
-    /* Columns excluding the first two */
-    .stats-table th:nth-child(n+3),
-    .stats-table td:nth-child(n+3) {
-        min-width: 75px;
-        max-width: 75px;
+    /* Columns excluding the first three */
+    .stats-table th:nth-child(n+4),
+    .stats-table td:nth-child(n+4) {
+        min-width: 60px;
+        max-width: 60px;
         text-align: center;
     }
 
     /* First header of column headers */
-    .stats-table thead th:first-child {
+    .stats-table thead th:nth-child(1) {
         z-index: 3;
         background: rgba(225, 225, 225);
     }
 
     /* Second header of column headers */
     .stats-table thead th:nth-child(2) {
+        z-index: 3;
+        background: rgba(225, 225, 225);
+    }
+
+    /* Third header of column headers */
+    .stats-table thead th:nth-child(3) {
         text-align: left;
         z-index: 3;
         background: rgba(225, 225, 225);
@@ -146,9 +163,22 @@
         font-size: 0.9rem;
         white-space: nowrap;
         padding: 5px 7px;
-        line-height: 15px;
+        line-height: 20px;
         text-overflow: ellipsis;
         text-align: center;
+    }
+
+    /* Table buttons */
+    .stats-table button.btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        margin: 0;
+        width: 20px;
+        height: 20px;
+        font-size: 0.9rem;
+        line-height: 1;
     }
   
 </style>
