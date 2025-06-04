@@ -107,7 +107,7 @@ namespace fantasydg.Services
                 tournament.Date = date;
 
                 await _db.SaveChangesAsync(); // Save tournament object to database
-                
+
                 var playerTournaments = new Dictionary<int, PlayerTournament>(); // Initialize dictionary of PlayerTournament objects
 
                 var (finalRoundStats, resultToPdga) = await FetchRounds(tournamentId, division); //Initialize player from the final round
@@ -126,6 +126,7 @@ namespace fantasydg.Services
 
                     if (!resultToPdga.TryGetValue(resultId, out int PDGANumber) || PDGANumber == 0)
                         continue;
+
                     var player = await GetOrCreatePlayerAsync(PDGANumber, name); // Initialize player object
 
                     // Initialize empty PlayerTournament object
@@ -176,9 +177,6 @@ namespace fantasydg.Services
                             default: continue;
                         }
                     }
-
-                    if (player != null && !playerTournaments.ContainsKey(player.PDGANumber))
-                        playerTournaments[player.PDGANumber] = pt;
                 }
 
                 // Parse tournament strokes gained stats API response
