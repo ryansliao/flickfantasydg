@@ -12,8 +12,8 @@ using fantasydg.Data;
 namespace fantasydg.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250603001827_ScoringSettings")]
-    partial class ScoringSettings
+    [Migration("20250604021856_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -238,7 +238,7 @@ namespace fantasydg.Migrations
                     b.Property<double>("AvgPuttDistWeight")
                         .HasColumnType("float");
 
-                    b.Property<double>("BirdiePlusWeight")
+                    b.Property<double>("BirdieMinusWeight")
                         .HasColumnType("float");
 
                     b.Property<double>("BirdieWeight")
@@ -248,6 +248,9 @@ namespace fantasydg.Migrations
                         .HasColumnType("float");
 
                     b.Property<double>("C1InRegWeight")
+                        .HasColumnType("float");
+
+                    b.Property<double>("C1PuttWeight")
                         .HasColumnType("float");
 
                     b.Property<double>("C1xPuttWeight")
@@ -268,7 +271,7 @@ namespace fantasydg.Migrations
                     b.Property<double>("DoubleBogeyPlusWeight")
                         .HasColumnType("float");
 
-                    b.Property<double>("EaglePlusWeight")
+                    b.Property<double>("EagleMinusWeight")
                         .HasColumnType("float");
 
                     b.Property<double>("FairwayWeight")
@@ -292,6 +295,9 @@ namespace fantasydg.Migrations
                         .HasColumnType("float");
 
                     b.Property<double>("ParkedWeight")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PlacementWeight")
                         .HasColumnType("float");
 
                     b.Property<int>("PlayerNumber")
@@ -388,32 +394,59 @@ namespace fantasydg.Migrations
                     b.ToTable("LeagueOwnershipTransfers");
                 });
 
+            modelBuilder.Entity("fantasydg.Models.LeaguePlayerFantasyPoints", b =>
+                {
+                    b.Property<int>("LeagueId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PDGANumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TournamentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Division")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("LeaguePDGANumber")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Points")
+                        .HasColumnType("real");
+
+                    b.HasKey("LeagueId", "PDGANumber", "TournamentId");
+
+                    b.HasIndex("PDGANumber");
+
+                    b.HasIndex("TournamentId", "Division");
+
+                    b.ToTable("LeaguePlayerFantasyPoints");
+                });
+
             modelBuilder.Entity("fantasydg.Models.Player", b =>
                 {
-                    b.Property<int>("PlayerId")
+                    b.Property<int>("PDGANumber")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("PlayerId");
+                    b.Property<int>("ResultId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PDGANumber");
 
                     b.ToTable("Players");
                 });
 
             modelBuilder.Entity("fantasydg.Models.PlayerTournament", b =>
                 {
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("int")
-                        .HasColumnOrder(0);
+                    b.Property<int>("ResultId")
+                        .HasColumnType("int");
 
-                    b.Property<int>("TournamentId")
-                        .HasColumnType("int")
-                        .HasColumnOrder(1);
-
-                    b.Property<string>("Division")
-                        .HasColumnType("nvarchar(450)")
-                        .HasColumnOrder(2);
+                    b.Property<double>("AvgPuttDistance")
+                        .HasColumnType("float");
 
                     b.Property<double>("Birdie")
                         .HasColumnType("float");
@@ -439,6 +472,10 @@ namespace fantasydg.Migrations
                     b.Property<double>("C2Putting")
                         .HasColumnType("float");
 
+                    b.Property<string>("Division")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<double>("DoubleBogeyPlus")
                         .HasColumnType("float");
 
@@ -448,8 +485,14 @@ namespace fantasydg.Migrations
                     b.Property<double>("Fairway")
                         .HasColumnType("float");
 
+                    b.Property<int>("LongThrowIn")
+                        .HasColumnType("int");
+
                     b.Property<double>("ObRate")
                         .HasColumnType("float");
+
+                    b.Property<int>("PDGANumber")
+                        .HasColumnType("int");
 
                     b.Property<double>("Par")
                         .HasColumnType("float");
@@ -460,9 +503,6 @@ namespace fantasydg.Migrations
                     b.Property<int>("Place")
                         .HasColumnType("int");
 
-                    b.Property<int>("PuttDistance")
-                        .HasColumnType("int");
-
                     b.Property<double>("Scramble")
                         .HasColumnType("float");
 
@@ -481,132 +521,22 @@ namespace fantasydg.Migrations
                     b.Property<double>("StrokesGainedTotal")
                         .HasColumnType("float");
 
+                    b.Property<int>("TotalPuttDistance")
+                        .HasColumnType("int");
+
                     b.Property<int>("TotalToPar")
-                        .HasColumnType("int");
-
-                    b.HasKey("PlayerId", "TournamentId", "Division");
-
-                    b.HasIndex("TournamentId", "Division");
-
-                    b.ToTable("PlayerTournaments");
-                });
-
-            modelBuilder.Entity("fantasydg.Models.Round", b =>
-                {
-                    b.Property<int>("RoundId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoundId"));
-
-                    b.Property<string>("Division")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("RoundNumber")
                         .HasColumnType("int");
 
                     b.Property<int>("TournamentId")
                         .HasColumnType("int");
 
-                    b.HasKey("RoundId");
+                    b.HasKey("ResultId");
+
+                    b.HasIndex("PDGANumber");
 
                     b.HasIndex("TournamentId", "Division");
 
-                    b.ToTable("Rounds");
-                });
-
-            modelBuilder.Entity("fantasydg.Models.RoundScore", b =>
-                {
-                    b.Property<int>("RoundId")
-                        .HasColumnType("int")
-                        .HasColumnOrder(0);
-
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("int")
-                        .HasColumnOrder(1);
-
-                    b.Property<double>("Birdie")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BirdieMinus")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BogeyPlus")
-                        .HasColumnType("float");
-
-                    b.Property<double>("C1InReg")
-                        .HasColumnType("float");
-
-                    b.Property<double>("C1Putting")
-                        .HasColumnType("float");
-
-                    b.Property<double>("C1xPutting")
-                        .HasColumnType("float");
-
-                    b.Property<double>("C2InReg")
-                        .HasColumnType("float");
-
-                    b.Property<double>("C2Putting")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Division")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("DoubleBogeyPlus")
-                        .HasColumnType("float");
-
-                    b.Property<double>("EagleMinus")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Fairway")
-                        .HasColumnType("float");
-
-                    b.Property<double>("ObRate")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Par")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Parked")
-                        .HasColumnType("float");
-
-                    b.Property<int>("PuttDistance")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoundToPar")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RunningPlace")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RunningToPar")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Scramble")
-                        .HasColumnType("float");
-
-                    b.Property<double>("StrokesGainedC1xPutting")
-                        .HasColumnType("float");
-
-                    b.Property<double>("StrokesGainedC2Putting")
-                        .HasColumnType("float");
-
-                    b.Property<double>("StrokesGainedPutting")
-                        .HasColumnType("float");
-
-                    b.Property<double>("StrokesGainedTeeToGreen")
-                        .HasColumnType("float");
-
-                    b.Property<double>("StrokesGainedTotal")
-                        .HasColumnType("float");
-
-                    b.HasKey("RoundId", "PlayerId");
-
-                    b.HasIndex("PlayerId");
-
-                    b.ToTable("RoundScores");
+                    b.ToTable("PlayerTournaments");
                 });
 
             modelBuilder.Entity("fantasydg.Models.Team", b =>
@@ -622,7 +552,8 @@ namespace fantasydg.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("OwnerId")
                         .IsRequired()
@@ -643,17 +574,17 @@ namespace fantasydg.Migrations
                     b.Property<int>("TeamId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PlayerId")
+                    b.Property<int>("PDGANumber")
                         .HasColumnType("int");
 
                     b.Property<int>("LeagueId")
                         .HasColumnType("int");
 
-                    b.HasKey("TeamId", "PlayerId");
+                    b.HasKey("TeamId", "PDGANumber");
 
-                    b.HasIndex("PlayerId");
+                    b.HasIndex("PDGANumber");
 
-                    b.HasIndex("LeagueId", "PlayerId")
+                    b.HasIndex("TeamId", "PDGANumber")
                         .IsUnique();
 
                     b.ToTable("TeamPlayers");
@@ -802,11 +733,38 @@ namespace fantasydg.Migrations
                     b.Navigation("NewOwner");
                 });
 
+            modelBuilder.Entity("fantasydg.Models.LeaguePlayerFantasyPoints", b =>
+                {
+                    b.HasOne("fantasydg.Models.League", "League")
+                        .WithMany()
+                        .HasForeignKey("LeagueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("fantasydg.Models.Player", "Player")
+                        .WithMany()
+                        .HasForeignKey("PDGANumber")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("fantasydg.Models.Tournament", "Tournament")
+                        .WithMany()
+                        .HasForeignKey("TournamentId", "Division")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("League");
+
+                    b.Navigation("Player");
+
+                    b.Navigation("Tournament");
+                });
+
             modelBuilder.Entity("fantasydg.Models.PlayerTournament", b =>
                 {
                     b.HasOne("fantasydg.Models.Player", "Player")
                         .WithMany("PlayerTournaments")
-                        .HasForeignKey("PlayerId")
+                        .HasForeignKey("PDGANumber")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -819,36 +777,6 @@ namespace fantasydg.Migrations
                     b.Navigation("Player");
 
                     b.Navigation("Tournament");
-                });
-
-            modelBuilder.Entity("fantasydg.Models.Round", b =>
-                {
-                    b.HasOne("fantasydg.Models.Tournament", "Tournament")
-                        .WithMany("Rounds")
-                        .HasForeignKey("TournamentId", "Division")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tournament");
-                });
-
-            modelBuilder.Entity("fantasydg.Models.RoundScore", b =>
-                {
-                    b.HasOne("fantasydg.Models.Player", "Player")
-                        .WithMany()
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("fantasydg.Models.Round", "Round")
-                        .WithMany("RoundScores")
-                        .HasForeignKey("RoundId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Player");
-
-                    b.Navigation("Round");
                 });
 
             modelBuilder.Entity("fantasydg.Models.Team", b =>
@@ -874,7 +802,7 @@ namespace fantasydg.Migrations
                 {
                     b.HasOne("fantasydg.Models.Player", "Player")
                         .WithMany("TeamPlayers")
-                        .HasForeignKey("PlayerId")
+                        .HasForeignKey("PDGANumber")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -912,11 +840,6 @@ namespace fantasydg.Migrations
                     b.Navigation("TeamPlayers");
                 });
 
-            modelBuilder.Entity("fantasydg.Models.Round", b =>
-                {
-                    b.Navigation("RoundScores");
-                });
-
             modelBuilder.Entity("fantasydg.Models.Team", b =>
                 {
                     b.Navigation("TeamPlayers");
@@ -925,8 +848,6 @@ namespace fantasydg.Migrations
             modelBuilder.Entity("fantasydg.Models.Tournament", b =>
                 {
                     b.Navigation("PlayerTournaments");
-
-                    b.Navigation("Rounds");
                 });
 #pragma warning restore 612, 618
         }

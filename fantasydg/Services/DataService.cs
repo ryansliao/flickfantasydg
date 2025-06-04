@@ -50,17 +50,23 @@ namespace fantasydg.Services
         }
 
         // Initialize player object from either the database or API response
-        private async Task<Player> GetOrCreatePlayerAsync(int playerId, string name)
+        private async Task<Player> GetOrCreatePlayerAsync(int pdgaNumber, string name)
         {
-            var player = _db.Players.Local
-                .FirstOrDefault(p => p.PlayerId == playerId)
-                ?? await _db.Players.FindAsync(playerId);
+            // Try local context first (helps avoid unnecessary DB hits)
+            var player = _db.Players.Local.FirstOrDefault(p => p.PDGANumber == pdgaNumber)
+                ?? await _db.Players.FindAsync(pdgaNumber);
 
             if (player == null)
             {
-                player = new Player { PlayerId = playerId, Name = name };
+                player = new Player
+                {
+                    PDGANumber = pdgaNumber,
+                    Name = name
+                };
                 _db.Players.Add(player);
+                await _db.SaveChangesAsync(); // Ensure it's saved to DB
             }
+
             return player;
         }
 
@@ -104,7 +110,7 @@ namespace fantasydg.Services
                 
                 var playerTournaments = new Dictionary<int, PlayerTournament>(); // Initialize dictionary of PlayerTournament objects
 
-                var finalRoundStats = await FetchRounds(tournamentId, division); //Initialize player placement and score from the final round
+                var (finalRoundStats, resultToPdga) = await FetchRounds(tournamentId, division); //Initialize player from the final round
 
                 // Assign PlayerTournament stats for every player present in API response
                 foreach (var playerData in statsArray ?? new JArray())
@@ -115,21 +121,24 @@ namespace fantasydg.Services
                     if (result == null || statList == null)
                         continue;
 
-                    int playerId = result["resultId"]?.Value<int>() ?? 0;
+                    int resultId = result["resultId"]?.Value<int>() ?? 0;
                     string name = $"{result["firstName"]} {result["lastName"]}".Trim();
 
-                    var player = await GetOrCreatePlayerAsync(playerId, name); // Initialize player object
+                    if (!resultToPdga.TryGetValue(resultId, out int PDGANumber) || PDGANumber == 0)
+                        continue;
+                    var player = await GetOrCreatePlayerAsync(PDGANumber, name); // Initialize player object
 
                     // Initialize empty PlayerTournament object
                     var pt = new PlayerTournament
                     {
-                        PlayerId = playerId,
+                        ResultId = resultId,
+                        PDGANumber = PDGANumber,
                         TournamentId = tournamentId,
                         Division = division
                     };
 
                     // Assign final round place and score to PlayerTournament attributes
-                    if (finalRoundStats.TryGetValue(pt.PlayerId, out var stats))
+                    if (finalRoundStats.TryGetValue(pt.PDGANumber, out var stats))
                     {
                         pt.Place = stats.Place;
                         pt.TotalToPar = stats.ToPar;
@@ -166,9 +175,8 @@ namespace fantasydg.Services
                         }
                     }
 
-                    // Adds object to dictionary if the object's player ID doesn't exist in the dictionary yet
-                    if (!playerTournaments.ContainsKey(playerId))
-                        playerTournaments[playerId] = pt;
+                    if (player != null && !playerTournaments.ContainsKey(player.PDGANumber))
+                        playerTournaments[player.PDGANumber] = pt;
                 }
 
                 // Parse tournament strokes gained stats API response
@@ -186,8 +194,8 @@ namespace fantasydg.Services
                     if (result == null || sgList == null)
                         continue;
 
-                    int playerId = result["resultId"]?.Value<int>() ?? 0;
-                    if (!playerTournaments.TryGetValue(playerId, out var pt)) continue; // Skips player IDs not found in the existing dictionary
+                    int PDGANumber = result["resultId"]?.Value<int>() ?? 0;
+                    if (!playerTournaments.TryGetValue(PDGANumber, out var pt)) continue; // Skips player IDs not found in the existing dictionary
 
                     // Assign API strokes gained stats to PlayerTournament attributes
                     foreach (var stat in sgList)
@@ -210,7 +218,7 @@ namespace fantasydg.Services
                 // Adds PlayerTournament object if no PlayerTournament object with matching composite keys exists in database
                 foreach (var pt in playerTournaments.Values)
                 {
-                    var existing = await _db.PlayerTournaments.FindAsync(pt.PlayerId, pt.TournamentId, pt.Division);
+                    var existing = await _db.PlayerTournaments.FindAsync(pt.ResultId);
                     if (existing == null)
                     {
                         _db.PlayerTournaments.Add(pt);
@@ -256,9 +264,11 @@ namespace fantasydg.Services
         }
 
         // Get round stats and populates round object
-        private async Task<Dictionary<int, (int Place, int ToPar)>> FetchRounds(int tournamentId, string division)
+        private async Task<(Dictionary<int, (int Place, int ToPar)> finalStats, Dictionary<int, int> resultToPdga)>
+        FetchRounds(int tournamentId, string division)
         {
-            Dictionary<int, (int Place, int ToPar)> latestRoundStats = null;
+            Dictionary<int, (int Place, int ToPar)> latestRoundStats = new();
+            Dictionary<int, int> resultToPdga = new();
             bool httpError = false;
 
             for (int pdgaRound = 1; pdgaRound <= 12; pdgaRound++)
@@ -282,11 +292,15 @@ namespace fantasydg.Services
                     var currentRoundStats = new Dictionary<int, (int Place, int ToPar)>();
                     foreach (var p in roundData["scores"])
                     {
-                        int playerId = p["ResultID"]?.Value<int>() ?? 0;
+                        int PDGANumber = p["PDGANum"]?.Value<int>() ?? 0;
+                        int resultId = p["ResultID"]?.Value<int>() ?? 0;
                         int place = p["RunningPlace"]?.Value<int>() ?? 0;
                         int toPar = p["ParThruRound"]?.Value<int>() ?? 0;
 
-                        currentRoundStats[playerId] = (place, toPar);
+                        if (PDGANumber > 0)
+                            currentRoundStats[PDGANumber] = (place, toPar);
+                        if (PDGANumber > 0 && resultId > 0)
+                            resultToPdga[resultId] = PDGANumber;
                     }
 
                     if (currentRoundStats.Count > 0)
@@ -302,7 +316,7 @@ namespace fantasydg.Services
                     continue;
                 }
             }
-            return latestRoundStats ?? new Dictionary<int, (int Place, int ToPar)>();
+            return (latestRoundStats, resultToPdga);
         }
     }
 }

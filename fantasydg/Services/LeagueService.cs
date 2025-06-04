@@ -21,15 +21,15 @@ namespace fantasydg.Services
 
             if (league == null) return;
 
-            var playerIds = await _db.PlayerTournaments
+            var PDGANumbers = await _db.PlayerTournaments
                 .Where(pt => pt.Tournament != null) // defensive
-                .Select(pt => pt.PlayerId)
+                .Select(pt => pt.PDGANumber)
                 .Distinct()
                 .ToListAsync();
 
             // Fetch all PlayerTournament entries for those players
             var playerTournaments = await _db.PlayerTournaments
-                .Where(pt => playerIds.Contains(pt.PlayerId))
+                .Where(pt => PDGANumbers.Contains(pt.PDGANumber))
                 .Include(pt => pt.Tournament)
                 .ToListAsync();
 
@@ -39,7 +39,7 @@ namespace fantasydg.Services
 
                 var existing = await _db.LeaguePlayerFantasyPoints.FirstOrDefaultAsync(f =>
                     f.LeagueId == leagueId &&
-                    f.PlayerId == pt.PlayerId &&
+                    f.PDGANumber == pt.PDGANumber &&
                     f.TournamentId == pt.TournamentId &&
                     f.Division == pt.Tournament.Division);
 
@@ -48,7 +48,7 @@ namespace fantasydg.Services
                     _db.LeaguePlayerFantasyPoints.Add(new LeaguePlayerFantasyPoints
                     {
                         LeagueId = leagueId,
-                        PlayerId = pt.PlayerId,
+                        PDGANumber = pt.PDGANumber,
                         TournamentId = pt.TournamentId,
                         Division = pt.Tournament.Division,
                         Points = score
@@ -94,12 +94,12 @@ namespace fantasydg.Services
 
             return (float)Math.Round(score, 2);
         }
-        public async Task<Dictionary<(int playerId, int tournamentId, string division), float>> GetFantasyPointsMapAsync(int leagueId)
+        public async Task<Dictionary<(int PDGANumber, int tournamentId, string division), float>> GetFantasyPointsMapAsync(int leagueId)
         {
             return await _db.LeaguePlayerFantasyPoints
                 .Where(fp => fp.LeagueId == leagueId)
                 .ToDictionaryAsync(
-                    fp => (fp.PlayerId, fp.TournamentId, fp.Division),
+                    fp => (fp.PDGANumber, fp.TournamentId, fp.Division),
                     fp => fp.Points
                 );
         }

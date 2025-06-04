@@ -78,7 +78,7 @@ namespace fantasydg.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPlayer(int teamId, int playerId, int leagueId)
+        public async Task<IActionResult> AddPlayer(int teamId, int PDGANumber, int leagueId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var team = await _db.Teams.FirstOrDefaultAsync(t => t.TeamId == teamId && t.OwnerId == userId);
@@ -87,7 +87,7 @@ namespace fantasydg.Controllers
 
             // Prevent adding duplicates
             bool alreadyAdded = await _db.TeamPlayers
-                .AnyAsync(tp => tp.TeamId == teamId && tp.PlayerId == playerId);
+                .AnyAsync(tp => tp.TeamId == teamId && tp.PDGANumber == PDGANumber);
 
             if (alreadyAdded)
             {
@@ -98,7 +98,7 @@ namespace fantasydg.Controllers
             _db.TeamPlayers.Add(new TeamPlayer
             {
                 TeamId = teamId,
-                PlayerId = playerId,
+                PDGANumber = PDGANumber,
                 LeagueId = leagueId
             });
 

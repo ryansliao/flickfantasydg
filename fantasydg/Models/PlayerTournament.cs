@@ -5,13 +5,16 @@ namespace fantasydg.Models
 {
     public class PlayerTournament
     {
-        [Key, Column(Order = 0)]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int ResultId { get; set; }
+
         [Required]
-        public int PlayerId { get; set; }
-        [Key, Column(Order = 1)]
+        public int PDGANumber { get; set; }
+
         [Required]
         public int TournamentId { get; set; }
-        [Key, Column(Order = 2)]
+
         [Required]
         public string Division { get; set; }
 
@@ -41,7 +44,9 @@ namespace fantasydg.Models
         public double StrokesGainedC1xPutting { get; set; }
         public double StrokesGainedC2Putting { get; set; }
 
+        [ForeignKey("PDGANumber")]
         public Player Player { get; set; }
+        [ForeignKey("TournamentId")]
         public Tournament Tournament { get; set; }
     }
 }

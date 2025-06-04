@@ -54,12 +54,13 @@ namespace fantasydg.Migrations
                 name: "Players",
                 columns: table => new
                 {
-                    PlayerId = table.Column<int>(type: "int", nullable: false),
+                    PDGANumber = table.Column<int>(type: "int", nullable: false),
+                    ResultId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Players", x => x.PlayerId);
+                    table.PrimaryKey("PK_Players", x => x.PDGANumber);
                 });
 
             migrationBuilder.CreateTable(
@@ -190,15 +191,39 @@ namespace fantasydg.Migrations
                     LeagueId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PlayerNumber = table.Column<int>(type: "int", nullable: false)
+                    OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PlayerNumber = table.Column<int>(type: "int", nullable: false),
+                    PlacementWeight = table.Column<double>(type: "float", nullable: false),
+                    FairwayWeight = table.Column<double>(type: "float", nullable: false),
+                    C1InRegWeight = table.Column<double>(type: "float", nullable: false),
+                    C2InRegWeight = table.Column<double>(type: "float", nullable: false),
+                    ParkedWeight = table.Column<double>(type: "float", nullable: false),
+                    ScrambleWeight = table.Column<double>(type: "float", nullable: false),
+                    C1PuttWeight = table.Column<double>(type: "float", nullable: false),
+                    C1xPuttWeight = table.Column<double>(type: "float", nullable: false),
+                    C2PuttWeight = table.Column<double>(type: "float", nullable: false),
+                    OBWeight = table.Column<double>(type: "float", nullable: false),
+                    BirdieWeight = table.Column<double>(type: "float", nullable: false),
+                    BirdieMinusWeight = table.Column<double>(type: "float", nullable: false),
+                    EagleMinusWeight = table.Column<double>(type: "float", nullable: false),
+                    ParWeight = table.Column<double>(type: "float", nullable: false),
+                    BogeyPlusWeight = table.Column<double>(type: "float", nullable: false),
+                    DoubleBogeyPlusWeight = table.Column<double>(type: "float", nullable: false),
+                    TotalPuttDistWeight = table.Column<double>(type: "float", nullable: false),
+                    AvgPuttDistWeight = table.Column<double>(type: "float", nullable: false),
+                    LongThrowInWeight = table.Column<double>(type: "float", nullable: false),
+                    TotalSGWeight = table.Column<double>(type: "float", nullable: false),
+                    PuttingSGWeight = table.Column<double>(type: "float", nullable: false),
+                    TeeToGreenSGWeight = table.Column<double>(type: "float", nullable: false),
+                    C1xSGWeight = table.Column<double>(type: "float", nullable: false),
+                    C2SGWeight = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Leagues", x => x.LeagueId);
                     table.ForeignKey(
-                        name: "FK_Leagues_AspNetUsers_CreatorId",
-                        column: x => x.CreatorId,
+                        name: "FK_Leagues_AspNetUsers_OwnerId",
+                        column: x => x.OwnerId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -208,7 +233,8 @@ namespace fantasydg.Migrations
                 name: "PlayerTournaments",
                 columns: table => new
                 {
-                    PlayerId = table.Column<int>(type: "int", nullable: false),
+                    ResultId = table.Column<int>(type: "int", nullable: false),
+                    PDGANumber = table.Column<int>(type: "int", nullable: false),
                     TournamentId = table.Column<int>(type: "int", nullable: false),
                     Division = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Place = table.Column<int>(type: "int", nullable: false),
@@ -228,7 +254,9 @@ namespace fantasydg.Migrations
                     Par = table.Column<double>(type: "float", nullable: false),
                     Birdie = table.Column<double>(type: "float", nullable: false),
                     EagleMinus = table.Column<double>(type: "float", nullable: false),
-                    PuttDistance = table.Column<int>(type: "int", nullable: false),
+                    TotalPuttDistance = table.Column<int>(type: "int", nullable: false),
+                    LongThrowIn = table.Column<int>(type: "int", nullable: false),
+                    AvgPuttDistance = table.Column<double>(type: "float", nullable: false),
                     StrokesGainedTotal = table.Column<double>(type: "float", nullable: false),
                     StrokesGainedTeeToGreen = table.Column<double>(type: "float", nullable: false),
                     StrokesGainedPutting = table.Column<double>(type: "float", nullable: false),
@@ -237,12 +265,12 @@ namespace fantasydg.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PlayerTournaments", x => new { x.PlayerId, x.TournamentId, x.Division });
+                    table.PrimaryKey("PK_PlayerTournaments", x => x.ResultId);
                     table.ForeignKey(
-                        name: "FK_PlayerTournaments_Players_PlayerId",
-                        column: x => x.PlayerId,
+                        name: "FK_PlayerTournaments_Players_PDGANumber",
+                        column: x => x.PDGANumber,
                         principalTable: "Players",
-                        principalColumn: "PlayerId",
+                        principalColumn: "PDGANumber",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PlayerTournaments_Tournaments_TournamentId_Division",
@@ -253,24 +281,30 @@ namespace fantasydg.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Rounds",
+                name: "LeagueInvitations",
                 columns: table => new
                 {
-                    RoundId = table.Column<int>(type: "int", nullable: false)
+                    LeagueInvitationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RoundNumber = table.Column<int>(type: "int", nullable: false),
-                    TournamentId = table.Column<int>(type: "int", nullable: false),
-                    Division = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    LeagueId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Rounds", x => x.RoundId);
+                    table.PrimaryKey("PK_LeagueInvitations", x => x.LeagueInvitationId);
                     table.ForeignKey(
-                        name: "FK_Rounds_Tournaments_TournamentId_Division",
-                        columns: x => new { x.TournamentId, x.Division },
-                        principalTable: "Tournaments",
-                        principalColumns: new[] { "Id", "Division" },
+                        name: "FK_LeagueInvitations_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LeagueInvitations_Leagues_LeagueId",
+                        column: x => x.LeagueId,
+                        principalTable: "Leagues",
+                        principalColumn: "LeagueId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -298,12 +332,73 @@ namespace fantasydg.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LeagueOwnershipTransfers",
+                columns: table => new
+                {
+                    LeagueOwnershipTransferId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LeagueId = table.Column<int>(type: "int", nullable: false),
+                    NewOwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RequestedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LeagueOwnershipTransfers", x => x.LeagueOwnershipTransferId);
+                    table.ForeignKey(
+                        name: "FK_LeagueOwnershipTransfers_AspNetUsers_NewOwnerId",
+                        column: x => x.NewOwnerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LeagueOwnershipTransfers_Leagues_LeagueId",
+                        column: x => x.LeagueId,
+                        principalTable: "Leagues",
+                        principalColumn: "LeagueId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LeaguePlayerFantasyPoints",
+                columns: table => new
+                {
+                    LeagueId = table.Column<int>(type: "int", nullable: false),
+                    PDGANumber = table.Column<int>(type: "int", nullable: false),
+                    TournamentId = table.Column<int>(type: "int", nullable: false),
+                    LeaguePDGANumber = table.Column<int>(type: "int", nullable: false),
+                    Division = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Points = table.Column<float>(type: "real", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LeaguePlayerFantasyPoints", x => new { x.LeagueId, x.PDGANumber, x.TournamentId });
+                    table.ForeignKey(
+                        name: "FK_LeaguePlayerFantasyPoints_Leagues_LeagueId",
+                        column: x => x.LeagueId,
+                        principalTable: "Leagues",
+                        principalColumn: "LeagueId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LeaguePlayerFantasyPoints_Players_PDGANumber",
+                        column: x => x.PDGANumber,
+                        principalTable: "Players",
+                        principalColumn: "PDGANumber",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LeaguePlayerFantasyPoints_Tournaments_TournamentId_Division",
+                        columns: x => new { x.TournamentId, x.Division },
+                        principalTable: "Tournaments",
+                        principalColumns: new[] { "Id", "Division" },
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Teams",
                 columns: table => new
                 {
                     TeamId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     LeagueId = table.Column<int>(type: "int", nullable: false),
                     OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
@@ -325,70 +420,21 @@ namespace fantasydg.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RoundScores",
-                columns: table => new
-                {
-                    RoundId = table.Column<int>(type: "int", nullable: false),
-                    PlayerId = table.Column<int>(type: "int", nullable: false),
-                    Division = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RunningPlace = table.Column<int>(type: "int", nullable: false),
-                    RoundToPar = table.Column<int>(type: "int", nullable: false),
-                    RunningToPar = table.Column<int>(type: "int", nullable: false),
-                    Fairway = table.Column<double>(type: "float", nullable: false),
-                    C1InReg = table.Column<double>(type: "float", nullable: false),
-                    C2InReg = table.Column<double>(type: "float", nullable: false),
-                    Parked = table.Column<double>(type: "float", nullable: false),
-                    Scramble = table.Column<double>(type: "float", nullable: false),
-                    C1Putting = table.Column<double>(type: "float", nullable: false),
-                    C1xPutting = table.Column<double>(type: "float", nullable: false),
-                    C2Putting = table.Column<double>(type: "float", nullable: false),
-                    ObRate = table.Column<double>(type: "float", nullable: false),
-                    BirdieMinus = table.Column<double>(type: "float", nullable: false),
-                    DoubleBogeyPlus = table.Column<double>(type: "float", nullable: false),
-                    BogeyPlus = table.Column<double>(type: "float", nullable: false),
-                    Par = table.Column<double>(type: "float", nullable: false),
-                    Birdie = table.Column<double>(type: "float", nullable: false),
-                    EagleMinus = table.Column<double>(type: "float", nullable: false),
-                    PuttDistance = table.Column<int>(type: "int", nullable: false),
-                    StrokesGainedTotal = table.Column<double>(type: "float", nullable: false),
-                    StrokesGainedTeeToGreen = table.Column<double>(type: "float", nullable: false),
-                    StrokesGainedPutting = table.Column<double>(type: "float", nullable: false),
-                    StrokesGainedC1xPutting = table.Column<double>(type: "float", nullable: false),
-                    StrokesGainedC2Putting = table.Column<double>(type: "float", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RoundScores", x => new { x.RoundId, x.PlayerId });
-                    table.ForeignKey(
-                        name: "FK_RoundScores_Players_PlayerId",
-                        column: x => x.PlayerId,
-                        principalTable: "Players",
-                        principalColumn: "PlayerId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RoundScores_Rounds_RoundId",
-                        column: x => x.RoundId,
-                        principalTable: "Rounds",
-                        principalColumn: "RoundId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TeamPlayers",
                 columns: table => new
                 {
                     TeamId = table.Column<int>(type: "int", nullable: false),
-                    PlayerId = table.Column<int>(type: "int", nullable: false),
+                    PDGANumber = table.Column<int>(type: "int", nullable: false),
                     LeagueId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TeamPlayers", x => new { x.TeamId, x.PlayerId });
+                    table.PrimaryKey("PK_TeamPlayers", x => new { x.TeamId, x.PDGANumber });
                     table.ForeignKey(
-                        name: "FK_TeamPlayers_Players_PlayerId",
-                        column: x => x.PlayerId,
+                        name: "FK_TeamPlayers_Players_PDGANumber",
+                        column: x => x.PDGANumber,
                         principalTable: "Players",
-                        principalColumn: "PlayerId",
+                        principalColumn: "PDGANumber",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_TeamPlayers_Teams_TeamId",
@@ -438,14 +484,49 @@ namespace fantasydg.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LeagueInvitations_LeagueId",
+                table: "LeagueInvitations",
+                column: "LeagueId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LeagueInvitations_UserId",
+                table: "LeagueInvitations",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LeagueMembers_UserId",
                 table: "LeagueMembers",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Leagues_CreatorId",
+                name: "IX_LeagueOwnershipTransfers_LeagueId",
+                table: "LeagueOwnershipTransfers",
+                column: "LeagueId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LeagueOwnershipTransfers_NewOwnerId",
+                table: "LeagueOwnershipTransfers",
+                column: "NewOwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LeaguePlayerFantasyPoints_PDGANumber",
+                table: "LeaguePlayerFantasyPoints",
+                column: "PDGANumber");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LeaguePlayerFantasyPoints_TournamentId_Division",
+                table: "LeaguePlayerFantasyPoints",
+                columns: new[] { "TournamentId", "Division" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Leagues_OwnerId",
                 table: "Leagues",
-                column: "CreatorId");
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlayerTournaments_PDGANumber",
+                table: "PlayerTournaments",
+                column: "PDGANumber");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PlayerTournaments_TournamentId_Division",
@@ -453,25 +534,15 @@ namespace fantasydg.Migrations
                 columns: new[] { "TournamentId", "Division" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Rounds_TournamentId_Division",
-                table: "Rounds",
-                columns: new[] { "TournamentId", "Division" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RoundScores_PlayerId",
-                table: "RoundScores",
-                column: "PlayerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TeamPlayers_LeagueId_PlayerId",
+                name: "IX_TeamPlayers_PDGANumber",
                 table: "TeamPlayers",
-                columns: new[] { "LeagueId", "PlayerId" },
+                column: "PDGANumber");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TeamPlayers_TeamId_PDGANumber",
+                table: "TeamPlayers",
+                columns: new[] { "TeamId", "PDGANumber" },
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TeamPlayers_PlayerId",
-                table: "TeamPlayers",
-                column: "PlayerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Teams_LeagueId_OwnerId",
@@ -504,13 +575,19 @@ namespace fantasydg.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "LeagueInvitations");
+
+            migrationBuilder.DropTable(
                 name: "LeagueMembers");
 
             migrationBuilder.DropTable(
-                name: "PlayerTournaments");
+                name: "LeagueOwnershipTransfers");
 
             migrationBuilder.DropTable(
-                name: "RoundScores");
+                name: "LeaguePlayerFantasyPoints");
+
+            migrationBuilder.DropTable(
+                name: "PlayerTournaments");
 
             migrationBuilder.DropTable(
                 name: "TeamPlayers");
@@ -519,16 +596,13 @@ namespace fantasydg.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Rounds");
+                name: "Tournaments");
 
             migrationBuilder.DropTable(
                 name: "Players");
 
             migrationBuilder.DropTable(
                 name: "Teams");
-
-            migrationBuilder.DropTable(
-                name: "Tournaments");
 
             migrationBuilder.DropTable(
                 name: "Leagues");

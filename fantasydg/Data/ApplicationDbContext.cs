@@ -24,12 +24,12 @@ namespace fantasydg.Data
         {
             base.OnModelCreating(modelBuilder); //
 
+            modelBuilder.Entity<Player>()
+                .HasKey(p => p.PDGANumber);
+
             // Tournament Relationships
             modelBuilder.Entity<Tournament>()
                 .HasKey(t => new { t.Id, t.Division });
-
-            modelBuilder.Entity<PlayerTournament>()
-                .HasKey(pt => new { pt.PlayerId, pt.TournamentId, pt.Division });
 
             modelBuilder.Entity<PlayerTournament>()
                 .HasOne(pt => pt.Tournament)
@@ -81,7 +81,7 @@ namespace fantasydg.Data
 
             // TeamPlayer Many-to-Many with enforcement: One player per league
             modelBuilder.Entity<TeamPlayer>()
-                .HasKey(tp => new { tp.TeamId, tp.PlayerId });
+                .HasKey(tp => new { tp.TeamId, tp.PDGANumber });
 
             modelBuilder.Entity<TeamPlayer>()
                 .HasOne(tp => tp.Team)
@@ -92,15 +92,15 @@ namespace fantasydg.Data
             modelBuilder.Entity<TeamPlayer>()
                 .HasOne(tp => tp.Player)
                 .WithMany(p => p.TeamPlayers)
-                .HasForeignKey(tp => tp.PlayerId)
+                .HasForeignKey(tp => tp.PDGANumber)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<TeamPlayer>()
-                .HasIndex(tp => new { tp.LeagueId, tp.PlayerId })
+                .HasIndex(tp => new { tp.TeamId, tp.PDGANumber })
                 .IsUnique();
 
             modelBuilder.Entity<LeaguePlayerFantasyPoints>()
-                .HasKey(lp => new { lp.LeagueId, lp.PlayerId, lp.TournamentId });
+                .HasKey(lp => new { lp.LeagueId, lp.PDGANumber, lp.TournamentId });
 
             modelBuilder.Entity<LeaguePlayerFantasyPoints>()
                 .HasOne(lp => lp.League)
@@ -110,7 +110,7 @@ namespace fantasydg.Data
             modelBuilder.Entity<LeaguePlayerFantasyPoints>()
                 .HasOne(lp => lp.Player)
                 .WithMany()
-                .HasForeignKey(lp => lp.PlayerId);
+                .HasForeignKey(lp => lp.PDGANumber);
 
             modelBuilder.Entity<LeaguePlayerFantasyPoints>()
                 .HasOne(lp => lp.Tournament)

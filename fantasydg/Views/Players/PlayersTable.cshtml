@@ -16,7 +16,7 @@
 
 <div class="table-scroll-container">
     <div class="table-scroll-top"></div>
-    <table class="stats-table">
+    <table id="playersTable" class="stats-table">
         <thead>
             <tr>
                 <th>Add</th>
@@ -49,14 +49,14 @@
         <tbody>
             @foreach (var pt in Model.OrderBy(pt => pt.Place))
             {
-                var key = (pt.PlayerId, pt.TournamentId, pt.Tournament.Division);
+                var key = (pt.PDGANumber, pt.TournamentId, pt.Tournament.Division);
                 float points = fantasyMap.ContainsKey(key) ? fantasyMap[key] : 0f;
 
                 <tr>
                     <td>
                         <form asp-controller="Team" asp-action="AddPlayer" method="post">
                             <input type="hidden" name="teamId" value="@teamId" />
-                            <input type="hidden" name="playerId" value="@pt.PlayerId" />
+                            <input type="hidden" name="PDGANumber" value="@pt.PDGANumber" />
                             <input type="hidden" name="leagueId" value="@leagueId" />
                             <button type="submit" class="btn btn-sm btn-success">+</button>
                         </form>

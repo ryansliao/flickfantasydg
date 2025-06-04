@@ -7,8 +7,8 @@ namespace fantasydg.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int PlayerId { get; set; }
-
+        public int PDGANumber { get; set; }
+        public int ResultId { get; set; }
         public string? Name { get; set; }
         public ICollection<PlayerTournament> PlayerTournaments { get; set; }
         public ICollection<TeamPlayer> TeamPlayers { get; set; }

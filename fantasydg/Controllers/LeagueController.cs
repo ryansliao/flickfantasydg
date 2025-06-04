@@ -161,11 +161,6 @@ namespace fantasydg.Controllers
                 tournamentId = allTournaments.FirstOrDefault()?.Id;
 
             var selectedTournament = allTournaments.FirstOrDefault(t => t.Id == tournamentId);
-            if (selectedTournament == null)
-            {
-                ViewBag.FantasyMap = new Dictionary<(int, int, string), float>();
-                return View("~/Views/Players/LeagueView.cshtml", new List<PlayerTournament>());
-            }
 
             tournamentId = selectedTournament.Id;
             ViewBag.SelectedTournamentId = tournamentId;
@@ -190,20 +185,18 @@ namespace fantasydg.Controllers
             var fantasyMap = await _leagueService.GetFantasyPointsMapAsync(leagueId);
             ViewBag.FantasyMap = fantasyMap;
 
-            // filter unassigned PlayerTournaments
-            var assignedIds = await _db.TeamPlayers
+            var assignedPDGANumbers = await _db.TeamPlayers
                 .Where(tp => tp.LeagueId == leagueId)
-                .Select(tp => tp.PlayerId)
-                .Distinct()
+                .Select(tp => tp.PDGANumber)
                 .ToListAsync();
 
             var unassigned = await _db.PlayerTournaments
                 .Include(pt => pt.Player)
                 .Include(pt => pt.Tournament)
                 .Where(pt =>
-                    !assignedIds.Contains(pt.PlayerId)
-                    && pt.Tournament.Division == division
-                    && pt.TournamentId == tournamentId.Value)
+                    pt.Tournament.Division == division &&
+                    pt.TournamentId == tournamentId &&
+                    !assignedPDGANumbers.Contains(pt.PDGANumber))
                 .ToListAsync();
 
             var model = new LeaguePlayersViewModel
@@ -219,6 +212,11 @@ namespace fantasydg.Controllers
             ViewBag.LeagueId = leagueId;
             ViewBag.LeagueName = league.Name;
             ViewBag.TeamId = team.TeamId;
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("~/Views/Players/PlayerTable.cshtml", model);
+            }
 
             return View("~/Views/Players/LeaguePlayers.cshtml", model);
         }

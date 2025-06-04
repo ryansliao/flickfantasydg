@@ -250,6 +250,37 @@
 
 
 <script>
+    $(document).ready(function () {
+        $('#playersTable').DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            pageLength: 25
+        });
+    });
+
+    function updatePlayerTable() {
+        const tournamentId = document.getElementById('tournamentDropdown')?.value;
+        const division = document.getElementById('divisionDropdown')?.value;
+        const leagueId = @ViewBag.LeagueId;
+
+        const url = `/League/FilterPlayers?leagueId=${leagueId}&tournamentId=${tournamentId}&division=${encodeURIComponent(division)}`;
+
+        fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById("table-scroll-container").innerHTML = html;
+            $('#playersTable').DataTable(); // Re-initialize DataTables
+        });
+    }
+
+    document.getElementById("tournamentDropdown")?.addEventListener("change", updatePlayerTable);
+    document.getElementById("divisionDropdown")?.addEventListener("change", updatePlayerTable);
+
     document.addEventListener("DOMContentLoaded", function () {
         const topScroll = document.querySelector('.table-scroll-top');
         const bottomScroll = document.querySelector('.table-scroll-bottom');
@@ -279,18 +310,6 @@
         wrapper.addEventListener('scroll', () => {
             topScroll.scrollLeft = wrapper.scrollLeft;
             bottomScroll.scrollLeft = wrapper.scrollLeft;
-        });
-    });
-
-    document.querySelectorAll('#tournamentDropdown, #divisionDropdown).forEach(el => {
-        el.addEventListener('change', () => {
-            const tournamentId = document.getElementById('tournamentDropdown').value;
-            const division = document.getElementById('divisionDropdown').value;
-
-            let url = `/tournaments/${tournamentId}`;
-            if (division) url += `/${division}`;
-
-            window.location.href = url;
         });
     });
 </script>
