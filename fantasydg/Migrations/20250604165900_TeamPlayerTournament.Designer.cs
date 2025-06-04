@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasydg.Data;
 
@@ -11,9 +12,11 @@ using fantasydg.Data;
 namespace fantasydg.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250604165900_TeamPlayerTournament")]
+    partial class TeamPlayerTournament
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -599,36 +602,6 @@ namespace fantasydg.Migrations
                     b.ToTable("TeamPlayers");
                 });
 
-            modelBuilder.Entity("fantasydg.Models.TeamPlayerTournament", b =>
-                {
-                    b.Property<int>("TeamId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PDGANumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TournamentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Division")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsLocked")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TeamId", "PDGANumber", "TournamentId", "Division");
-
-                    b.HasIndex("PDGANumber");
-
-                    b.HasIndex("TournamentId", "Division");
-
-                    b.ToTable("TeamPlayerTournaments");
-                });
-
             modelBuilder.Entity("fantasydg.Models.Tournament", b =>
                 {
                     b.Property<int>("Id")
@@ -856,33 +829,6 @@ namespace fantasydg.Migrations
                     b.Navigation("Team");
                 });
 
-            modelBuilder.Entity("fantasydg.Models.TeamPlayerTournament", b =>
-                {
-                    b.HasOne("fantasydg.Models.Player", "Player")
-                        .WithMany("TeamPlayerTournaments")
-                        .HasForeignKey("PDGANumber")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("fantasydg.Models.Team", "Team")
-                        .WithMany("TeamPlayerTournaments")
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("fantasydg.Models.Tournament", "Tournament")
-                        .WithMany()
-                        .HasForeignKey("TournamentId", "Division")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Player");
-
-                    b.Navigation("Team");
-
-                    b.Navigation("Tournament");
-                });
-
             modelBuilder.Entity("fantasydg.Models.ApplicationUser", b =>
                 {
                     b.Navigation("LeagueMemberships");
@@ -903,15 +849,11 @@ namespace fantasydg.Migrations
                 {
                     b.Navigation("PlayerTournaments");
 
-                    b.Navigation("TeamPlayerTournaments");
-
                     b.Navigation("TeamPlayers");
                 });
 
             modelBuilder.Entity("fantasydg.Models.Team", b =>
                 {
-                    b.Navigation("TeamPlayerTournaments");
-
                     b.Navigation("TeamPlayers");
                 });
 

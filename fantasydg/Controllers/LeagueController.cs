@@ -94,6 +94,15 @@ namespace fantasydg.Controllers
             ViewBag.TeamId = team?.TeamId;
             ViewBag.LeagueName = league.Name;
 
+            var lockedRosters = await _db.TeamPlayerTournaments
+                .Where(tpt => tpt.IsLocked)
+                .Select(tpt => new { tpt.TeamId, tpt.PDGANumber, tpt.TournamentId })
+                .ToListAsync();
+
+            var lockedSet = new HashSet<(int teamId, int pdga, int tournamentId)>(
+                lockedRosters.Select(r => (r.TeamId, r.PDGANumber, r.TournamentId))
+            );
+
             var standings = await _db.Teams
                 .Where(t => t.LeagueId == id)
                 .Include(t => t.Owner)
@@ -109,7 +118,9 @@ namespace fantasydg.Controllers
                     OwnerName = t.Owner.UserName,
                     Points = t.TeamPlayers
                         .Where(tp => tp.Status == RosterStatus.Starter)
-                        .SelectMany(tp => tp.Player.PlayerTournaments)
+                        .SelectMany(tp => tp.Player.PlayerTournaments
+                            .Where(pt => lockedSet.Contains((tp.TeamId, tp.PDGANumber, pt.TournamentId)))
+                        )
                         .Sum(pt =>
                             pt.Place * league.PlacementWeight +
                             pt.Fairway * league.FairwayWeight +

@@ -20,5 +20,6 @@ namespace fantasydg.Models
 
         // Players on the team (existing Player entities)
         public ICollection<TeamPlayer> TeamPlayers { get; set; }
+        public ICollection<TeamPlayerTournament> TeamPlayerTournaments { get; set; }
     }
 }

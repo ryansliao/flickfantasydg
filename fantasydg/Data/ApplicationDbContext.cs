@@ -12,6 +12,7 @@ namespace fantasydg.Data
         public DbSet<League> Leagues { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<TeamPlayer> TeamPlayers { get; set; }
+        public DbSet<TeamPlayerTournament> TeamPlayerTournaments { get; set; }
         public DbSet<LeagueMember> LeagueMembers { get; set; }
         public DbSet<LeaguePlayerFantasyPoints> LeaguePlayerFantasyPoints { get; set; }
         public DbSet<LeagueInvitation> LeagueInvitations { get; set; }
@@ -36,6 +37,24 @@ namespace fantasydg.Data
                 .WithMany(t => t.PlayerTournaments)
                 .HasForeignKey(pt => new { pt.TournamentId, pt.Division })
                 .HasPrincipalKey(t => new { t.Id, t.Division });
+
+            modelBuilder.Entity<TeamPlayerTournament>()
+                .HasKey(tpt => new { tpt.TeamId, tpt.PDGANumber, tpt.TournamentId, tpt.Division });
+
+            modelBuilder.Entity<TeamPlayerTournament>()
+                .HasOne(tpt => tpt.Team)
+                .WithMany(t => t.TeamPlayerTournaments)
+                .HasForeignKey(tpt => tpt.TeamId);
+
+            modelBuilder.Entity<TeamPlayerTournament>()
+                .HasOne(tpt => tpt.Player)
+                .WithMany(p => p.TeamPlayerTournaments)
+                .HasForeignKey(tpt => tpt.PDGANumber);
+
+            modelBuilder.Entity<TeamPlayerTournament>()
+                .HasOne(tpt => tpt.Tournament)
+                .WithMany()
+                .HasForeignKey(tpt => new { tpt.TournamentId, tpt.Division });
 
             // Identity-based League System
             modelBuilder.Entity<LeagueMember>()

@@ -1,8 +1,11 @@
 ﻿using fantasydg.Data;
 using fantasydg.Models;
+using fantasydg.Models.Repository;
+using fantasydg.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Core.Types;
 using System.Security.Claims;
 
 namespace fantasydg.Controllers
@@ -11,11 +14,13 @@ namespace fantasydg.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly DatabaseRepository _repository;
 
-        public TeamController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
+        public TeamController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, DatabaseRepository repository)
         {
             _db = db;
             _userManager = userManager;
+            _repository = repository;
         }
 
         [HttpGet]
@@ -59,13 +64,15 @@ namespace fantasydg.Controllers
             return RedirectToAction("View", new { teamId = team.TeamId });
         }
 
-        public async Task<IActionResult> View(int teamId)
+        [HttpGet]
+        public async Task<IActionResult> View(int teamId, int? tournamentId = null)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
             var team = await _db.Teams
                 .Include(t => t.League)
                 .Include(t => t.TeamPlayers)
-                .ThenInclude(tp => tp.Player)
+                    .ThenInclude(tp => tp.Player)
                 .FirstOrDefaultAsync(t => t.TeamId == teamId && t.OwnerId == userId);
 
             if (team == null) return NotFound();
@@ -73,39 +80,200 @@ namespace fantasydg.Controllers
             ViewBag.LeagueName = team.League?.Name;
             ViewBag.TeamId = team.TeamId;
 
-            return View("TeamView", team);
+            // Load all tournaments
+            var allTournaments = await _repository.GetAllTournamentsAsync();
+            var orderedTournaments = allTournaments.OrderByDescending(t => t.Date).ToList();
+            ViewBag.Tournaments = orderedTournaments;
+
+            // Select the most recent tournament if none is specified
+            var selectedTournament = tournamentId.HasValue
+                ? orderedTournaments.FirstOrDefault(t => t.Id == tournamentId)
+                : orderedTournaments.FirstOrDefault();
+
+            if (selectedTournament == null)
+            {
+                return View("TeamView", new TeamViewModel { Team = team, Roster = new List<TeamPlayerTournament>() });
+            }
+
+            tournamentId = selectedTournament.Id;
+            ViewBag.SelectedTournamentId = tournamentId;
+
+            // Get available divisions
+            var division = await _db.Tournaments
+                .Where(t => t.Id == tournamentId)
+                .Select(t => t.Division)
+                .FirstOrDefaultAsync();
+
+            var tournamentRoster = await _db.TeamPlayerTournaments
+                .Include(tpt => tpt.Player)
+                .Include(tpt => tpt.Tournament)
+                .Where(tpt => tpt.TeamId == teamId && tpt.TournamentId == tournamentId)
+                .ToListAsync();
+
+            // fallback if no locked snapshot exists
+            List<TeamPlayerTournament> roster;
+            bool isLocked = false;
+
+            if (tournamentRoster.Any())
+            {
+                roster = tournamentRoster;
+                isLocked = tournamentRoster.All(tpt => tpt.IsLocked);
+            }
+            else
+            {
+                // fallback to current team players
+                var teamPlayers = await _db.TeamPlayers
+                    .Include(tp => tp.Player)
+                    .ThenInclude(p => p.PlayerTournaments)
+                    .Where(tp => tp.TeamId == teamId)
+                    .ToListAsync();
+
+                roster = teamPlayers
+                    .Where(tp => tp.Player != null)
+                    .Select(tp => new TeamPlayerTournament
+                    {
+                        TeamId = tp.TeamId,
+                        PDGANumber = tp.PDGANumber,
+                        TournamentId = tournamentId.Value,
+                        Division = tp.Player.PlayerTournaments
+                            .FirstOrDefault(p => p.TournamentId == tournamentId)?.Division ?? "MPO",
+                        Player = tp.Player,
+                        Status = tp.Status.ToString(),
+                        IsLocked = false
+                    }).ToList();
+            }
+
+            ViewBag.IsLocked = isLocked;
+
+            return View("TeamView", new TeamViewModel
+            {
+                Team = team,
+                Roster = roster
+            });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPlayer(int teamId, int PDGANumber, int leagueId)
+        public async Task<IActionResult> AddPlayer(int teamId, int PDGANumber, int leagueId, int tournamentId, string division)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var team = await _db.Teams.FirstOrDefaultAsync(t => t.TeamId == teamId && t.OwnerId == userId);
-
             if (team == null) return Unauthorized();
 
-            // Prevent adding duplicates
             bool alreadyAdded = await _db.TeamPlayers
                 .AnyAsync(tp => tp.TeamId == teamId && tp.PDGANumber == PDGANumber);
 
-            if (alreadyAdded)
+            if (!alreadyAdded)
             {
-                TempData["PlayerAddResult"] = "Player already on your team.";
-                return RedirectToAction("Players", "League", new { leagueId });
+                _db.TeamPlayers.Add(new TeamPlayer
+                {
+                    TeamId = teamId,
+                    PDGANumber = PDGANumber,
+                    LeagueId = leagueId
+                });
+                await _db.SaveChangesAsync();
             }
 
-            _db.TeamPlayers.Add(new TeamPlayer
+            return RedirectToAction("View", "Team", new { teamId, tournamentId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DropPlayer(int teamId, int pdgaNumber, int tournamentId, string division)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var team = await _db.Teams
+                .FirstOrDefaultAsync(t => t.TeamId == teamId && t.OwnerId == userId);
+            if (team == null) return Unauthorized();
+
+            // Fetch the record first
+            var tpt = await _db.TeamPlayerTournaments.FirstOrDefaultAsync(t =>
+                t.TeamId == teamId &&
+                t.PDGANumber == pdgaNumber &&
+                t.TournamentId == tournamentId &&
+                t.Division == division);
+
+            // Now check if it's locked
+            if (tpt != null && !tpt.IsLocked)
             {
-                TeamId = teamId,
-                PDGANumber = PDGANumber,
-                LeagueId = leagueId
+                _db.TeamPlayerTournaments.Remove(tpt);
+                await _db.SaveChangesAsync();
+            }
+
+            return RedirectToAction("View", new
+            {
+                teamId,
+                tournamentId,
+                division
             });
+        }
 
-            await _db.SaveChangesAsync();
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LockRoster(int teamId, int tournamentId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var team = await _db.Teams
+                .Include(t => t.TeamPlayers)
+                    .ThenInclude(tp => tp.Player)
+                    .ThenInclude(p => p.PlayerTournaments)
+                .FirstOrDefaultAsync(t => t.TeamId == teamId && t.OwnerId == userId);
 
-            TempData["PlayerAddResult"] = "Player added to your team!";
-            return RedirectToAction("Players", "League", new { leagueId });
+            if (team == null)
+                return Unauthorized();
+
+            // Get all starter TeamPlayers
+            var starters = team.TeamPlayers.Where(tp => tp.Status == RosterStatus.Starter).ToList();
+
+            // Check if already locked
+            var alreadyLocked = await _db.TeamPlayerTournaments
+                .Where(tpt => tpt.TeamId == teamId && tpt.TournamentId == tournamentId && tpt.IsLocked)
+                .AnyAsync();
+
+            if (alreadyLocked)
+            {
+                // Unlock: remove existing entries
+                var existing = await _db.TeamPlayerTournaments
+                    .Where(tpt => tpt.TeamId == teamId && tpt.TournamentId == tournamentId)
+                    .ToListAsync();
+
+                _db.TeamPlayerTournaments.RemoveRange(existing);
+                await _db.SaveChangesAsync();
+            }
+            else
+            {
+                if (!starters.Any())
+                {
+                    TempData["RosterLockError"] = "You must assign at least one starter before locking the roster.";
+                    return RedirectToAction("View", new { teamId, tournamentId });
+                }
+
+                // Lock: create snapshot
+                foreach (var tp in starters)
+                {
+                    // Try to find the matching player tournament record for this tournament
+                    var pt = tp.Player.PlayerTournaments
+                        .FirstOrDefault(p => p.TournamentId == tournamentId);
+
+                    if (pt != null)
+                    {
+                        _db.TeamPlayerTournaments.Add(new TeamPlayerTournament
+                        {
+                            TeamId = teamId,
+                            PDGANumber = tp.PDGANumber,
+                            TournamentId = tournamentId,
+                            Division = pt.Division, // ✅ Derive division from player tournament stats
+                            Status = tp.Status.ToString(),
+                            IsLocked = true
+                        });
+                    }
+                }
+
+                await _db.SaveChangesAsync();
+            }
+
+            return RedirectToAction("View", new { teamId, tournamentId });
         }
 
         [HttpPost]

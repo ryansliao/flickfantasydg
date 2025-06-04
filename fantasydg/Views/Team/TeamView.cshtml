@@ -1,31 +1,56 @@
-﻿@model fantasydg.Models.Team
+﻿@model fantasydg.Models.ViewModels.TeamViewModel
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 
 @{
     Layout = "_Layout";
     var teamId = ViewBag.TeamId as int?;
     var tokens = Antiforgery.GetAndStoreTokens(Context);
-    var league = Model.League;
+    var league = Model.Team.League;
     var types = new[] {
         new { Key = "Starter", Label = "Starters", Count = league.StarterCount },
         new { Key = "Bench", Label = "Bench", Count = league.RosterLimit - league.StarterCount },
         new { Key = "InjuryReserve", Label = "Injury Reserve", Count = league.InjuryReserveLimit }
     };
+    bool isLocked = ViewBag.IsLocked != null && (bool)ViewBag.IsLocked;
 }
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-auto p-0">
-            <partial name="_LeagueTeamSidebar" model="(ViewBag.LeagueName as string, Model.LeagueId, ViewBag.TeamId as int?)" />
+            <partial name="_LeagueTeamSidebar" model="(ViewBag.LeagueName as string, Model.Team.LeagueId, ViewBag.TeamId as int?)" />
         </div>
         <div class="col-auto p-0" style="margin-left: 20px">
-            <h3 class="mt-4">@Model.Name</h3>
+            <h3 class="mt-4">@Model.Team.Name</h3>
+            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
+
+            <input type="hidden" name="leagueId" value="@Model.Team.LeagueId" />
+            <form method="get" asp-action="View" asp-controller="Team">
+                <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
+
+                <div class="row g-2 align-items-end mb-3" style="min-width: 0;">
+                    <div class="col-auto">
+                        <label for="tournament">Tournament:</label>
+                        @{
+                            int selectedId = ViewBag.SelectedTournamentId ?? -1;
+                        }
+
+                        <select id="tournamentDropdown" name="tournamentId" onchange="this.form.submit()">
+                            @foreach (var t in ViewBag.Tournaments as List<fantasydg.Models.Tournament>)
+                            {
+                                var selected = t.Id == selectedId ? "selected" : null;
+                                <option value="@t.Id" selected="@selected">@t.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </form>
+
             <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
             <div class="row justify-content-center">
                 @foreach (var rosterGroup in types)
                 {
-                    var players = Model.TeamPlayers
+                    var players = Model.Roster
                     .Where(tp => tp.Status.ToString() == rosterGroup.Key)
                     .ToList();
 
@@ -36,39 +61,104 @@
                         {
                             var tp = i < players.Count ? players[i] : null;
 
-                            <div class="drop-slot"
+                            var cardClass = tp != null
+                            ? "player-card " + (
+                            tp.Status == nameof(RosterStatus.Starter) ? "starter-card" :
+                            tp.Status == nameof(RosterStatus.Bench) ? "bench-card" : "ir-card")
+                            : "player-card";
+
+                            <div class="drop-slot @(isLocked ? "locked-slot" : "")"
                                  data-status="@rosterGroup.Key"
-                                 ondrop="drop(event)"
-                                 ondragover="allowDrop(event)">
+                                 @Html.Raw(!isLocked ? "ondrop=\"drop(event)\" ondragover=\"allowDrop(event)\"" : "")>
                                 @if (tp != null)
                                 {
-                                    <div class="player-card @(tp.Status == RosterStatus.Starter ? "starter-card" : tp.Status == RosterStatus.Bench ? "bench-card" : "ir-card")"
-                                         draggable="true"
-                                         ondragstart="drag(event)"
-                                         data-id="@tp.PDGANumber">
-                                        @tp.Player.Name
-                                    </div>
+                                    if (!isLocked)
+                                    {
+                                        <div class="@cardClass"
+                                             draggable="true"
+                                             ondragstart="drag(event)"
+                                             data-id="@tp.PDGANumber"
+                                             onmousedown="trackClickStart(event)"
+                                             onmouseup="maybeOpenModal(event, '@tp.Player.Name', '@tp.PDGANumber')">
+                                            @tp.Player.Name
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="@cardClass">
+                                            @tp.Player.Name
+                                        </div>
+                                    }
                                 }
                             </div>
                         }
                     </div>
                 }
             </div>
+            @if (Model.Roster.Any())
+            {
+                <form method="post" asp-action="LockRoster" style="margin-bottom: 5px;">
+                    <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
+                    <input type="hidden" name="tournamentId" value="@ViewBag.SelectedTournamentId" />
+                    <button type="submit" class="btn btn-@(isLocked ? "secondary" : "primary")">
+                        @(isLocked ? "Unlock Roster" : "Lock Roster")
+                    </button>
+                </form>
+
+                @if (TempData["RosterLockError"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["RosterLockError"]
+                    </div>
+                }
+            }
+
+            @if (isLocked)
+            {
+                <div class="alert alert-warning mt-3">Edits are disabled while this roster is locked.</div>
+            }
         </div>
+    </div>
+</div>
+
+<div id="playerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1050;">
+    <div class="modal-content bg-white p-4 rounded" style="margin:10% auto; max-width:400px; position:relative;">
+        <button onclick="closeModal()"
+                style="position:absolute; top:10px; right:15px; border:none; background:none; font-size:1.5rem; cursor:pointer;">
+            &times;
+        </button>
+        <h4 id="playerModalName"></h4>
+        <p>PDGA #: <span id="playerModalId"></span></p>
+        <form method="post" asp-action="DropPlayer">
+            <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
+            <input type="hidden" name="pdgaNumber" id="modalPdgaNumber" />
+            <input type="hidden" name="tournamentId" value="@ViewBag.SelectedTournamentId" />
+            @if (!(bool)(ViewBag.IsLocked ?? false))
+            {
+                <button type="submit" class="btn btn-danger mt-2">Drop Player</button>
+            }
+            else
+            {
+                <div class="alert alert-warning mt-2">Roster is locked.</div>
+            }
+        </form>
     </div>
 </div>
 
 @section Scripts {
     <script>
         function allowDrop(ev) {
+            if (@(isLocked.ToString().ToLower())) return;
             ev.preventDefault();
         }
 
         function drag(ev) {
+            if (@(isLocked.ToString().ToLower())) return;
             ev.dataTransfer.setData("playerId", ev.target.dataset.id);
         }
 
         function drop(ev) {
+            if (@(isLocked.ToString().ToLower())) return;
             ev.preventDefault();
             const pdgaNumber = ev.dataTransfer.getData("playerId");
             const newStatus = ev.currentTarget.dataset.status;
@@ -77,7 +167,6 @@
             const originalSlot = dragged.closest('.drop-slot');
             const target = ev.currentTarget;
 
-            // Clone and assign new class
             const clone = dragged.cloneNode(true);
             clone.setAttribute("ondragstart", "drag(event)");
             clone.classList.remove("starter-card", "bench-card", "ir-card");
@@ -88,17 +177,14 @@
                 case "InjuryReserve": clone.classList.add("ir-card"); break;
             }
 
-            // Replace target content
             const existing = target.querySelector('.player-card');
             if (existing) target.removeChild(existing);
             target.appendChild(clone);
 
-            // Clear original slot **after drop completes**
             if (originalSlot && originalSlot !== target) {
                 originalSlot.innerHTML = '';
             }
 
-            // Update server
             fetch(`/Team/ChangeStatus/${pdgaNumber}`, {
                 method: 'POST',
                 headers: {
@@ -107,6 +193,37 @@
                 },
                 body: JSON.stringify({ newStatus })
             });
+        }
+
+        let mouseDownTime = null;
+
+        function trackClickStart(event) {
+            mouseDownTime = new Date().getTime();
+        }
+
+        function showPlayerModal(name, pdgaNumber) {
+            document.getElementById('playerModalName').textContent = name;
+            document.getElementById('playerModalId').textContent = pdgaNumber;
+            document.getElementById('modalPdgaNumber').value = pdgaNumber;
+            document.getElementById('playerModal').style.display = 'block';
+        }
+
+        function maybeOpenModal(event, name, pdgaNumber) {
+            const duration = new Date().getTime() - mouseDownTime;
+            if (duration < 200) { // treat as a click
+                showPlayerModal(name, pdgaNumber);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('playerModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('playerModal');
+            if (event.target === modal) {
+                closeModal();
+            }
         }
     </script>
 }
@@ -138,6 +255,11 @@
         margin-left: auto;
         margin-right: auto;
         color: inherit;
+    }
+
+    .locked-slot {
+        background-color: #eee;
+        cursor: not-allowed;
     }
 
     .player-card {
@@ -174,5 +296,36 @@
 
     .player-card:active {
         cursor: grabbing;
+    }
+
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.65);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1050;
+    }
+
+    .modal-content {
+        background: #fff;
+        padding: 1.5rem;
+        border-radius: 8px;
+        position: relative;
+        width: 320px;
+        max-width: 90%;
+        text-align: center;
+    }
+
+    .close-button {
+        position: absolute;
+        right: 10px;
+        top: 6px;
+        font-size: 24px;
+        cursor: pointer;
     }
 </style>

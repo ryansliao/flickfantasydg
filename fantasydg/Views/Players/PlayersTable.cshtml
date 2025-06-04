@@ -55,10 +55,12 @@
 
                 <tr>
                     <td>
-                        <form asp-controller="Team" asp-action="AddPlayer" method="post">
-                            <input type="hidden" name="teamId" value="@teamId" />
+                        <form method="post" asp-action="AddPlayer" asp-controller="Team">
+                            <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
+                            <input type="hidden" name="leagueId" value="@ViewBag.LeagueId" />
                             <input type="hidden" name="PDGANumber" value="@pt.PDGANumber" />
-                            <input type="hidden" name="leagueId" value="@leagueId" />
+                            <input type="hidden" name="tournamentId" value="@ViewBag.SelectedTournamentId" />
+                            <input type="hidden" name="division" value="@ViewBag.SelectedDivision" />
                             <button type="submit" class="btn btn-sm btn-success">+</button>
                         </form>
                     </td>
