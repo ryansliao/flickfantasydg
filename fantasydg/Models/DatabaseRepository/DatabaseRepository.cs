@@ -25,21 +25,6 @@ namespace fantasydg.Models.Repository
                 .ToListAsync();
         }
 
-        // Get RoundScores table
-        public async Task<List<RoundScore>> GetRoundScoresAsync(int id, string division, int round)
-        {
-            return await _db.RoundScores
-                .Include(rs => rs.Player)
-                .Include(rs => rs.Round)
-                    .ThenInclude(r => r.Tournament)
-                .Where(rs => rs.Round.Tournament.Id == id
-                          && rs.Division == division
-                          && rs.Round.RoundNumber == round)
-                .OrderBy(rs => rs.RunningPlace)
-                    .ThenBy(rs => rs.RoundToPar)
-                .ToListAsync();
-        }
-
         // Get Tournaments table
         public async Task<List<Tournament>> GetAllTournamentsAsync()
         {
@@ -60,18 +45,6 @@ namespace fantasydg.Models.Repository
                 .Where(t => t.Id == id)
                 .Select(t => t.Division)
                 .Distinct()
-                .ToListAsync();
-        }
-
-        // Get Rounds table
-        public async Task<List<int>> GetRoundsForTournamentAsync(int id, string division)
-        {
-            return await _db.Rounds
-                .Include(r => r.Tournament)
-                .Where(r => r.Tournament.Id == id && r.Division == division)
-                .Select(r => r.RoundNumber)
-                .Distinct()
-                .OrderBy(n => n)
                 .ToListAsync();
         }
     }

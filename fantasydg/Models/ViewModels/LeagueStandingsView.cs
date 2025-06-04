@@ -1,4 +1,4 @@
-﻿namespace fantasydg.Models
+﻿namespace fantasydg.Models.ViewModels
 {
     public class LeagueStandingView
     {

@@ -75,6 +75,37 @@ namespace fantasydg.Controllers
 
             return View("TeamView", team);
         }
-    }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddPlayer(int teamId, int playerId, int leagueId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var team = await _db.Teams.FirstOrDefaultAsync(t => t.TeamId == teamId && t.OwnerId == userId);
+
+            if (team == null) return Unauthorized();
+
+            // Prevent adding duplicates
+            bool alreadyAdded = await _db.TeamPlayers
+                .AnyAsync(tp => tp.TeamId == teamId && tp.PlayerId == playerId);
+
+            if (alreadyAdded)
+            {
+                TempData["PlayerAddResult"] = "Player already on your team.";
+                return RedirectToAction("Players", "League", new { leagueId });
+            }
+
+            _db.TeamPlayers.Add(new TeamPlayer
+            {
+                TeamId = teamId,
+                PlayerId = playerId,
+                LeagueId = leagueId
+            });
+
+            await _db.SaveChangesAsync();
+
+            TempData["PlayerAddResult"] = "Player added to your team!";
+            return RedirectToAction("Players", "League", new { leagueId });
+        }
+    }
 }

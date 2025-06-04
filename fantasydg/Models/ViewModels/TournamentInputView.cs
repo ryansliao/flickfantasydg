@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace fantasydg.Models
+namespace fantasydg.Models.ViewModels
 {
     public class TournamentInputView
     {

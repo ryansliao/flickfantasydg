@@ -14,6 +14,5 @@ public class Tournament
     public string? Name { get; set; }
     public double Weight { get; set; }
 
-    public ICollection<Round> Rounds { get; set; }
     public ICollection<PlayerTournament> PlayerTournaments { get; set; }
 }

@@ -258,9 +258,9 @@ namespace fantasydg.Services
         // Get round stats and populates round object
         private async Task<Dictionary<int, (int Place, int ToPar)>> FetchRounds(int tournamentId, string division)
         {
-            Dictionary<int, RoundScore> finalPlayerMap = null;
-            int actualRoundNumber = 0;
+            Dictionary<int, (int Place, int ToPar)> latestRoundStats = null;
             bool httpError = false;
+
             for (int pdgaRound = 1; pdgaRound <= 12; pdgaRound++)
             {
                 // If a round doesn't exist, skip to round 12
@@ -279,194 +279,21 @@ namespace fantasydg.Services
                         continue;
                     }
 
-                    int? liveRoundId = (int?)roundData["live_round_id"];
-                    if (liveRoundId == null) continue;
-                    actualRoundNumber += 1; // Adds 1 to round number every valid API request
-
-                    // Initiate local tournament object from either the database or API response
-                    var tournament = _db.Tournaments.Local
-                        .FirstOrDefault(t => t.Id == tournamentId && t.Division == division)
-                        ?? await _db.Tournaments
-                            .FirstOrDefaultAsync(t => t.Id == tournamentId && t.Division == division);
-                    if (tournament == null)
-                    {
-                        tournament = new Tournament { Id = tournamentId, Division = division, Name = $"Tournament {tournamentId}", Date = DateTime.UtcNow, Weight = 1.0 };
-                        _db.Tournaments.Add(tournament);
-                        await _db.SaveChangesAsync();
-                    }
-
-                    // Initiate local round object from either the database or API response
-                    var round = _db.Rounds.Local
-                        .FirstOrDefault(r => r.TournamentId == tournamentId &&
-                                             r.Division == division &&
-                                             r.RoundNumber == actualRoundNumber)
-                        ?? await _db.Rounds
-                            .FirstOrDefaultAsync(r => r.TournamentId == tournamentId &&
-                                                      r.Division == division &&
-                                                      r.RoundNumber == actualRoundNumber);
-                    if (round == null)
-                    {
-                        round = new Round { TournamentId = tournamentId, Division = division, RoundNumber = actualRoundNumber };
-                        _db.Rounds.Add(round);
-                        await _db.SaveChangesAsync();
-                    }
-                    int roundId = round.RoundId;
-
-                    var playerMap = new Dictionary<int, RoundScore>(); // Initialize dictionary of RoundScore objects
-
-                    // Assign round info for every player present in API response
+                    var currentRoundStats = new Dictionary<int, (int Place, int ToPar)>();
                     foreach (var p in roundData["scores"])
                     {
                         int playerId = p["ResultID"]?.Value<int>() ?? 0;
-                        string name = $"{p["FirstName"]} {p["LastName"]}".Trim();
                         int place = p["RunningPlace"]?.Value<int>() ?? 0;
-                        int roundScore = p["RoundtoPar"]?.Value<int>() ?? 0;
                         int toPar = p["ParThruRound"]?.Value<int>() ?? 0;
 
-                        var player = await GetOrCreatePlayerAsync(playerId, name); // Initialize Player object
-
-                        var rs = new RoundScore // Initialize RoundScore object
-                        {
-                            PlayerId = playerId,
-                            RoundId = roundId,
-                            Division = division,
-                            RunningPlace = place,
-                            RoundToPar = roundScore,
-                            RunningToPar = toPar
-                        };
-
-                        // Adds object to dictionary if the object's player ID doesn't exist in the dictionary yet
-                        if (!playerMap.ContainsKey(playerId))
-                            playerMap[playerId] = rs;
+                        currentRoundStats[playerId] = (place, toPar);
                     }
 
-                    // Parse round stats API response
-                    string roundStatsUrl = $"https://www.pdga.com/api/v1/feat/stats/round-stats/{liveRoundId}";
-                    var roundStatsJson = await _httpClient.GetStringAsync(roundStatsUrl);
-                    var roundStatsArray = JArray.Parse(roundStatsJson);
-
-                    // Assign API stats to RoundScore attributes
-                    foreach (var playerData in roundStatsArray)
+                    if (currentRoundStats.Count > 0)
                     {
-                        var liveResult = playerData["score"]?["liveResult"];
-                        if (liveResult == null) continue;
-
-                        int playerId = liveResult["resultId"]?.Value<int>() ?? 0;
-                        if (!playerMap.TryGetValue(playerId, out var rs)) continue;
-
-                        foreach (var stat in playerData["stats"] ?? new JArray())
-                        {
-                            int statId = stat["statId"]?.Value<int>() ?? 0;
-                            double statValue = stat["statValue"]?.Type == JTokenType.Null ? 0.0 : stat["statValue"]?.Value<double>() ?? 0.0;
-                            int statCount = stat["statValue"]?.Type == JTokenType.Null ? 0 : stat["statValue"]?.Value<int>() ?? 0;
-
-                            switch (statId)
-                            {
-                                case 1: rs.Fairway = Math.Round(statValue, 0); break;
-                                case 2: rs.C1InReg = Math.Round(statValue, 0); break;
-                                case 3: rs.C2InReg = Math.Round(statValue, 0); break;
-                                case 4: rs.Parked = Math.Round(statValue, 1); break;
-                                case 5: rs.Scramble = Math.Round(statValue, 0); break;
-                                case 6: rs.C1Putting = Math.Round(statValue, 0); break;
-                                case 7: rs.C1xPutting = Math.Round(statValue, 0); break;
-                                case 8: rs.C2Putting = Math.Round(statValue, 0); break;
-                                case 9: rs.ObRate = Math.Round(statValue, 1); break;
-                                case 10: rs.BirdieMinus = Math.Round(statValue, 0); break;
-                                case 11: rs.DoubleBogeyPlus = Math.Round(statValue, 1); break;
-                                case 12: rs.BogeyPlus = Math.Round(statValue, 0); break;
-                                case 13: rs.Par = Math.Round(statValue, 0); break;
-                                case 14: rs.Birdie = Math.Round(statValue, 0); break;
-                                case 15: rs.EagleMinus = Math.Round(statValue, 1); break;
-                                case 16: rs.TotalPuttDistance = statCount; break;
-                                case 17: rs.LongThrowIn = statCount; break;
-                                case 18: rs.AvgPuttDistance = Math.Round(statValue, 1); break;
-                                default: continue;
-                            }
-                        }
+                        latestRoundStats = currentRoundStats;
                     }
 
-                    // Parse round strokes gained stats API response
-                    string strokesUrl = $"https://www.pdga.com/api/v1/feat/stats/strokes-gained/{liveRoundId}";
-                    var strokesJson = await _httpClient.GetStringAsync(strokesUrl);
-                    var strokesArray = JArray.Parse(strokesJson);
-
-                    // Assign API strokes gained stats to RoundScore attributes
-                    foreach (var sg in strokesArray)
-                    {
-                        var liveResult = sg["score"]?["liveResult"];
-                        if (liveResult == null) continue;
-
-                        int playerId = liveResult["resultId"]?.Value<int>() ?? 0;
-                        if (!playerMap.TryGetValue(playerId, out var rs)) continue;
-
-                        foreach (var stat in sg["stats"] ?? new JArray())
-                        {
-                            int statId = stat["statId"]?.Value<int>() ?? 0;
-                            double statValue = stat["statValue"]?.Type == JTokenType.Null ? 0.0 : stat["statValue"]?.Value<double>() ?? 0.0;
-
-                            switch (statId)
-                            {
-                                case 100: rs.StrokesGainedTotal = Math.Round(statValue, 2); break;
-                                case 101: rs.StrokesGainedPutting = Math.Round(statValue, 2); break;
-                                case 102: rs.StrokesGainedTeeToGreen = Math.Round(statValue, 2); break;
-                                case 104: rs.StrokesGainedC1xPutting = Math.Round(statValue, 2); break;
-                                case 105: rs.StrokesGainedC2Putting = Math.Round(statValue, 2); break;
-                                default: continue;
-                            }
-                        }
-                    }
-
-                    // Adds RoundScore object if no RoundScore object with matching composite keys exists in database 
-                    foreach (var rs in playerMap.Values)
-                    {
-                        var existing = await _db.RoundScores.FindAsync(rs.RoundId, rs.PlayerId);
-                        if (existing == null)
-                        {
-                            _db.RoundScores.Add(rs);
-                        }
-                        else
-                        {
-                            existing.RunningPlace = rs.RunningPlace;
-                            existing.RoundToPar = rs.RoundToPar;
-                            existing.RunningToPar = rs.RunningToPar;
-                            existing.Fairway = rs.Fairway;
-                            existing.C1InReg = rs.C1InReg;
-                            existing.C2InReg = rs.C2InReg;
-                            existing.Parked = rs.Parked;
-                            existing.Scramble = rs.Scramble;
-                            existing.C1Putting = rs.C1Putting;
-                            existing.C1xPutting = rs.C1xPutting;
-                            existing.C2Putting = rs.C2Putting;
-                            existing.ObRate = rs.ObRate;
-                            existing.BirdieMinus = rs.BirdieMinus;
-                            existing.DoubleBogeyPlus = rs.DoubleBogeyPlus;
-                            existing.BogeyPlus = rs.BogeyPlus;
-                            existing.Par = rs.Par;
-                            existing.Birdie = rs.Birdie;
-                            existing.EagleMinus = rs.EagleMinus;
-                            existing.TotalPuttDistance = rs.TotalPuttDistance;
-                            existing.LongThrowIn = rs.LongThrowIn;
-                            existing.AvgPuttDistance = rs.AvgPuttDistance;
-                            existing.StrokesGainedTotal = rs.StrokesGainedTotal;
-                            existing.StrokesGainedPutting = rs.StrokesGainedPutting;
-                            existing.StrokesGainedTeeToGreen = rs.StrokesGainedTeeToGreen;
-                            existing.StrokesGainedC1xPutting = rs.StrokesGainedC1xPutting;
-                            existing.StrokesGainedC2Putting = rs.StrokesGainedC2Putting;
-
-                            _db.Entry(existing).State = EntityState.Modified;
-                        }                       
-                    }
-
-                    if (pdgaRound == 12 && playerMap.Count > 0)
-                    {
-                        finalPlayerMap = playerMap; // ✅ now overwritten by round 12
-                    }
-                    else if (playerMap.Count > 0)
-                    {
-                        finalPlayerMap = playerMap; // ✅ previous logic for earlier valid rounds
-                    }
-
-                    await _db.SaveChangesAsync(); // Save RoundScore object to database
                 }
                 catch (Exception ex)
                 {
@@ -475,24 +302,7 @@ namespace fantasydg.Services
                     continue;
                 }
             }
-
-            // Return final round RoundScore dictionary
-            return finalPlayerMap != null
-                ? GetFinalRoundStats(finalPlayerMap)
-                : new Dictionary<int, (int Place, int ToPar)>();
-        }
-
-        // Gets final round placements and scores for each player
-        private Dictionary<int, (int Place, int ToPar)> GetFinalRoundStats(Dictionary<int, RoundScore> finalPlayerMap)
-        {
-            var finalRoundStats = new Dictionary<int, (int Place, int ToPar)>();
-
-            foreach (var kvp in finalPlayerMap)
-            {
-                finalRoundStats[kvp.Key] = (kvp.Value.RunningPlace, kvp.Value.RunningToPar);
-            }
-
-            return finalRoundStats;
+            return latestRoundStats ?? new Dictionary<int, (int Place, int ToPar)>();
         }
     }
 }

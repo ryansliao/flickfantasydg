@@ -1,5 +1,6 @@
 ﻿using fantasydg.Data;
 using fantasydg.Models;
+using fantasydg.Models.ViewModels;
 using fantasydg.Models.Repository;
 using fantasydg.Services;
 using Microsoft.AspNetCore.Authorization;
