@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasydg.Data;
 
@@ -11,9 +12,11 @@ using fantasydg.Data;
 namespace fantasydg.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250604050356_RosterSpots")]
+    partial class RosterSpots
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -274,9 +277,6 @@ namespace fantasydg.Migrations
                     b.Property<double>("FairwayWeight")
                         .HasColumnType("float");
 
-                    b.Property<int>("InjuryReserveLimit")
-                        .HasColumnType("int");
-
                     b.Property<double>("LongThrowInWeight")
                         .HasColumnType("float");
 
@@ -306,14 +306,8 @@ namespace fantasydg.Migrations
                     b.Property<double>("PuttingSGWeight")
                         .HasColumnType("float");
 
-                    b.Property<int>("RosterLimit")
-                        .HasColumnType("int");
-
                     b.Property<double>("ScrambleWeight")
                         .HasColumnType("float");
-
-                    b.Property<int>("StarterCount")
-                        .HasColumnType("int");
 
                     b.Property<double>("TeeToGreenSGWeight")
                         .HasColumnType("float");

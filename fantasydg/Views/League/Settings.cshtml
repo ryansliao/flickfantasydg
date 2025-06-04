@@ -11,7 +11,40 @@
         </div>
 
         <div class="col pt-3">
-            <h2>@Model.Name</h2>
+            <h2>Settings</h2>
+            @if (TempData["RosterSettingsSaved"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["RosterSettingsSaved"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+
+            <h3>Roster Configuration</h3>
+
+            <form asp-action="SaveRosterSettings" asp-controller="League" method="post" class="mt-4" style="max-width: 400px;">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="leagueId" value="@Model.LeagueId" />
+
+                <div class="mb-2 d-flex justify-content-between align-items-center">
+                    <label for="StarterCount" class="me-2">Number of Starters</label>
+                    <input type="number" step="1" name="StarterCount" value="@Model.StarterCount" class="form-control" style="width: 80px; height: 40px;" />
+                </div>
+
+                <div class="mb-2 d-flex justify-content-between align-items-center">
+                    <label for="RosterLimit" class="me-2">Total Roster Spots</label>
+                    <input type="number" step="1" name="RosterLimit" value="@Model.RosterLimit" class="form-control" style="width: 80px; height: 40px;" />
+                </div>
+
+                <div class="mb-2 d-flex justify-content-between align-items-center">
+                    <label for="InjuryReserveLimit" class="me-2">Injury Reserve Slots</label>
+                    <input type="number" step="1" name="InjuryReserveLimit" value="@Model.InjuryReserveLimit" class="form-control" style="width: 80px; height: 40px;" />
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-2">Save Roster Settings</button>
+            </form>
 
             <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
 
@@ -23,7 +56,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
-            <form asp-action="SaveSettings" asp-controller="League" method="post" class="mt-4" style="max-width: 400px;">
+            <form asp-action="SaveScoringSettings" asp-controller="League" method="post" class="mt-4" style="max-width: 400px;">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="leagueId" value="@Model.LeagueId" />
 

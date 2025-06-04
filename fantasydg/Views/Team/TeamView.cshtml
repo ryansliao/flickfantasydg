@@ -1,8 +1,16 @@
 ﻿@model fantasydg.Models.Team
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 
 @{
     Layout = "_Layout";
     var teamId = ViewBag.TeamId as int?;
+    var tokens = Antiforgery.GetAndStoreTokens(Context);
+    var league = Model.League;
+    var types = new[] {
+        new { Key = "Starter", Label = "Starters", Count = league.StarterCount },
+        new { Key = "Bench", Label = "Bench", Count = league.RosterLimit - league.StarterCount },
+        new { Key = "InjuryReserve", Label = "Injury Reserve", Count = league.InjuryReserveLimit }
+    };
 }
 
 <div class="container-fluid">
@@ -10,18 +18,161 @@
         <div class="col-auto p-0">
             <partial name="_LeagueTeamSidebar" model="(ViewBag.LeagueName as string, Model.LeagueId, ViewBag.TeamId as int?)" />
         </div>
+        <div class="col-auto p-0" style="margin-left: 20px">
+            <h3 class="mt-4">@Model.Name</h3>
+            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
-        <div class="col pt-3">
-            <h2>@Model.Name</h2>
-            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
-
-            <h3>Players:</h3>
-            <ul>
-                @foreach (var tp in Model.TeamPlayers)
+            <div class="row justify-content-center">
+                @foreach (var rosterGroup in types)
                 {
-                    <li>@tp.Player.Name</li>
+                    var players = Model.TeamPlayers
+                    .Where(tp => tp.Status.ToString() == rosterGroup.Key)
+                    .ToList();
+
+                    <div class="col roster-section text-center">
+                        <h5 class="text-center">@rosterGroup.Label</h5>
+
+                        @for (int i = 0; i < rosterGroup.Count; i++)
+                        {
+                            var tp = i < players.Count ? players[i] : null;
+
+                            <div class="drop-slot"
+                                 data-status="@rosterGroup.Key"
+                                 ondrop="drop(event)"
+                                 ondragover="allowDrop(event)">
+                                @if (tp != null)
+                                {
+                                    <div class="player-card @(tp.Status == RosterStatus.Starter ? "starter-card" : tp.Status == RosterStatus.Bench ? "bench-card" : "ir-card")"
+                                         draggable="true"
+                                         ondragstart="drag(event)"
+                                         data-id="@tp.PDGANumber">
+                                        @tp.Player.Name
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
                 }
-            </ul>
+            </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("playerId", ev.target.dataset.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const pdgaNumber = ev.dataTransfer.getData("playerId");
+            const newStatus = ev.currentTarget.dataset.status;
+
+            const dragged = document.querySelector(`[data-id='${pdgaNumber}']`);
+            const originalSlot = dragged.closest('.drop-slot');
+            const target = ev.currentTarget;
+
+            // Clone and assign new class
+            const clone = dragged.cloneNode(true);
+            clone.setAttribute("ondragstart", "drag(event)");
+            clone.classList.remove("starter-card", "bench-card", "ir-card");
+
+            switch (newStatus) {
+                case "Starter": clone.classList.add("starter-card"); break;
+                case "Bench": clone.classList.add("bench-card"); break;
+                case "InjuryReserve": clone.classList.add("ir-card"); break;
+            }
+
+            // Replace target content
+            const existing = target.querySelector('.player-card');
+            if (existing) target.removeChild(existing);
+            target.appendChild(clone);
+
+            // Clear original slot **after drop completes**
+            if (originalSlot && originalSlot !== target) {
+                originalSlot.innerHTML = '';
+            }
+
+            // Update server
+            fetch(`/Team/ChangeStatus/${pdgaNumber}`, {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': '@tokens.RequestToken',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ newStatus })
+            });
+        }
+    </script>
+}
+
+<style>
+    .roster-section {
+        padding: 0 12px;
+    }
+
+        .roster-section h5 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+    .drop-slot {
+        border: 2px dashed #bbb;
+        border-radius: 6px;
+        height: 52px;
+        padding: 4px 12px;
+        margin-bottom: 14px;
+        background-color: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-width: 250px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        color: inherit;
+    }
+
+    .player-card {
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+        padding: 6px 12px;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+        width: 100%;
+        max-height: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        cursor: grab;
+        user-select: none;
+    }
+
+    .starter-card {
+        background-color: #d4edda; /* light green */
+        color: #155724;
+    }
+
+    .bench-card {
+        background-color: #fff3cd; /* light yellow */
+        color: #856404;
+    }
+
+    .ir-card {
+        background-color: #f8d7da; /* light red */
+        color: #721c24;
+    }
+
+    .player-card:active {
+        cursor: grabbing;
+    }
+</style>

@@ -1,5 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
+public enum RosterStatus
+{
+    Starter,
+    Bench,
+    InjuryReserve
+}
+
 namespace fantasydg.Models
 {
     public class TeamPlayer
@@ -11,6 +18,7 @@ namespace fantasydg.Models
         [ForeignKey("PDGANumber")]
         public Player Player { get; set; }
 
-        public int LeagueId { get; set; } // redundant but needed to enforce uniqueness
+        public int LeagueId { get; set; }
+        public RosterStatus Status { get; set; } = RosterStatus.Starter;
     }
 }

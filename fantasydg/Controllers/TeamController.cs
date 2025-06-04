@@ -107,5 +107,30 @@ namespace fantasydg.Controllers
             TempData["PlayerAddResult"] = "Player added to your team!";
             return RedirectToAction("Players", "League", new { leagueId });
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeStatus(int id, [FromBody] ChangeStatusRequest request)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var teamPlayer = await _db.TeamPlayers
+                .FirstOrDefaultAsync(tp => tp.PDGANumber == id && tp.Team.OwnerId == userId);
+
+            if (teamPlayer == null)
+                return NotFound();
+
+            if (!Enum.TryParse<RosterStatus>(request.NewStatus, out var status))
+                return BadRequest();
+
+            teamPlayer.Status = status;
+            await _db.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        public class ChangeStatusRequest
+        {
+            public string NewStatus { get; set; }
+        }
     }
 }

@@ -15,6 +15,15 @@ namespace fantasydg.Models
         public string OwnerId { get; set; }
         public int PlayerNumber {  get; set; }
 
+        [Range(3, 20)]
+        public int StarterCount { get; set; } = 6;
+
+        [Range(5, 25)]
+        public int RosterLimit { get; set; } = 12;
+
+        [Range(0, 10)]
+        public int InjuryReserveLimit { get; set; } = 1;
+
         // Scoring settings
         public double PlacementWeight { get; set; } = -0.05;
         public double FairwayWeight { get; set; } = 0;

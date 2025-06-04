@@ -5,10 +5,12 @@ Tasks:
 	- Sort By Columns
 	- Player Search
 
-- fantasy pts
-- javascript integration
+
 
 Debug Notes:
+- sidebar buttons hover
+- temp message for player view needs to be in the table container
+- player view dropdowns integrated with dataview
 
 - Views:
 	- Homepage
