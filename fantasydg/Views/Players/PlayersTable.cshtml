@@ -100,9 +100,9 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 <script>
-    $('#playersTable').DataTable({
+    const table = $('#playersTable').DataTable({
         scrollX: true,
-        scrollY: 'calc(100vh - 324px)',
+        scrollY: 'calc(100vh - 305px)',
         scrollCollapse: true,
         paging: false,
         searching: true,
@@ -119,9 +119,14 @@
             { targets: 2, width: "150px" },
             { targets: "_all", width: "50px" }
         ],
+        dom: 'f rt<"bottom"ip>',
         initComplete: function () {
             $('#loadingSpinner').hide();
             $('#tableWrapper').removeClass('d-none');
+
+            // ✅ Move the search box
+            const filter = $('#playersTable_filter').detach();
+            $('#searchContainer').html(filter).show();
         }
     });
 </script>

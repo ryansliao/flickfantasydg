@@ -6,8 +6,45 @@
     var action = route["action"]?.ToString();
 }
 
-<div class="sidebar bg-light"
-     style="top: 57px; bottom: 61px; width: 220px; padding: 1rem; overflow-y: auto;">
+<style>
+    /* Sidebar Styling */
+    .sidebar {
+        background-color: #ffffff;
+        border-right: 1px solid #e5e5e5;
+        padding-top: 1rem;
+        box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+        top: 57px;
+        bottom: 61px;
+        width: 220px;
+        padding: 1rem;
+        flex-shrink: 0;
+        z-index: 1000;
+        overflow-y: auto;
+    }
+
+        .sidebar .nav-link {
+            color: #1b6ec2;
+            padding: 0.75rem 1rem;
+            display: block;
+            font-weight: normal;
+            transition: all 0.2s ease-in-out;
+        }
+
+            .sidebar .nav-link:hover {
+                background-color: #e9f1fb;
+                color: #0d3d91;
+                font-weight: bold;
+                text-decoration: none;
+            }
+
+            .sidebar .nav-link.active {
+                background-color: #1b6ec2;
+                color: white;
+                font-weight: bold;
+            }
+</style>
+
+<div class="sidebar bg-light">
 
     <h5 class="mb-1">@Model.LeagueName</h5>
     <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />

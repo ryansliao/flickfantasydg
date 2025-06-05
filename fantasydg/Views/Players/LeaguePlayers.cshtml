@@ -28,24 +28,6 @@
         overflow: hidden;
     }
 
-    #sidebar {
-        width: 220px;
-        overflow-y: auto;
-        flex-shrink: 0;
-    }
-
-    .sidebar a.btn-light,
-    .sidebar button.btn-light {
-        transition: all 0.2s ease;
-    }
-
-        .sidebar a.btn-light:hover,
-        .sidebar button.btn-light:hover {
-            background-color: #e2e6ea;
-            font-weight: bold;
-            color: #000;
-        }
-
     #mainContent {
         flex: 1;
         margin-left: 10px;
@@ -101,6 +83,41 @@
             line-height: 1;
         }
 
+    #playersTable_filter {
+        margin-left: auto;
+    }
+
+    #searchContainer {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+        padding-left: 12px;
+        margin-top: 10px;
+    }
+
+        #searchContainer label {
+            margin-bottom: 0;
+        }
+
+        #searchContainer input[type="search"] {
+            height: 32px;
+            padding: 4px 8px;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+    select.form-select-sm {
+        width: auto;
+        min-width: 150px;
+    }
+
+    form.filter-form label {
+        font-weight: 500;
+        margin-bottom: 0;
+    }
+
     div.dataTables_filter {
         margin-bottom: 10px;
     }
@@ -128,13 +145,27 @@
         background-color: #e1e1e1;
         color: #000;
         font-weight: bold;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         text-wrap: wrap;
         text-align: center !important;
         vertical-align: middle;
         padding: 4px 5px;
         line-height: 1.1;
     }
+
+    /* Arrows */
+        table.dataTable thead th.sorting::before,
+        table.dataTable thead th.sorting::after,
+        table.dataTable thead th.sorting_asc::before,
+        table.dataTable thead th.sorting_asc::after,
+        table.dataTable thead th.sorting_desc::before,
+        table.dataTable thead th.sorting_desc::after {
+            font-size: 0.5rem !important;
+            margin-left: 4px;
+            vertical-align: middle;
+            display: inline-block;
+            transform: translateY(1px);
+        }
   
 </style>
 
@@ -144,51 +175,52 @@
         <div id="sidebar">
             @await Html.PartialAsync("_LeagueTeamSidebar", ((string)ViewBag.LeagueName!, (int)ViewBag.LeagueId!, (int?)ViewBag.TeamId))
         </div>
+
         <div id="mainContent">
             <h2 class="mt-2">Available Players</h2>
 
-            <form method="get" asp-action="Players" asp-controller="League" class="filter-form">
-                <input type="hidden" name="leagueId" value="@Model.League.LeagueId" />
-                <div class="row g-2 align-items-end mb-3" style="min-width: 0;">
-                    <div class="col-auto">
-                        <label for="tournament">Tournament:</label>
-                        @{
-                            int selectedId = ViewBag.SelectedTournamentId ?? -1;
+            <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+                <form method="get" asp-action="Players" asp-controller="League" class="d-flex align-items-center flex-wrap gap-2 mb-0">
+                    <input type="hidden" name="leagueId" value="@Model.League.LeagueId" />
+
+                    @{
+                        int selectedId = ViewBag.SelectedTournamentId ?? -1;
+                    }
+
+                    <label for="tournamentDropdown" class="me-2">Tournament:</label>
+                    <select id="tournamentDropdown" name="tournamentId" class="form-select form-select-sm" onchange="this.form.submit()">
+                        @foreach (var t in ViewBag.Tournaments as List<fantasydg.Models.Tournament>)
+                        {
+                            @if (t.Id == selectedId)
+                            {
+                                <option value="@t.Id" selected>@t.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@t.Id">@t.Name</option>
+                            }
                         }
+                    </select>
 
-                        <select id="tournamentDropdown" name="tournamentId" onchange="this.form.submit()">
-                            @foreach (var t in ViewBag.Tournaments as List<fantasydg.Models.Tournament>)
+                    <label for="divisionDropdown" class="ms-3 me-2">Division:</label>
+                    <select id="divisionDropdown" name="division" class="form-select form-select-sm" onchange="this.form.submit()">
+                        @foreach (var d in ViewBag.Divisions as List<string>)
+                        {
+                            @if ((string)ViewBag.SelectedDivision == d)
                             {
-                                if (t.Id == selectedId)
-                                {
-                                    <option value="@t.Id" selected>@t.Name</option>
-                                }
-                                else
-                                {
-                                    <option value="@t.Id">@t.Name</option>
-                                }
+                                <option value="@d" selected>@d</option>
                             }
-                        </select>
-                    </div>
+                            else
+                            {
+                                <option value="@d">@d</option>
+                            }
+                        }
+                    </select>
+                </form>
 
-                    <div class="col-auto">
-                        <label for="division">Division:</label>
-                        <select id="divisionDropdown" name="division" onchange="this.form.submit()">
-                            @foreach (var d in ViewBag.Divisions as List<string>)
-                            {
-                                if (d == (string)ViewBag.SelectedDivision)
-                                {
-                                    <option value="@d" selected>@d</option>
-                                }
-                                else
-                                {
-                                    <option value="@d">@d</option>
-                                }
-                            }
-                        </select>
-                    </div>
-                </div>
-            </form>
+                <div id="searchContainer" class="ms-auto"></div>
+            </div>
+
             @if (!hasData)
             {
                 <div class="alert alert-warning mt-4">
@@ -202,7 +234,6 @@
         </div>
     </div>
 </div>
-
 
 <script>
     function updatePlayerTable() {

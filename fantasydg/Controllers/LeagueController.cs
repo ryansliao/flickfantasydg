@@ -94,20 +94,21 @@ namespace fantasydg.Controllers
             ViewBag.TeamId = team?.TeamId;
             ViewBag.LeagueName = league.Name;
 
-            var lockedRosters = await _db.TeamPlayerTournaments
-                .Where(tpt => tpt.IsLocked)
-                .Select(tpt => new { tpt.TeamId, tpt.PDGANumber, tpt.TournamentId })
-                .ToListAsync();
+            ViewBag.Standings = await GetStandings(id);
 
-            var lockedSet = new HashSet<(int teamId, int pdga, int tournamentId)>(
-                lockedRosters.Select(r => (r.TeamId, r.PDGANumber, r.TournamentId))
-            );
+            return View("LeagueView", league);
+        }
+
+        private async Task<List<LeagueStandingView>> GetStandings(int leagueId)
+        {
+            var league = await _db.Leagues.FirstOrDefaultAsync(l => l.LeagueId == leagueId);
+            if (league == null) return new List<LeagueStandingView>();
 
             var standings = await _db.Teams
-                .Where(t => t.LeagueId == id)
+                .Where(t => t.LeagueId == leagueId)
                 .Include(t => t.Owner)
-                .Include(t => t.TeamPlayers)
-                    .ThenInclude(tp => tp.Player)
+                .Include(t => t.TeamPlayerTournaments)
+                    .ThenInclude(tpt => tpt.Player)
                     .ThenInclude(p => p.PlayerTournaments)
                 .ToListAsync();
 
@@ -116,11 +117,12 @@ namespace fantasydg.Controllers
                 {
                     Team = t,
                     OwnerName = t.Owner.UserName,
-                    Points = t.TeamPlayers
-                        .Where(tp => tp.Status == RosterStatus.Starter)
-                        .SelectMany(tp => tp.Player.PlayerTournaments
-                            .Where(pt => lockedSet.Contains((tp.TeamId, tp.PDGANumber, pt.TournamentId)))
-                        )
+                    Points = t.TeamPlayerTournaments
+                        .Where(tpt => tpt.Status == nameof(RosterStatus.Starter) && tpt.IsLocked)
+                        .Select(tpt =>
+                            tpt.Player.PlayerTournaments
+                                .FirstOrDefault(pt => pt.TournamentId == tpt.TournamentId))
+                        .Where(pt => pt != null)
                         .Sum(pt =>
                             pt.Place * league.PlacementWeight +
                             pt.Fairway * league.FairwayWeight +
@@ -158,9 +160,7 @@ namespace fantasydg.Controllers
                 })
                 .ToList();
 
-            ViewBag.Standings = ordered;
-
-            return View("LeagueView", league);
+            return ordered;
         }
 
         [HttpGet]
