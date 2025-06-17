@@ -1,31 +1,13 @@
 Tasks:
-- Add functionality to views.
+- See other teams rosters.
 - Upload WebApp + Database to Azure Cloud
-- Table Functionality
-	- Sort By Columns
-	- Player Search
-
-
 
 Debug Notes:
-- sidebar buttons hover
-- temp message for player view needs to be in the table container
-- player view dropdowns integrated with dataview
 
-- Views:
-	- Homepage
-	- League (General information, standings)
-		- League Settings
-			- Invite Users
-			- Scoring
-		- Team (Choose starting players / bench)
-			- Team Dropdown
-			- Team Settings
-			- Individual Player (A player's info and stats)
-		- Available Players (List of players not on any team)
-			-Detailed Views Data Grid
-		- Results (Will resemble current database view)
-	- User Profile/Settings
-		- Username change
-		- Email change
-		- Forgot Password
+Remaining Goals:
+	- Roster View
+		- Start, bench, and drop players
+		- See other rosters
+	- Tournament View
+		- See results for each tournament
+		

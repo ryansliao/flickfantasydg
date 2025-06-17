@@ -164,6 +164,81 @@ namespace fantasydg.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> TeamTournamentResultsView(int leagueId, int? tournamentId = null, string? division = null, int? round = null)
+        {
+            // Load tournaments and set default selection
+            var allTournaments = await _repository.GetAllTournamentsAsync();
+            var orderedTournaments = allTournaments.OrderByDescending(t => t.Date).ToList();
+            ViewBag.Tournaments = orderedTournaments;
+
+            tournamentId ??= orderedTournaments.FirstOrDefault()?.Id;
+            var selectedTournament = orderedTournaments.FirstOrDefault(t => t.Id == tournamentId);
+            if (selectedTournament == null) return NotFound();
+
+            ViewBag.SelectedTournamentId = selectedTournament.Id;
+
+            // Load divisions and set default
+            var divisions = await _repository.GetDivisionsForTournamentAsync(selectedTournament.Id);
+            ViewBag.Divisions = divisions.OrderByDescending(d => d).ToList();
+
+            division ??= divisions.Contains("MPO") ? "MPO" : divisions.FirstOrDefault();
+            ViewBag.SelectedDivision = division;
+
+            // Get all assigned players in league
+            var assignedPDGAs = await _db.TeamPlayers
+                .Where(tp => tp.LeagueId == leagueId)
+                .Select(tp => tp.PDGANumber)
+                .ToListAsync();
+
+            // Filter players who participated in the selected tournament
+            var participatingPlayers = await _db.PlayerTournaments
+                .Include(pt => pt.Player)
+                .Include(pt => pt.Tournament)
+                .Where(pt =>
+                    pt.TournamentId == selectedTournament.Id &&
+                    pt.Tournament.Division == division &&
+                    assignedPDGAs.Contains(pt.PDGANumber))
+                .ToListAsync();
+
+            // Load league and teams
+            var league = await _db.Leagues
+                .Include(l => l.Teams)
+                .ThenInclude(t => t.TeamPlayers)
+                .FirstOrDefaultAsync(l => l.LeagueId == leagueId);
+            if (league == null) return NotFound();
+
+            // Ensure fantasy points are up to date
+            await _leagueService.UpdateFantasyPointsForLeagueAsync(leagueId);
+            var fantasyMap = await _leagueService.GetFantasyPointsMapAsync(leagueId);
+
+            // Prepare view model
+            var model = new LeaguePlayersViewModel
+            {
+                League = league,
+                Players = participatingPlayers
+            };
+
+            var playerTeamMap = await _db.TeamPlayers
+                .Where(tp => tp.LeagueId == leagueId)
+                .ToDictionaryAsync(tp => tp.PDGANumber, tp => tp.Team.Name);
+
+            // ViewBag values
+            ViewBag.LeagueId = league.LeagueId;
+            ViewBag.LeagueName = league.Name;
+            ViewBag.FantasyMap = fantasyMap;
+            ViewBag.PlayerTeamMap = playerTeamMap;
+            ViewBag.TeamId = await _db.Teams
+                .Where(t => t.LeagueId == leagueId && t.OwnerId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                .Select(t => (int?)t.TeamId)
+                .FirstOrDefaultAsync();
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return PartialView("~/Views/Tournament/TeamPlayerTable.cshtml", model);
+
+            return View("~/Views/Tournament/TeamTournamentResultsView.cshtml", model);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Players(int leagueId, int? tournamentId = null, string? division = null, int? round = null)
         {
             var allTournaments = await _repository.GetAllTournamentsAsync();

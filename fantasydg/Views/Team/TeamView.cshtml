@@ -48,6 +48,7 @@
             <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
             <div class="row justify-content-center">
+
                 @foreach (var rosterGroup in types)
                 {
                     var players = Model.Roster
@@ -160,39 +161,84 @@
         function drop(ev) {
             if (@(isLocked.ToString().ToLower())) return;
             ev.preventDefault();
-            const pdgaNumber = ev.dataTransfer.getData("playerId");
-            const newStatus = ev.currentTarget.dataset.status;
 
-            const dragged = document.querySelector(`[data-id='${pdgaNumber}']`);
-            const originalSlot = dragged.closest('.drop-slot');
-            const target = ev.currentTarget;
+            const draggedId = ev.dataTransfer.getData("playerId");
+            const draggedCard = document.querySelector(`[data-id='${draggedId}']`);
+            const dropSlot = ev.currentTarget;
 
-            const clone = dragged.cloneNode(true);
-            clone.setAttribute("ondragstart", "drag(event)");
-            clone.classList.remove("starter-card", "bench-card", "ir-card");
+            const existingCard = dropSlot.querySelector('.player-card');
 
-            switch (newStatus) {
-                case "Starter": clone.classList.add("starter-card"); break;
-                case "Bench": clone.classList.add("bench-card"); break;
-                case "InjuryReserve": clone.classList.add("ir-card"); break;
+            const getClassForStatus = (status) => {
+                switch (status) {
+                    case "Starter": return "starter-card";
+                    case "Bench": return "bench-card";
+                    case "InjuryReserve": return "ir-card";
+                    default: return "";
+                }
+            };
+
+            // If the slot already has a card, swap them
+            if (existingCard && existingCard !== draggedCard) {
+                const originalSlot = draggedCard.closest('.drop-slot');
+                const fromStatus = originalSlot.dataset.status;
+                const toStatus = dropSlot.dataset.status;
+
+                // DOM swap
+                originalSlot.appendChild(existingCard);
+                dropSlot.appendChild(draggedCard);
+
+                // Update card classes
+                draggedCard.classList.remove("starter-card", "bench-card", "ir-card");
+                draggedCard.classList.add(getClassForStatus(toStatus));
+
+                existingCard.classList.remove("starter-card", "bench-card", "ir-card");
+                existingCard.classList.add(getClassForStatus(fromStatus));
+
+                // Update backend if status changed
+                if (fromStatus !== toStatus) {
+                    fetch(`/Team/ChangeStatus/${draggedId}`, {
+                        method: 'POST',
+                        headers: {
+                            'RequestVerificationToken': '@tokens.RequestToken',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ newStatus: toStatus })
+                    });
+
+                    const swappedId = existingCard.dataset.id;
+
+                    fetch(`/Team/ChangeStatus/${swappedId}`, {
+                        method: 'POST',
+                        headers: {
+                            'RequestVerificationToken': '@tokens.RequestToken',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ newStatus: fromStatus })
+                    });
+                }
+
+            } else {
+                // No existing card in slot — simple move
+                const newStatus = dropSlot.dataset.status;
+                const originalSlot = draggedCard.closest('.drop-slot');
+
+                if (originalSlot !== dropSlot) {
+                    dropSlot.appendChild(draggedCard);
+                    originalSlot.innerHTML = '';
+
+                    draggedCard.classList.remove("starter-card", "bench-card", "ir-card");
+                    draggedCard.classList.add(getClassForStatus(newStatus));
+
+                    fetch(`/Team/ChangeStatus/${draggedId}`, {
+                        method: 'POST',
+                        headers: {
+                            'RequestVerificationToken': '@tokens.RequestToken',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ newStatus })
+                    });
+                }
             }
-
-            const existing = target.querySelector('.player-card');
-            if (existing) target.removeChild(existing);
-            target.appendChild(clone);
-
-            if (originalSlot && originalSlot !== target) {
-                originalSlot.innerHTML = '';
-            }
-
-            fetch(`/Team/ChangeStatus/${pdgaNumber}`, {
-                method: 'POST',
-                headers: {
-                    'RequestVerificationToken': '@tokens.RequestToken',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ newStatus })
-            });
         }
 
         let mouseDownTime = null;

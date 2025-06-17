@@ -2,6 +2,7 @@
 using fantasydg.Models;
 using fantasydg.Models.Repository;
 using fantasydg.Models.ViewModels;
+using fantasydg.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,12 +16,14 @@ namespace fantasydg.Controllers
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly DatabaseRepository _repository;
+        private readonly LeagueService _leagueService;
 
-        public TeamController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, DatabaseRepository repository)
+        public TeamController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, DatabaseRepository repository, LeagueService leagueService)
         {
             _db = db;
             _userManager = userManager;
             _repository = repository;
+            _leagueService = leagueService;
         }
 
         [HttpGet]
@@ -246,6 +249,17 @@ namespace fantasydg.Controllers
                 if (!starters.Any())
                 {
                     TempData["RosterLockError"] = "You must assign at least one starter before locking the roster.";
+                    return RedirectToAction("View", new { teamId, tournamentId });
+                }
+
+                var missingStarters = starters
+                    .Where(tp => !tp.Player.PlayerTournaments.Any(pt => pt.TournamentId == tournamentId))
+                    .ToList();
+
+                if (missingStarters.Any())
+                {
+                    string names = string.Join(", ", missingStarters.Select(p => p.Player.Name));
+                    TempData["RosterLockError"] = $"Cannot lock roster. The following starters are not in this tournament: {names}";
                     return RedirectToAction("View", new { teamId, tournamentId });
                 }
 

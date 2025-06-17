@@ -144,8 +144,12 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91cm5hbWVudFxJbnB1dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Tournament/_TournamentTable.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91cm5hbWVudFxfVG91cm5hbWVudFRhYmxlLmNzaHRtbA==
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Tournament/TeamPlayersTable.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91cm5hbWVudFxUZWFtUGxheWVyc1RhYmxlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Tournament/TeamTournamentResultsView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91cm5hbWVudFxUZWFtVG91cm5hbWVudFJlc3VsdHNWaWV3LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/_ViewImports.cshtml]

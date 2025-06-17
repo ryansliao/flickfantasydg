@@ -70,6 +70,14 @@
                 </li>
             }
 
+            <!-- Tournaments -->
+            <li class="nav-item">
+                <a class="nav-link @(controller == "League" && action == "TeamTournamentResultsView" ? "active" : "")"
+                   asp-controller="League" asp-action="TeamTournamentResultsView" asp-route-leagueId="@Model.LeagueId">
+                    Tournaments
+                </a>
+            </li>
+
             <!-- Players -->
             <li class="nav-item">
                 <a class="nav-link @(controller == "League" && action == "Players" ? "active" : "")"

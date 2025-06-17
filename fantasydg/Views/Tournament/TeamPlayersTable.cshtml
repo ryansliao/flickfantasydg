@@ -1,0 +1,119 @@
+﻿@model IEnumerable<fantasydg.Models.PlayerTournament>
+
+@{
+    var fantasyMap = ViewBag.FantasyMap as Dictionary<(int, int, string), float> ?? new();
+    var leagueName = ViewBag.LeagueName as string;
+    var leagueId = (int)ViewBag.LeagueId;
+    var teamId = (int)ViewBag.TeamId;
+    var division = (string)ViewBag.SelectedDivision;
+    var tournamentId = (int)ViewBag.SelectedTournamentId;
+    var teamMap = ViewBag.PlayerTeamMap as Dictionary<int, string>;
+}
+
+<div id="loadingSpinner">Loading table...</div>
+<div id="tableWrapper" class="d-none table-scroll-container">
+    <div class="table-scroll-top"></div>
+    <table id="playersTable" class="stats-table">
+        <thead>
+            <tr>
+                <th>Team</th>
+                <th>Player</th>
+                <th>#</th>
+                <th>Pts.</th>
+                <th>Total</th>
+                <th>Birdie-</th>
+                <th>Eagle-</th>
+                <th>Bogey+</th>
+                <th>Dbl Bog.+</th>
+                <th>Fairway</th>
+                <th>C1 Reg</th>
+                <th>C2 Reg</th>
+                <th>Parked</th>
+                <th>Scramb.</th>
+                <th>OB</th>
+                <th>C1x Putt</th>
+                <th>C2 Putt</th>
+                <th>Tot. Putt</th>
+                <th>Long Thr.-In</th>
+                <th>Avg. Putt</th>
+                <th>Strk. Gained</th>
+                <th>SG Putting</th>
+                <th>SG Tee→Grn</th>
+                <th>SG C1x</th>
+                <th>SG C2</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pt in Model.OrderBy(pt => pt.Place))
+            {
+                var key = (pt.PDGANumber, pt.TournamentId, pt.Tournament.Division);
+                float points = fantasyMap.ContainsKey(key) ? fantasyMap[key] : 0f;
+
+                <tr>
+                    <td>@(ViewBag.PlayerTeamMap[pt.PDGANumber])</td>
+                    <td>@pt.Player.Name</td>
+                    <td>@pt.Place</td>
+                    <td>@points.ToString("0.0")</td>
+                    <td>@pt.TotalToPar</td>
+                    <td>@pt.BirdieMinus%</td>
+                    <td>@pt.EagleMinus%</td>
+                    <td>@pt.BogeyPlus%</td>
+                    <td>@pt.DoubleBogeyPlus%</td>
+                    <td>@pt.Fairway%</td>
+                    <td>@pt.C1InReg%</td>
+                    <td>@pt.C2InReg%</td>
+                    <td>@pt.Parked%</td>
+                    <td>@pt.Scramble%</td>
+                    <td>@pt.ObRate%</td>
+                    <td>@pt.C1xPutting%</td>
+                    <td>@pt.C2Putting%</td>
+                    <td>@pt.TotalPuttDistance</td>
+                    <td>@pt.LongThrowIn</td>
+                    <td>@pt.AvgPuttDistance</td>
+                    <td>@pt.StrokesGainedTotal</td>
+                    <td>@pt.StrokesGainedPutting</td>
+                    <td>@pt.StrokesGainedTeeToGreen</td>
+                    <td>@pt.StrokesGainedC1xPutting</td>
+                    <td>@pt.StrokesGainedC2Putting</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- DataTables Setup (only include once per page if possible) -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script>
+    const table = $('#playersTable').DataTable({
+        scrollX: true,
+        scrollY: 'calc(100vh - 305px)',
+        scrollCollapse: true,
+        paging: false,
+        searching: true,
+        ordering: true,
+        autoWidth: false,
+        info: false,
+        order: [[0, 'asc']],
+        fixedColumns: {
+            leftColumns: 3
+        },
+        columnDefs: [
+            { targets: 0, width: "150px" },
+            { targets: 1, width: "150px" },
+            { targets: 2, width: "40px" },
+            { targets: "_all", width: "50px" }
+        ],
+        dom: 'f rt<"bottom"ip>',
+        initComplete: function () {
+            $('#loadingSpinner').hide();
+            $('#tableWrapper').removeClass('d-none');
+
+            // ✅ Move the search box
+            const filter = $('#playersTable_filter').detach();
+            $('#searchContainer').html(filter).show();
+        }
+    });
+</script>
