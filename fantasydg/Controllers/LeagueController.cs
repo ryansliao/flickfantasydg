@@ -191,14 +191,51 @@ namespace fantasydg.Controllers
                 .ToListAsync();
 
             // Filter players who participated in the selected tournament
-            var participatingPlayers = await _db.PlayerTournaments
-                .Include(pt => pt.Player)
-                .Include(pt => pt.Tournament)
-                .Where(pt =>
-                    pt.TournamentId == selectedTournament.Id &&
-                    pt.Tournament.Division == division &&
-                    assignedPDGAs.Contains(pt.PDGANumber))
+            var participatingPlayers = await _db.TeamPlayerTournaments
+                .Where(tpt =>
+                    tpt.TournamentId == selectedTournament.Id &&
+                    tpt.IsLocked &&
+                    assignedPDGAs.Contains(tpt.PDGANumber))
+                .Include(tpt => tpt.Player)
+                    .ThenInclude(p => p.PlayerTournaments)
                 .ToListAsync();
+
+            // You can filter division here if needed, but only if it's stored in TeamPlayerTournament
+            participatingPlayers = participatingPlayers
+                .Where(tpt => tpt.Division == division)
+                .ToList();
+
+            // Then convert to PlayerTournaments (if needed by view)
+            var playerTournamentList = participatingPlayers.Select(tpt =>
+            {
+                var ptMatch = tpt.Player?.PlayerTournaments
+                    ?.FirstOrDefault(pt => pt.TournamentId == tpt.TournamentId);
+
+                return new PlayerTournament
+                {
+                    PDGANumber = tpt.PDGANumber,
+                    Player = tpt.Player,
+                    TournamentId = tpt.TournamentId,
+                    Division = tpt.Division,
+                    Place = ptMatch?.Place ?? -1,
+                    TotalToPar = ptMatch?.TotalToPar ?? 999,
+                    Fairway = ptMatch?.Fairway ?? -1,
+                    C1InReg = ptMatch?.C1InReg ?? -1,
+                    C2InReg = ptMatch?.C2InReg ?? -1,
+                    Scramble = ptMatch?.Scramble ?? -1,
+                    C1Putting = ptMatch?.C1Putting ?? -1,
+                    C2Putting = ptMatch?.C2Putting ?? -1,
+                    ObRate = ptMatch?.ObRate ?? -1,
+                    BirdieMinus = ptMatch?.BirdieMinus ?? -1,
+                    Par = ptMatch?.Par ?? -1,
+                    BogeyPlus = ptMatch?.BogeyPlus ?? -1,
+                    DoubleBogeyPlus = ptMatch?.DoubleBogeyPlus ?? -1,
+                    StrokesGainedTeeToGreen = ptMatch?.StrokesGainedTeeToGreen ?? -1,
+                    StrokesGainedPutting = ptMatch?.StrokesGainedPutting ?? -1,
+                    StrokesGainedC1xPutting = ptMatch?.StrokesGainedC1xPutting ?? -1,
+                    StrokesGainedC2Putting = ptMatch?.StrokesGainedC2Putting ?? -1
+                };
+            }).ToList();
 
             // Load league and teams
             var league = await _db.Leagues
@@ -215,7 +252,7 @@ namespace fantasydg.Controllers
             var model = new LeaguePlayersViewModel
             {
                 League = league,
-                Players = participatingPlayers
+                Players = playerTournamentList
             };
 
             var playerTeamMap = await _db.TeamPlayers

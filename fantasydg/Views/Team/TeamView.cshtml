@@ -1,4 +1,5 @@
 ﻿@model fantasydg.Models.ViewModels.TeamViewModel
+@using fantasydg.Models.ViewModels
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 
 @{
@@ -12,6 +13,9 @@
         new { Key = "InjuryReserve", Label = "Injury Reserve", Count = league.InjuryReserveLimit }
     };
     bool isLocked = ViewBag.IsLocked != null && (bool)ViewBag.IsLocked;
+    var teams = ViewBag.OtherTeams as List<fantasydg.Models.Team>;
+    int selectedTeamId = ViewBag.SelectedTeamId;
+    bool isOwnTeam = teamId == selectedTeamId;
 }
 
 <div class="container-fluid">
@@ -19,41 +23,27 @@
         <div class="col-auto p-0">
             <partial name="_LeagueTeamSidebar" model="(ViewBag.LeagueName as string, Model.Team.LeagueId, ViewBag.TeamId as int?)" />
         </div>
-        <div class="col-auto p-0" style="margin-left: 20px">
+        <div class="col-auto p-0" style="margin-left: 10px">
             <h3 class="mt-4">@Model.Team.Name</h3>
             <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
-            <input type="hidden" name="leagueId" value="@Model.Team.LeagueId" />
             <form method="get" asp-action="View" asp-controller="Team">
                 <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
-
-                <div class="row g-2 align-items-end mb-3" style="min-width: 0;">
-                    <div class="col-auto">
-                        <label for="tournament">Tournament:</label>
-                        @{
-                            int selectedId = ViewBag.SelectedTournamentId ?? -1;
-                        }
-
-                        <select id="tournamentDropdown" name="tournamentId" onchange="this.form.submit()">
-                            @foreach (var t in ViewBag.Tournaments as List<fantasydg.Models.Tournament>)
-                            {
-                                var selected = t.Id == selectedId ? "selected" : null;
-                                <option value="@t.Id" selected="@selected">@t.Name</option>
-                            }
-                        </select>
-                    </div>
-                </div>
+                <label for="viewTeamId">Team:</label>
+                <select name="viewTeamId" class="form-select" onchange="this.form.submit()">
+                    @foreach (var t in teams)
+                    {
+                        <option value="@t.TeamId" selected="@(t.TeamId == selectedTeamId ? "selected" : null)">@t.Name</option>
+                    }
+                </select>
             </form>
 
             <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
             <div class="row justify-content-center">
-
                 @foreach (var rosterGroup in types)
                 {
-                    var players = Model.Roster
-                    .Where(tp => tp.Status.ToString() == rosterGroup.Key)
-                    .ToList();
+                    var players = Model.Roster.Where(tp => tp.Status.ToString() == rosterGroup.Key).ToList();
 
                     <div class="col roster-section text-center">
                         <h5 class="text-center">@rosterGroup.Label</h5>
@@ -61,34 +51,29 @@
                         @for (int i = 0; i < rosterGroup.Count; i++)
                         {
                             var tp = i < players.Count ? players[i] : null;
-
-                            var cardClass = tp != null
-                            ? "player-card " + (
-                            tp.Status == nameof(RosterStatus.Starter) ? "starter-card" :
-                            tp.Status == nameof(RosterStatus.Bench) ? "bench-card" : "ir-card")
+                            var cardClass = tp != null ?
+                            "player-card " + (tp.Status == nameof(RosterStatus.Starter) ? "starter-card" : tp.Status == nameof(RosterStatus.Bench) ? "bench-card" : "ir-card")
                             : "player-card";
 
-                            <div class="drop-slot @(isLocked ? "locked-slot" : "")"
-                                 data-status="@rosterGroup.Key"
-                                 @Html.Raw(!isLocked ? "ondrop=\"drop(event)\" ondragover=\"allowDrop(event)\"" : "")>
+                            <div class="drop-slot @(!isOwnTeam ? "locked-slot" : "")"
+                                    data-status="@rosterGroup.Key"
+                                    @Html.Raw((!isLocked && isOwnTeam) ? "ondrop=\"drop(event)\" ondragover=\"allowDrop(event)\"" : "")>
                                 @if (tp != null)
                                 {
-                                    if (!isLocked)
+                                    if (!isLocked && isOwnTeam)
                                     {
                                         <div class="@cardClass"
-                                             draggable="true"
-                                             ondragstart="drag(event)"
-                                             data-id="@tp.PDGANumber"
-                                             onmousedown="trackClickStart(event)"
-                                             onmouseup="maybeOpenModal(event, '@tp.Player.Name', '@tp.PDGANumber')">
+                                                draggable="true"
+                                                ondragstart="drag(event)"
+                                                data-id="@tp.PDGANumber"
+                                                onmousedown="trackClickStart(event)"
+                                                onmouseup="maybeOpenModal(event, '@tp.Player.Name', '@tp.PDGANumber')">
                                             @tp.Player.Name
                                         </div>
                                     }
                                     else
                                     {
-                                        <div class="@cardClass">
-                                            @tp.Player.Name
-                                        </div>
+                                        <div class="@cardClass">@tp.Player.Name</div>
                                     }
                                 }
                             </div>
@@ -96,52 +81,57 @@
                     </div>
                 }
             </div>
-            @if (Model.Roster.Any())
-            {
-                <form method="post" asp-action="LockRoster" style="margin-bottom: 5px;">
-                    <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
-                    <input type="hidden" name="tournamentId" value="@ViewBag.SelectedTournamentId" />
-                    <button type="submit" class="btn btn-@(isLocked ? "secondary" : "primary")">
-                        @(isLocked ? "Unlock Roster" : "Lock Roster")
-                    </button>
-                </form>
 
-                @if (TempData["RosterLockError"] != null)
-                {
-                    <div class="alert alert-danger">
-                        @TempData["RosterLockError"]
-                    </div>
-                }
+            @if (isOwnTeam)
+            {
+                <button class="btn btn-primary mt-3" onclick="openLockModal()">Lock Roster For Tournament</button>
             }
 
-            @if (isLocked)
-            {
-                <div class="alert alert-warning mt-3">Edits are disabled while this roster is locked.</div>
-            }
         </div>
     </div>
 </div>
 
-<div id="playerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1050;">
-    <div class="modal-content bg-white p-4 rounded" style="margin:10% auto; max-width:400px; position:relative;">
+<div id="lockModal" class="modal" tabindex="-1">
+    <div class="modal-content bg-white p-4 rounded">
+        <div class="modal-header">
+            <h5 class="modal-title">Select Tournament to Lock</h5>
+            <button type="button" class="btn-close" onclick="closeLockModal()"></button>
+        </div>
+        <div class="modal-body">
+            <form method="post" asp-action="LockRoster">
+                <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
+                <label for="tournamentId">Tournament:</label>
+                <select id="lockTournamentDropdown" name="tournamentId" class="form-select" onchange="loadStarterPreview(); updateLockButtonLabel();">
+                    @foreach (var t in ViewBag.AllTournaments as List<TournamentLockView>)
+                    {
+                        <option value="@t.Id" data-locked="@t.IsLocked.ToString().ToLower()">
+                            @t.Name @(t.IsLocked ? "(Locked)" : "")
+                        </option>
+                    }
+                </select>
+
+                <div id="starterPreview" class="mt-3"></div>
+
+                <button type="submit" class="btn btn-success mt-3" id="lockButton"></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="playerModal">
+    <div class="modal-content bg-white p-4 rounded">
         <button onclick="closeModal()"
                 style="position:absolute; top:10px; right:15px; border:none; background:none; font-size:1.5rem; cursor:pointer;">
             &times;
         </button>
         <h4 id="playerModalName"></h4>
         <p>PDGA #: <span id="playerModalId"></span></p>
-        <form method="post" asp-action="DropPlayer">
+        <form method="post" asp-controller="Team" asp-action="DropPlayer">
+            @Html.AntiForgeryToken()
             <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
             <input type="hidden" name="pdgaNumber" id="modalPdgaNumber" />
             <input type="hidden" name="tournamentId" value="@ViewBag.SelectedTournamentId" />
-            @if (!(bool)(ViewBag.IsLocked ?? false))
-            {
-                <button type="submit" class="btn btn-danger mt-2">Drop Player</button>
-            }
-            else
-            {
-                <div class="alert alert-warning mt-2">Roster is locked.</div>
-            }
+            <button type="submit" class="btn btn-danger mt-2">Drop Player</button>
         </form>
     </div>
 </div>
@@ -265,6 +255,70 @@
             document.getElementById('playerModal').style.display = 'none';
         }
 
+        function openLockModal() {
+            document.getElementById("lockModal").style.display = "block";
+            loadStarterPreview();
+            updateLockButtonLabel();
+        }
+
+        function closeLockModal() {
+            document.getElementById("lockModal").style.display = "none";
+        }
+
+        function loadStarterPreview() {
+            const tournamentId = document.getElementById("lockTournamentDropdown").value;
+            fetch(`/Team/GetStarterPreview?teamId=${@ViewBag.TeamId}&tournamentId=${tournamentId}`)
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById("starterPreview").innerHTML = html;
+                });
+        }
+
+        function unlockRoster() {
+            const tournamentId = document.getElementById("lockTournamentDropdown").value;
+            const form = document.createElement("form");
+            form.method = "post";
+            form.action = "/Team/UnlockRoster";
+
+            const teamInput = document.createElement("input");
+            teamInput.type = "hidden";
+            teamInput.name = "teamId";
+            teamInput.value = "@ViewBag.TeamId";
+
+            const tourInput = document.createElement("input");
+            tourInput.type = "hidden";
+            tourInput.name = "tournamentId";
+            tourInput.value = tournamentId;
+
+            const token = document.createElement("input");
+            token.type = "hidden";
+            token.name = "__RequestVerificationToken";
+            token.value = '@tokens.RequestToken';
+
+            form.appendChild(teamInput);
+            form.appendChild(tourInput);
+            form.appendChild(token);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        function updateLockButtonLabel() {
+            const dropdown = document.getElementById("lockTournamentDropdown");
+            const selected = dropdown.options[dropdown.selectedIndex];
+            const button = document.getElementById("lockButton");
+
+            const isLocked = selected.getAttribute("data-locked") === "true";
+
+            if (isLocked) {
+                button.innerText = "Unlock Tournament";
+                button.className = "btn btn-danger mt-3";
+            } else {
+                button.innerText = "Confirm Lock";
+                button.className = "btn btn-success mt-3";
+            }
+        }
+
         window.onclick = function(event) {
             const modal = document.getElementById('playerModal');
             if (event.target === modal) {
@@ -362,9 +416,11 @@
         padding: 1.5rem;
         border-radius: 8px;
         position: relative;
-        width: 320px;
-        max-width: 90%;
+        width: 400px;
+        max-width: 150%;
         text-align: center;
+        margin: 10% auto;
+        position: relative;
     }
 
     .close-button {
@@ -373,5 +429,27 @@
         top: 6px;
         font-size: 24px;
         cursor: pointer;
+    }
+
+    #playerModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1050;
+    }
+
+    #lockModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1050;
     }
 </style>

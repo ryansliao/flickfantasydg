@@ -68,91 +68,136 @@ namespace fantasydg.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> View(int teamId, int? tournamentId = null)
+        public async Task<IActionResult> View(int teamId, int? viewTeamId = null)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
-            var team = await _db.Teams
+
+            var mainTeam = await _db.Teams
                 .Include(t => t.League)
-                .Include(t => t.TeamPlayers)
-                    .ThenInclude(tp => tp.Player)
                 .FirstOrDefaultAsync(t => t.TeamId == teamId && t.OwnerId == userId);
 
-            if (team == null) return NotFound();
+            if (mainTeam == null) return NotFound();
 
-            ViewBag.LeagueName = team.League?.Name;
-            ViewBag.TeamId = team.TeamId;
-
-            // Load all tournaments
-            var allTournaments = await _repository.GetAllTournamentsAsync();
-            var orderedTournaments = allTournaments.OrderByDescending(t => t.Date).ToList();
-            ViewBag.Tournaments = orderedTournaments;
-
-            // Select the most recent tournament if none is specified
-            var selectedTournament = tournamentId.HasValue
-                ? orderedTournaments.FirstOrDefault(t => t.Id == tournamentId)
-                : orderedTournaments.FirstOrDefault();
-
-            if (selectedTournament == null)
-            {
-                return View("TeamView", new TeamViewModel { Team = team, Roster = new List<TeamPlayerTournament>() });
-            }
-
-            tournamentId = selectedTournament.Id;
-            ViewBag.SelectedTournamentId = tournamentId;
-
-            // Get available divisions
-            var division = await _db.Tournaments
-                .Where(t => t.Id == tournamentId)
-                .Select(t => t.Division)
-                .FirstOrDefaultAsync();
-
-            var tournamentRoster = await _db.TeamPlayerTournaments
-                .Include(tpt => tpt.Player)
-                .Include(tpt => tpt.Tournament)
-                .Where(tpt => tpt.TeamId == teamId && tpt.TournamentId == tournamentId)
+            var leagueId = mainTeam.LeagueId;
+            var allTeams = await _db.Teams
+                .Where(t => t.LeagueId == leagueId)
                 .ToListAsync();
 
-            // fallback if no locked snapshot exists
-            List<TeamPlayerTournament> roster;
-            bool isLocked = false;
+            var selectedTeamId = viewTeamId ?? teamId;
 
-            if (tournamentRoster.Any())
-            {
-                roster = tournamentRoster;
-                isLocked = tournamentRoster.All(tpt => tpt.IsLocked);
-            }
-            else
-            {
-                // fallback to current team players
-                var teamPlayers = await _db.TeamPlayers
-                    .Include(tp => tp.Player)
-                    .ThenInclude(p => p.PlayerTournaments)
-                    .Where(tp => tp.TeamId == teamId)
-                    .ToListAsync();
+            var selectedTeam = await _db.Teams
+                .Include(t => t.TeamPlayers).ThenInclude(tp => tp.Player)
+                .ThenInclude(p => p.PlayerTournaments)
+                .FirstOrDefaultAsync(t => t.TeamId == selectedTeamId);
 
-                roster = teamPlayers
-                    .Where(tp => tp.Player != null)
-                    .Select(tp => new TeamPlayerTournament
-                    {
-                        TeamId = tp.TeamId,
-                        PDGANumber = tp.PDGANumber,
-                        TournamentId = tournamentId.Value,
-                        Division = tp.Player.PlayerTournaments
-                            .FirstOrDefault(p => p.TournamentId == tournamentId)?.Division ?? "MPO",
-                        Player = tp.Player,
-                        Status = tp.Status.ToString(),
-                        IsLocked = false
-                    }).ToList();
-            }
+            if (selectedTeam == null) return NotFound();
 
+            // Prepare ViewBags
+            ViewBag.LeagueName = mainTeam.League?.Name;
+            ViewBag.TeamId = teamId;                   // user's team ID
+            ViewBag.SelectedTeamId = selectedTeamId;   // current team being viewed
+            ViewBag.OtherTeams = allTeams;             // for dropdown
+
+            // Load all tournaments and locked status
+            var allTournaments = await _repository.GetAllTournamentsAsync();
+            var lockedTournamentIds = await _db.TeamPlayerTournaments
+                .Where(tpt => tpt.TeamId == selectedTeamId && tpt.IsLocked)
+                .Select(tpt => tpt.TournamentId)
+                .Distinct()
+                .ToListAsync();
+
+            ViewBag.AllTournaments = allTournaments
+                 .OrderByDescending(t => t.Date)
+                 .Select(t => new TournamentLockView
+                 {
+                     Id = t.Id,
+                     Name = t.Name,
+                     Date = t.Date,
+                     IsLocked = lockedTournamentIds.Contains(t.Id)
+                 }).ToList();
+
+            // Show latest locked or unlocked tournament
+            var latestTournamentId = allTournaments.OrderByDescending(t => t.Date).FirstOrDefault()?.Id ?? -1;
+
+            var lockedRoster = await _db.TeamPlayerTournaments
+                .Include(tpt => tpt.Player)
+                .Include(tpt => tpt.Tournament)
+                .Where(tpt => tpt.TeamId == selectedTeamId && tpt.TournamentId == latestTournamentId)
+                .ToListAsync();
+
+            var roster = selectedTeam.TeamPlayers
+                 .Where(tp => tp.Player != null)
+                 .Select(tp => new TeamPlayerTournament
+                 {
+                     TeamId = tp.TeamId,
+                     PDGANumber = tp.PDGANumber,
+                     Player = tp.Player,
+                     TournamentId = latestTournamentId,
+                     Status = tp.Status.ToString(),
+                     IsLocked = lockedRoster.Any(r => r.PDGANumber == tp.PDGANumber) // Flag locked players
+                 }).ToList();
+
+            var isLocked = lockedRoster.All(r => r.IsLocked); // Or use a separate field to check
             ViewBag.IsLocked = isLocked;
 
             return View("TeamView", new TeamViewModel
             {
-                Team = team,
+                Team = selectedTeam,
                 Roster = roster
             });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetLockOptions(int teamId)
+        {
+            var tournaments = await _repository.GetAllTournamentsAsync();
+            var lockedIds = await _db.TeamPlayerTournaments
+                .Where(tpt => tpt.TeamId == teamId && tpt.IsLocked)
+                .Select(tpt => tpt.TournamentId)
+                .Distinct()
+                .ToListAsync();
+
+            var results = tournaments
+                .OrderByDescending(t => t.Date)
+                .Select(t => new {
+                    t.Id,
+                    t.Name,
+                    t.Date,
+                    IsLocked = lockedIds.Contains(t.Id)
+                });
+
+            return Json(results);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetStarterPreview(int teamId, int tournamentId)
+        {
+            var starters = await _db.TeamPlayers
+                .Include(tp => tp.Player)
+                .Where(tp => tp.TeamId == teamId && tp.Status == RosterStatus.Starter)
+                .ToListAsync();
+
+            if (!starters.Any())
+                return Content("<div class='text-danger'>No starters assigned.</div>", "text/html");
+
+            var tournamentPlayerIds = await _db.PlayerTournaments
+                .Where(pt => pt.TournamentId == tournamentId)
+                .Select(pt => pt.PDGANumber)
+                .ToListAsync();
+
+            var html = "<ul class='list-group'>";
+            foreach (var s in starters)
+            {
+                bool inTournament = tournamentPlayerIds.Contains(s.PDGANumber);
+                var badge = inTournament
+                    ? "<span class='badge bg-success ms-2'>✓ In Tournament</span>"
+                    : "<span class='badge bg-danger ms-2'>✗ Not in Tournament</span>";
+
+                html += $"<li class='list-group-item d-flex justify-content-between align-items-center'>{s.Player.Name}{badge}</li>";
+            }
+            html += "</ul>";
+
+            return Content(html, "text/html");
         }
 
         [HttpPost]
@@ -185,31 +230,33 @@ namespace fantasydg.Controllers
         public async Task<IActionResult> DropPlayer(int teamId, int pdgaNumber, int tournamentId, string division)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var team = await _db.Teams.FirstOrDefaultAsync(t => t.TeamId == teamId);
 
-            var team = await _db.Teams
-                .FirstOrDefaultAsync(t => t.TeamId == teamId && t.OwnerId == userId);
-            if (team == null) return Unauthorized();
+            // Ensure user owns the team
+            if (team == null || team.OwnerId != userId)
+                return Unauthorized();
 
-            // Fetch the record first
-            var tpt = await _db.TeamPlayerTournaments.FirstOrDefaultAsync(t =>
-                t.TeamId == teamId &&
-                t.PDGANumber == pdgaNumber &&
-                t.TournamentId == tournamentId &&
-                t.Division == division);
+            // Prevent drop if roster is locked for this tournament
+            bool isLocked = await _db.TeamPlayerTournaments
+                .AnyAsync(tpt => tpt.TeamId == teamId && tpt.TournamentId == tournamentId && tpt.IsLocked);
 
-            // Now check if it's locked
-            if (tpt != null && !tpt.IsLocked)
+            if (isLocked)
             {
-                _db.TeamPlayerTournaments.Remove(tpt);
+                TempData["RosterLockError"] = "You cannot drop players from a locked roster.";
+                return RedirectToAction("View", new { teamId, tournamentId });
+            }
+
+            // Drop from active roster
+            var player = await _db.TeamPlayers
+                .FirstOrDefaultAsync(tp => tp.TeamId == teamId && tp.PDGANumber == pdgaNumber);
+
+            if (player != null)
+            {
+                _db.TeamPlayers.Remove(player);
                 await _db.SaveChangesAsync();
             }
 
-            return RedirectToAction("View", new
-            {
-                teamId,
-                tournamentId,
-                division
-            });
+            return RedirectToAction("View", new { teamId, tournamentId, division });
         }
 
         [HttpPost]

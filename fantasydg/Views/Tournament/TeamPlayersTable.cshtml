@@ -46,7 +46,7 @@
         <tbody>
             @foreach (var pt in Model.OrderBy(pt => pt.Place))
             {
-                var key = (pt.PDGANumber, pt.TournamentId, pt.Tournament.Division);
+                var key = (pt.PDGANumber, pt.TournamentId, pt.Division);
                 float points = fantasyMap.ContainsKey(key) ? fantasyMap[key] : 0f;
 
                 <tr>
@@ -89,7 +89,7 @@
 <script>
     const table = $('#playersTable').DataTable({
         scrollX: true,
-        scrollY: 'calc(100vh - 305px)',
+        scrollY: 'calc(100vh - 355px)',
         scrollCollapse: true,
         paging: false,
         searching: true,

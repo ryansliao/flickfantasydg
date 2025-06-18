@@ -66,17 +66,17 @@
                 </div>
 
                 <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="FairwayWeight" class="me-2">Fairway %:</label>
+                    <label for="FairwayWeight" class="me-2">Fairway Hit %:</label>
                     <input type="number" step="0.001" name="FairwayWeight" value="@Model.FairwayWeight" class="form-control" style="width: 80px; height: 40px;" />
                 </div>
 
                 <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="C1InRegWeight" class="me-2">C1 In-Reg %:</label>
+                    <label for="C1InRegWeight" class="me-2">C1 In-Regulation %:</label>
                     <input type="number" step="0.001" name="C1InRegWeight" value="@Model.C1InRegWeight" class="form-control" style="width: 80px; height: 40px;" />
                 </div>
 
                 <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="C2InRegWeight" class="me-2">C2 In-Reg %:</label>
+                    <label for="C2InRegWeight" class="me-2">C2 In-Regulation %:</label>
                     <input type="number" step="0.001" name="C2InRegWeight" value="@Model.C2InRegWeight" class="form-control" style="width: 80px; height: 40px;" />
                 </div>
 
@@ -91,22 +91,22 @@
                 </div>
 
                 <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="C1PuttWeight" class="me-2">C1 Putt %:</label>
+                    <label for="C1PuttWeight" class="me-2">C1 Putting %:</label>
                     <input type="number" step="0.001" name="C1PuttWeight" value="@Model.C1PuttWeight" class="form-control" style="width: 80px; height: 40px;" />
                 </div>
 
                 <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="C1xPuttWeight" class="me-2">C1x Putt %:</label>
+                    <label for="C1xPuttWeight" class="me-2">C1x Putting %:</label>
                     <input type="number" step="0.001" name="C1xPuttWeight" value="@Model.C1xPuttWeight" class="form-control" style="width: 80px; height: 40px;" />
                 </div>
 
                 <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="C2PuttWeight" class="me-2">C2 Putt %:</label>
+                    <label for="C2PuttWeight" class="me-2">C2 Putting %:</label>
                     <input type="number" step="0.001" name="C2PuttWeight" value="@Model.C2PuttWeight" class="form-control" style="width: 80px; height: 40px;" />
                 </div>
 
                 <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="OBWeight" class="me-2">OB %:</label>
+                    <label for="OBWeight" class="me-2">Out-of-Bounds %:</label>
                     <input type="number" step="0.001" name="OBWeight" value="@Model.OBWeight" class="form-control" style="width: 80px; height: 40px;" />
                 </div>
 
@@ -150,9 +150,34 @@
                     <input type="number" step="0.001" name="AvgPuttDistWeight" value="@Model.AvgPuttDistWeight" class="form-control" style="width: 80px; height: 40px;" />
                 </div>
 
-                <div class="mb-3 d-flex justify-content-between align-items-center">
+                <div class="mb-2 d-flex justify-content-between align-items-center">
                     <label for="LongThrowInWeight" class="me-2">Long Throw-In:</label>
                     <input type="number" step="0.001" name="LongThrowInWeight" value="@Model.LongThrowInWeight" class="form-control" style="width: 80px; height: 40px;" />
+                </div>
+
+                <div class="mb-2 d-flex justify-content-between align-items-center">
+                    <label for="TotalSGWeight" class="me-2">Total Stroked Gained:</label>
+                    <input type="number" step="0.001" name="TotalSGWeightt" value="@Model.TotalSGWeight" class="form-control" style="width: 80px; height: 40px;" />
+                </div>
+
+                <div class="mb-2 d-flex justify-content-between align-items-center">
+                    <label for="PuttingSGWeight" class="me-2">Strokes Gained Putting:</label>
+                    <input type="number" step="0.001" name="PuttingSGWeight" value="@Model.PuttingSGWeight" class="form-control" style="width: 80px; height: 40px;" />
+                </div>
+
+                <div class="mb-2 d-flex justify-content-between align-items-center">
+                    <label for="TeeToGreenSGWeight" class="me-2">Strokes Gained Tee-to-Green:</label>
+                    <input type="number" step="0.001" name="TeeToGreenSGWeight" value="@Model.TeeToGreenSGWeight" class="form-control" style="width: 80px; height: 40px;" />
+                </div>
+
+                <div class="mb-2 d-flex justify-content-between align-items-center">
+                    <label for="C1xSGWeight" class="me-2">Strokes Gained C1x Putting:</label>
+                    <input type="number" step="0.001" name="C1xSGWeight" value="@Model.C1xSGWeight" class="form-control" style="width: 80px; height: 40px;" />
+                </div>
+
+                <div class="mb-3 d-flex justify-content-between align-items-center">
+                    <label for="C2SGWeight" class="me-2">Strokes Gained C2 Putting:</label>
+                    <input type="number" step="0.001" name="C2SGWeight" value="@Model.C2SGWeight" class="form-control" style="width: 80px; height: 40px;" />
                 </div>
 
                 <button type="submit" class="btn btn-primary mt-2">Save Scoring Settings</button>
