@@ -1,0 +1,15 @@
+﻿@model IEnumerable<dynamic>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No starters to preview.</p>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (var player in Model)
+        {
+            <li class="list-group-item">@player.Player?.Name (@player.PDGANumber)</li>
+        }
+    </ul>
+}

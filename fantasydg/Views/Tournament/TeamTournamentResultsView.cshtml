@@ -2,7 +2,7 @@
 @model LeaguePlayersViewModel
 
 @{
-    ViewBag.Title = "Available Players";
+    ViewBag.Title = "Tournament Results";
     bool hasData = Model != null && Model.Players != null && Model.Players.Any();
 }
 
@@ -90,9 +90,7 @@
     #searchContainer {
         display: flex;
         align-items: flex-end;
-        gap: 8px;
         padding-left: 12px;
-        margin-top: 10px;
     }
 
         #searchContainer label {
@@ -124,7 +122,7 @@
     }
 
     div.dataTables_filter {
-        margin-bottom: 10px;
+        margin-bottom: 0px;
     }
 
     /* DataTables scroll container */
@@ -180,7 +178,7 @@
             @await Html.PartialAsync("_LeagueTeamSidebar", ((string)ViewBag.LeagueName!, (int)ViewBag.LeagueId!, (int?)ViewBag.TeamId))
         </div>
 
-        <div id="mainContent">
+        <div id="mainContent" class="col pt-3">
             <h2 class="mt-2">Tounament Results</h2>
             <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 

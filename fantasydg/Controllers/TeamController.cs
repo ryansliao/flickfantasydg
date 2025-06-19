@@ -172,28 +172,52 @@ namespace fantasydg.Controllers
         [HttpGet]
         public async Task<IActionResult> GetStarterPreview(int teamId, int tournamentId)
         {
-            var starters = await _db.TeamPlayers
-                .Include(tp => tp.Player)
-                .Where(tp => tp.TeamId == teamId && tp.Status == RosterStatus.Starter)
-                .ToListAsync();
+            var isLocked = await _db.TeamPlayerTournaments
+                .AnyAsync(tpt => tpt.TeamId == teamId && tpt.TournamentId == tournamentId && tpt.IsLocked);
 
-            if (!starters.Any())
-                return Content("<div class='text-danger'>No starters assigned.</div>", "text/html");
-
-            var tournamentPlayerIds = await _db.PlayerTournaments
+            List<int> tournamentPlayerIds = await _db.PlayerTournaments
                 .Where(pt => pt.TournamentId == tournamentId)
                 .Select(pt => pt.PDGANumber)
                 .ToListAsync();
 
-            var html = "<ul class='list-group'>";
-            foreach (var s in starters)
+            List<(string Name, bool IsParticipating)> starters;
+
+            if (isLocked)
             {
-                bool inTournament = tournamentPlayerIds.Contains(s.PDGANumber);
+                // Show locked starters for this tournament
+                var lockedStarters = await _db.TeamPlayerTournaments
+                    .Include(tpt => tpt.Player)
+                    .Where(tpt => tpt.TeamId == teamId && tpt.TournamentId == tournamentId && tpt.Status == "Starter")
+                    .ToListAsync();
+
+                starters = lockedStarters
+                    .Select(tpt => (tpt.Player?.Name ?? "Unknown", tournamentPlayerIds.Contains(tpt.PDGANumber)))
+                    .ToList();
+            }
+            else
+            {
+                // Show current roster starters
+                var currentStarters = await _db.TeamPlayers
+                    .Include(tp => tp.Player)
+                    .Where(tp => tp.TeamId == teamId && tp.Status == RosterStatus.Starter)
+                    .ToListAsync();
+
+                starters = currentStarters
+                    .Select(tp => (tp.Player?.Name ?? "Unknown", tournamentPlayerIds.Contains(tp.PDGANumber)))
+                    .ToList();
+            }
+
+            if (!starters.Any())
+                return Content("<div class='text-danger'>No starters assigned.</div>", "text/html");
+
+            var html = "<ul class='list-group'>";
+            foreach (var (name, inTournament) in starters)
+            {
                 var badge = inTournament
                     ? "<span class='badge bg-success ms-2'>✓ In Tournament</span>"
                     : "<span class='badge bg-danger ms-2'>✗ Not in Tournament</span>";
 
-                html += $"<li class='list-group-item d-flex justify-content-between align-items-center'>{s.Player.Name}{badge}</li>";
+                html += $"<li class='list-group-item d-flex justify-content-between align-items-center'>{name}{badge}</li>";
             }
             html += "</ul>";
 
