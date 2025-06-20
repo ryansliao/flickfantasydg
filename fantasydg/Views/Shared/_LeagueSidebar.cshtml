@@ -7,10 +7,9 @@
 }
 
 <style>
-    /* Sidebar Styling */
     .sidebar {
         background-color: #ffffff;
-        border-right: 1px solid #e5e5e5;
+        border: 1px solid #e5e5e5;
         padding-top: 1rem;
         box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
         top: 57px;
@@ -44,7 +43,7 @@
             }
 </style>
 
-<div class="sidebar bg-light">
+<div id="sidebar" class="sidebar bg-light">
 
     <h5 class="mb-1">@Model.LeagueName</h5>
     <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
@@ -65,16 +64,24 @@
                 <li class="nav-item">
                     <a class="nav-link @(controller == "Team" && action == "View" ? "active" : "")"
                        asp-controller="Team" asp-action="View" asp-route-teamId="@Model.TeamId">
-                        Team
+                        My Team
                     </a>
                 </li>
             }
+
+            <!-- Results -->
+            <li class="nav-item">
+                <a class="nav-link @(controller == "League" && action == "LeagueLeaderboardView" ? "active" : "")"
+                   asp-controller="League" asp-action="LeagueLeaderboardView" asp-route-leagueId="@Model.LeagueId">
+                    Leaderboard
+                </a>
+            </li>
 
             <!-- Tournaments -->
             <li class="nav-item">
                 <a class="nav-link @(controller == "League" && action == "TeamTournamentResultsView" ? "active" : "")"
                    asp-controller="League" asp-action="TeamTournamentResultsView" asp-route-leagueId="@Model.LeagueId">
-                    Tournaments
+                    Tournament Results
                 </a>
             </li>
 
@@ -82,7 +89,7 @@
             <li class="nav-item">
                 <a class="nav-link @(controller == "League" && action == "Players" ? "active" : "")"
                    asp-controller="League" asp-action="Players" asp-route-leagueId="@Model.LeagueId">
-                    Players
+                    Available Players
                 </a>
             </li>
         </ul>

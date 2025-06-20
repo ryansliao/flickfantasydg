@@ -108,7 +108,7 @@ namespace fantasydg.Controllers
 
             ViewBag.AllTournaments = allTournaments
                  .OrderByDescending(t => t.Date)
-                 .Select(t => new TournamentLockView
+                 .Select(t => new TournamentLockViewModel
                  {
                      Id = t.Id,
                      Name = t.Name,

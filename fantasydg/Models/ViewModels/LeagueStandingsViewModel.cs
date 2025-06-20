@@ -1,6 +1,6 @@
 ﻿namespace fantasydg.Models.ViewModels
 {
-    public class LeagueStandingView
+    public class LeagueStandingsViewModel
     {
         public int Placement { get; set; }
         public string MemberName { get; set; }

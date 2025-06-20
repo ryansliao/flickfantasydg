@@ -1,4 +1,4 @@
-﻿@using fantasydg.Models.ViewModels
+﻿﻿@using fantasydg.Models.ViewModels
 @model LeaguePlayersViewModel
 
 @{
@@ -10,8 +10,13 @@
     <link rel="stylesheet" href="~/css/playerTableView.css" />
 }
 
+<!-- DataTables Setup (only include once per page if possible) -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
 @section Scripts {
-    <script src="~/js/tournamentResultsView.js"></script>
+    <script src="~/js/teamTournamentView.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("resultsViewWrapper").style.display = "block";
@@ -21,12 +26,12 @@
 
 <div class="players-page-wrapper" style="display: none" id="resultsViewWrapper">
     <div class="players-content-row">
-        <div id="sidebar">
-            @await Html.PartialAsync("_LeagueTeamSidebar", ((string)ViewBag.LeagueName!, (int)ViewBag.LeagueId!, (int?)ViewBag.TeamId))
+        <div class="col-auto p-0">
+            @await Html.PartialAsync("_LeagueSidebar", ((string)ViewBag.LeagueName!, (int)ViewBag.LeagueId!, (int?)ViewBag.TeamId))
         </div>
 
         <div id="mainContent" class="col pt-3">
-            <h2>Tounament Results</h2>
+            <h2>Tournament Results</h2>
             <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
             <div class="d-flex justify-content-between align-items-center flex-wrap">
@@ -66,7 +71,7 @@
             }
             else
             {
-                @await Html.PartialAsync("~/Views/Tournament/TeamPlayersTable.cshtml", Model.Players)
+                @await Html.PartialAsync("~/Views/Tournaments/TeamPlayersTable.cshtml", Model.Players)
             }
         </div>
     </div>

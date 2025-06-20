@@ -32,8 +32,9 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-auto p-0">
-                    <partial name="_LeagueTeamSidebar" model="(ViewBag.LeagueName as string, Model.Team.LeagueId, ViewBag.TeamId as int?)" />
+                    <partial name="_LeagueSidebar" model="(ViewBag.LeagueName as string, Model.Team.LeagueId, ViewBag.TeamId as int?)" />
                 </div>
+
                 <div class="col pt-3">
 
                     <div class="d-flex justify-content-between align-items-center flex-wrap">
@@ -126,7 +127,7 @@
                         <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
                         <label for="tournamentId">Tournament:</label>
                         <select id="lockTournamentDropdown" name="tournamentId" class="form-select" onchange="loadStarterPreview(); updateLockButtonLabel();">
-                            @foreach (var t in ViewBag.AllTournaments as List<TournamentLockView>)
+                            @foreach (var t in ViewBag.AllTournaments as List<TournamentLockViewModel>)
                             {
                                 <option value="@t.Id" data-locked="@t.IsLocked.ToString().ToLower()">
                                     @t.Name @(t.IsLocked ? "(Locked)" : "")

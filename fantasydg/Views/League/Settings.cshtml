@@ -7,7 +7,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-auto p-0">
-            <partial name="_LeagueTeamSidebar" model="(ViewBag.LeagueName as string, Model.LeagueId, ViewBag.TeamId as int?)" />
+            <partial name="_LeagueSidebar" model="(ViewBag.LeagueName as string, Model.LeagueId, ViewBag.TeamId as int?)" />
         </div>
 
         <div class="col pt-3">
@@ -45,7 +45,7 @@
 
             <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
 
-            <h3>Roster Configuration</h3>
+            <h4>Roster Configuration</h4>
 
             @if (TempData["RosterSettingsSaved"] != null)
             {
@@ -79,7 +79,7 @@
 
             <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
 
-            <h3>Scoring Settings</h3>
+            <h4>Scoring Settings</h4>
             @if (TempData["ScoringSaved"] != null)
             {
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -215,7 +215,7 @@
             </form>
 
             <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
-            <h3>Invite Members</h3>
+            <h4>Invite Members</h4>
 
             <form asp-action="Invite" method="post">
                 @Html.AntiForgeryToken()
@@ -235,7 +235,7 @@
             }
 
             <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
-            <h3>Administrator Functions</h3>
+            <h4>Administrator Functions</h4>
 
             @if (User?.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value == Model.OwnerId)
             {

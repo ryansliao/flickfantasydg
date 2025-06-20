@@ -50,11 +50,6 @@ div.dataTables_filter {
         border: 1px solid #ccc;
     }
 
-#tournamentDropdown {
-    width: 15vw;
-    min-width: 100px;
-}
-
 #divisionDropdown {
     width: 5vw;
     min-width: 80px;
@@ -65,6 +60,7 @@ form.filter-form label {
     margin-bottom: 0;
 }
 
+/* Scroll Containers */
 .table-scroll-container {
     flex: none;
     overflow: visible;
@@ -78,7 +74,6 @@ table.dataTable {
     border-collapse: collapse;
     box-sizing: border-box;
     vertical-align: middle;
-
 }
 
     .stats-table th,

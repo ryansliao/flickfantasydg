@@ -99,10 +99,10 @@ namespace fantasydg.Controllers
             return View("LeagueView", league);
         }
 
-        private async Task<List<LeagueStandingView>> GetStandings(int leagueId)
+        private async Task<List<LeagueStandingsViewModel>> GetStandings(int leagueId)
         {
             var league = await _db.Leagues.FirstOrDefaultAsync(l => l.LeagueId == leagueId);
-            if (league == null) return new List<LeagueStandingView>();
+            if (league == null) return new List<LeagueStandingsViewModel>();
 
             var standings = await _db.Teams
                 .Where(t => t.LeagueId == leagueId)
@@ -151,7 +151,7 @@ namespace fantasydg.Controllers
                         )
                 })
                 .OrderByDescending(t => t.Points)
-                .Select((s, index) => new LeagueStandingView
+                .Select((s, index) => new LeagueStandingsViewModel
                 {
                     Placement = index + 1,
                     MemberName = s.OwnerName,
@@ -270,9 +270,9 @@ namespace fantasydg.Controllers
                 .FirstOrDefaultAsync();
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                return PartialView("~/Views/Tournament/TeamPlayerTable.cshtml", model);
+                return PartialView("~/Views/Tournaments/TeamPlayerTable.cshtml", model);
 
-            return View("~/Views/Tournament/TeamTournamentResultsView.cshtml", model);
+            return View("~/Views/Tournaments/TeamTournamentResultsView.cshtml", model);
         }
 
         [HttpGet]
@@ -342,7 +342,106 @@ namespace fantasydg.Controllers
                 return PartialView("~/Views/Players/PlayerTable.cshtml", model);
             }
 
-            return View("~/Views/Players/LeaguePlayers.cshtml", model);
+            return View("~/Views/Players/LeaguePlayersView.cshtml", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> LeagueLeaderboardView(int leagueId, string? division = null)
+        {
+            var league = await _db.Leagues
+                .Include(l => l.Teams).ThenInclude(t => t.Owner)
+                .Include(l => l.Teams).ThenInclude(t => t.TeamPlayerTournaments)
+                    .ThenInclude(tpt => tpt.Player)
+                    .ThenInclude(p => p.PlayerTournaments)
+                .FirstOrDefaultAsync(l => l.LeagueId == leagueId);
+
+            if (league == null) return NotFound();
+
+            var leagueTournamentIds = await _db.TeamPlayerTournaments
+                .Where(tpt => tpt.Team.LeagueId == leagueId)
+                .Select(tpt => tpt.TournamentId)
+                .Distinct()
+                .ToListAsync();
+
+            var divisions = await _db.PlayerTournaments
+                .Where(pt => leagueTournamentIds.Contains(pt.TournamentId) && pt.Division != null)
+                .Select(pt => pt.Division)
+                .Distinct()
+                .OrderByDescending(d => d)
+                .ToListAsync();
+
+            division ??= divisions.Contains("MPO") ? "MPO" : divisions.FirstOrDefault();
+
+            var tournaments = await _db.Tournaments
+                .OrderBy(t => t.Date)
+                .ToListAsync();
+
+            tournaments = tournaments
+                .DistinctBy(t => t.Id)
+                .ToList();
+
+            var model = new LeagueLeaderboardViewModel
+            {
+                League = league,
+                Tournaments = tournaments,
+                Teams = new List<LeagueLeaderboardViewModel.TeamRow>()
+            };
+
+            foreach (var team in league.Teams)
+            {
+                var row = new LeagueLeaderboardViewModel.TeamRow
+                {
+                    TeamName = team.Name,
+                    OwnerName = team.Owner?.UserName ?? "Unknown"
+                };
+
+                foreach (var tournament in tournaments)
+                {
+                    var lockedStarters = team.TeamPlayerTournaments
+                        .Where(tpt => tpt.TournamentId == tournament.Id && tpt.Status == nameof(RosterStatus.Starter) && tpt.IsLocked)
+                        .Select(tpt => tpt.Player?.PlayerTournaments.FirstOrDefault(pt => pt.TournamentId == tournament.Id))
+                        .Where(pt => pt != null);
+
+                    double score = lockedStarters.Sum(pt =>
+                        pt.Place * league.PlacementWeight +
+                        pt.Fairway * league.FairwayWeight +
+                        pt.C1InReg * league.C1InRegWeight +
+                        pt.C2InReg * league.C2InRegWeight +
+                        pt.Parked * league.ParkedWeight +
+                        pt.Scramble * league.ScrambleWeight +
+                        pt.C1Putting * league.C1PuttWeight +
+                        pt.C1xPutting * league.C1xPuttWeight +
+                        pt.C2Putting * league.C2PuttWeight +
+                        pt.ObRate * league.OBWeight +
+                        pt.Par * league.ParWeight +
+                        pt.Birdie * league.BirdieWeight +
+                        pt.BirdieMinus * league.BirdieMinusWeight +
+                        pt.EagleMinus * league.EagleMinusWeight +
+                        pt.BogeyPlus * league.BogeyPlusWeight +
+                        pt.DoubleBogeyPlus * league.DoubleBogeyPlusWeight +
+                        pt.TotalPuttDistance * league.TotalPuttDistWeight +
+                        pt.AvgPuttDistance * league.AvgPuttDistWeight +
+                        pt.LongThrowIn * league.LongThrowInWeight +
+                        pt.StrokesGainedTotal * league.TotalSGWeight +
+                        pt.StrokesGainedPutting * league.PuttingSGWeight +
+                        pt.StrokesGainedTeeToGreen * league.TeeToGreenSGWeight +
+                        pt.StrokesGainedC1xPutting * league.C1xSGWeight +
+                        pt.StrokesGainedC2Putting * league.C2SGWeight
+                    );
+
+                    row.PointsByTournament[tournament.Id] = score;
+                }
+
+                model.Teams.Add(row);
+            }
+
+            ViewBag.LeagueName = league.Name;
+            ViewBag.LeagueId = league.LeagueId;
+            ViewBag.TeamId = league.Teams.FirstOrDefault(t => t.OwnerId == User.FindFirstValue(ClaimTypes.NameIdentifier))?.TeamId;
+            ViewBag.SelectedDivision = division;
+            ViewBag.Divisions = divisions;
+
+            return View("~/Views/Leaderboard/LeagueLeaderboardView.cshtml", model);
         }
 
         // View and manage settings for a specific league

@@ -1,8 +1,10 @@
+wwwroot\css\leagueLeaderboardView.css
 wwwroot\css\playerTableView.css
 wwwroot\css\site.css
 wwwroot\css\teamView.css
 wwwroot\css\tournamentInput.css
 wwwroot\favicon.ico
+wwwroot\js\leagueLeaderboardView.js
 wwwroot\js\leaguePlayersView.js
 wwwroot\js\leagueSettingsModal.js
 wwwroot\js\site.js

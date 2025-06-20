@@ -1,26 +1,4 @@
-﻿function updatePlayerTable() {
-    const tournamentId = document.getElementById('tournamentDropdown')?.value;
-    const division = document.getElementById('divisionDropdown')?.value;
-    const leagueId = document.body.dataset.leagueId;
-
-    const url = `/League/FilterPlayers?leagueId=${leagueId}&tournamentId=${tournamentId}&division=${encodeURIComponent(division)}`;
-
-    fetch(url, {
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-        .then(res => res.text())
-        .then(html => {
-            document.getElementById("table-scroll-container").innerHTML = html;
-            $('#playersTable').DataTable();
-        });
-}  
-    
-document.getElementById("tournamentDropdown")?.addEventListener("change", updatePlayerTable);
-document.getElementById("divisionDropdown")?.addEventListener("change", updatePlayerTable);
-
-document.addEventListener("DOMContentLoaded", function () {
+﻿document.addEventListener("DOMContentLoaded", function () {
     const table = $('#playersTable').DataTable({
         scrollX: true,
         scrollY: 'calc(100vh - 355px)',
@@ -30,15 +8,14 @@ document.addEventListener("DOMContentLoaded", function () {
         ordering: true,
         autoWidth: false,
         info: false,
-        order: [[0, 'asc']],
+        order: [[1, 'desc']],
         fixedColumns: {
-            leftColumns: 3
+            leftColumns: 2
         },
         columnDefs: [
             { targets: 0, width: "150px" },
-            { targets: 1, width: "150px" },
-            { targets: 2, width: "40px" },
-            { targets: "_all", width: "50px" }
+            { targets: 1, width: "70px" },
+            { targets: "_all", width: "70px" }
         ],
         dom: 'f rt<"bottom"ip>',
         initComplete: function () {
@@ -46,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
             $('#loadingSpinner').hide();
 
             const filter = $('#playersTable_filter').detach();
-            $('#searchContainer').html(filter).show();
+            $('#searchContainer').empty().append(filter).show();
 
             setTimeout(() => {
                 table.columns.adjust().draw(false);

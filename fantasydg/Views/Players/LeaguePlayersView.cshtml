@@ -10,6 +10,11 @@
     <link rel="stylesheet" href="~/css/playerTableView.css" />
 }
 
+<!-- DataTables Setup (only include once per page if possible) -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
 @section Scripts {
     <script src="~/js/leaguePlayersView.js"></script>
     <script>
@@ -21,8 +26,8 @@
 
 <div class="players-page-wrapper" style="display: none;" id="playersViewWrapper">
     <div class="players-content-row">
-        <div id="sidebar">
-            @await Html.PartialAsync("_LeagueTeamSidebar", ((string)ViewBag.LeagueName!, (int)ViewBag.LeagueId!, (int?)ViewBag.TeamId))
+        <div class="col-auto p-0">
+            @await Html.PartialAsync("_LeagueSidebar", ((string)ViewBag.LeagueName!, (int)ViewBag.LeagueId!, (int?)ViewBag.TeamId))
         </div>
 
         <div id="mainContent" class="col pt-3">

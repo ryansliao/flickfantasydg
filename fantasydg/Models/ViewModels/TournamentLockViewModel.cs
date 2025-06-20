@@ -2,7 +2,7 @@
 
 namespace fantasydg.Models.ViewModels
 {
-    public class TournamentLockView
+    public class TournamentLockViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }

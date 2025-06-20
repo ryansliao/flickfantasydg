@@ -1,0 +1,51 @@
+﻿@using fantasydg.Models.ViewModels
+@model LeagueLeaderboardViewModel
+
+@{
+    ViewBag.Title = "Leaderboard";
+    bool hasData = Model != null && Model.Teams != null && Model.Teams.Any();
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LeagueLeaderboardView.css" />
+}
+
+<!-- DataTables Setup (only include once per page if possible) -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+@section Scripts {
+    <script src="~/js/LeagueLeaderboardView.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("resultsViewWrapper").style.display = "block";
+        });
+    </script>
+}
+
+<div class="players-page-wrapper" style="display: none" id="resultsViewWrapper">
+    <div class="players-content-row">
+        <div class="col-auto p-0">
+            @await Html.PartialAsync("_LeagueSidebar", ((string)ViewBag.LeagueName!, (int)ViewBag.LeagueId!, (int?)ViewBag.TeamId))
+        </div>
+
+        <div id="mainContent" class="col pt-3">
+            <h2>Leaderboard</h2>
+            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
+
+            @if (!hasData)
+            {
+                <div class="alert alert-warning mt-4">
+                    No fantasy points have been recorded for any tournament.
+                </div>
+            }
+            else
+            {
+                @await Html.PartialAsync("~/Views/Leaderboard/_TournamentTotalPointsTable.cshtml", Model)
+            }
+        </div>
+    </div>
+</div>
+
+

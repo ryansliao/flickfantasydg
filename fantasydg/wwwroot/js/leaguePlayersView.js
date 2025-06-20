@@ -17,10 +17,43 @@
         });
 }
 
+document.getElementById("tournamentDropdown")?.addEventListener("change", updatePlayerTable);
+document.getElementById("divisionDropdown")?.addEventListener("change", updatePlayerTable);
+
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("playersViewWrapper").style.display = "block";
-    document.getElementById("tournamentDropdown")?.addEventListener("change", updatePlayerTable);
-    document.getElementById("divisionDropdown")?.addEventListener("change", updatePlayerTable);
+    const table = $('#playersTable').DataTable({
+        scrollX: true,
+        scrollY: 'calc(100vh - 355px)',
+        scrollCollapse: true,
+        paging: false,
+        searching: true,
+        ordering: true,
+        autoWidth: false,
+        info: false,
+        order: [[3, 'asc']],
+        fixedColumns: {
+            leftColumns: 3
+        },
+        columnDefs: [
+            { orderable: false, targets: 0, width: "40px" },
+            { targets: 1, width: "150px" },
+            { targets: 2, width: "50px" },
+            { targets: 3, width: "40px" },
+            { targets: "_all", width: "50px" }
+        ],
+        dom: 'f rt<"bottom"ip>',
+        initComplete: function () {
+            $('#tableWrapper').removeClass('d-none');
+            $('#loadingSpinner').hide();
+
+            const filter = $('#playersTable_filter').detach();
+            $('#searchContainer').html(filter).show();
+
+            setTimeout(() => {
+                table.columns.adjust().draw(false);
+            }, 10);
+        }
+    });
 
     const topScroll = document.querySelector('.table-scroll-top');
     const bottomScroll = document.querySelector('.table-scroll-bottom');

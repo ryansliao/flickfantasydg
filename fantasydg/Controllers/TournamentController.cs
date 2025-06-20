@@ -42,14 +42,5 @@ namespace fantasydg.Controllers
             TempData["TournamentInputSuccess"] = "Tournament successfully added or updated!";
             return RedirectToAction("Settings", "League", new { id = leagueId });
         }
-
-        // Return the name of the tournament given its ID
-        private async Task<string?> GetTournamentName(int tournamentId)
-        {
-            return await _db.Tournaments
-                .Where(t => t.Id == tournamentId && t.Division == "MPO")
-                .Select(t => t.Name)
-                .FirstOrDefaultAsync();
-        }
     }
 }
