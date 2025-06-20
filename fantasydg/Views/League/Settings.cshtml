@@ -12,17 +12,48 @@
 
         <div class="col pt-3">
             <h2>Settings</h2>
-            @if (TempData["RosterSettingsSaved"] != null)
+
+            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+
+            <button class="btn btn-primary" onclick="openTournamentModal()">Add/Update Tournament</button>
+
+            @if (TempData["TournamentInputSuccess"] != null)
             {
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    @TempData["RosterSettingsSaved"]
+                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                    @TempData["TournamentInputSuccess"]
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
 
+            <div id="tournamentInputModal" class="modal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog" onclick="event.stopPropagation()">
+                    <button type="button" class="btn-close" onclick="closeTournamentModal()">×</button>
+                    <h4 class="mb-3">Add/Update Tournament</h4>
+                    <form asp-controller="Tournament" asp-action="Input" method="post">
+                        <input type="hidden" name="leagueId" value="@Model.LeagueId" />
+
+                        <div class="form-group mb-3">
+                            <label for="TournamentId">Tournament ID</label>
+                            <input type="number" id="TournamentId" name="TournamentId" class="form-control"
+                                   placeholder="Find a five-digit ID in its PDGA Live URL." required />
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </form>
+                </div>
+            </div>
+
             <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
 
             <h3>Roster Configuration</h3>
+
+            @if (TempData["RosterSettingsSaved"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                    @TempData["RosterSettingsSaved"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
 
             <form asp-action="SaveRosterSettings" asp-controller="League" method="post" class="mt-4" style="max-width: 400px;">
                 @Html.AntiForgeryToken()
@@ -222,3 +253,11 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/leagueSettingsModal.js"></script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/tournamentInput.css" />
+}

@@ -18,513 +18,146 @@
     bool isOwnTeam = teamId == selectedTeamId;
 }
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-auto p-0">
-            <partial name="_LeagueTeamSidebar" model="(ViewBag.LeagueName as string, Model.Team.LeagueId, ViewBag.TeamId as int?)" />
-        </div>
-        <div class="col-auto pt-3">
-            <h2 class="mt-2">@Model.Team.Name</h2>
-            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
+@section Styles {
+    <link rel="stylesheet" href="~/css/teamView.css" />
+}
 
-            <form method="get" asp-action="View" asp-controller="Team">
-                <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
-                <label for="viewTeamId">Team:</label>
-                <select name="viewTeamId" class="form-select" onchange="this.form.submit()">
-                    @foreach (var t in teams)
-                    {
-                        <option value="@t.TeamId" selected="@(t.TeamId == selectedTeamId ? "selected" : null)">@t.Name</option>
-                    }
-                </select>
-            </form>
+@section Scripts {
+    <script src="~/js/teamView.js"></script>
+}
 
-            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
-            <div class="row justify-content-center">
-                @foreach (var rosterGroup in types)
-                {
-                    var players = Model.Roster.Where(tp => tp.Status.ToString() == rosterGroup.Key).ToList();
+<body data-is-own-team="@isOwnTeam.ToString().ToLower()" data-team-id="@teamId" data-request-verification-token="@tokens.RequestToken">
+    <div id="mainContent" style="display:none;">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-auto p-0">
+                    <partial name="_LeagueTeamSidebar" model="(ViewBag.LeagueName as string, Model.Team.LeagueId, ViewBag.TeamId as int?)" />
+                </div>
+                <div class="col pt-3">
 
-                    <div class="col roster-section text-center">
-                        <h5 class="text-center">@rosterGroup.Label</h5>
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <h2 class="team-header">@Model.Team.Name</h2>
 
-                        @for (int i = 0; i < rosterGroup.Count; i++)
+                        @if (isOwnTeam)
                         {
-                            var tp = i < players.Count ? players[i] : null;
-                            var cardClass = tp != null ?
-                            "player-card " + (tp.Status == nameof(RosterStatus.Starter) ? "starter-card" : tp.Status == nameof(RosterStatus.Bench) ? "bench-card" : "ir-card")
-                            : "player-card";
+                            <a asp-controller="Team" asp-action="Settings" asp-route-teamId="@teamId" class="btn btn-outline-secondary">
+                                ⚙️ Settings
+                            </a>
+                        }
+                    </div>
 
-                            <div class="drop-slot @(!isOwnTeam ? "locked-slot" : "")" data-status="@rosterGroup.Key">
-                                @if (tp != null)
+                    <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-end flex-wrap w-100">
+                            <form method="get" asp-action="View" asp-controller="Team" class="d-flex align-items-end">
+                                <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
+                                <div>
+                                    <label for="viewTeamId">Team:</label>
+                                    <select name="viewTeamId" class="form-select team-dropdown" onchange="this.form.submit()">
+                                        @foreach (var t in teams)
+                                        {
+                                            <option value="@t.TeamId" selected="@(t.TeamId == selectedTeamId ? "selected" : null)">@t.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </form>
+
+                            @if (isOwnTeam)
+                            {
+                                <button class="btn btn-danger ms-auto" onclick="openLockModal()">Lock Roster For Tournament</button>
+                            }
+                        </div>
+                    </div>
+
+                    <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
+
+                    <div class="row justify-content-left roster-row">
+                        <h4 class="mb-4">Current Roster</h4>
+                        @foreach (var rosterGroup in types)
+                        {
+                            var players = Model.Roster.Where(tp => tp.Status.ToString() == rosterGroup.Key).ToList();
+
+                            <div class="col-auto roster-section">
+                                <h5>@rosterGroup.Label</h5>
+
+                                @for (int i = 0; i < rosterGroup.Count; i++)
                                 {
-                                    @if (isOwnTeam)
-                                    {
-                                        <div class="@cardClass draggable-player"
-                                             draggable="true"
-                                             data-id="@tp.PDGANumber"
-                                             onmousedown="trackClickStart(event)"
-                                             onmouseup="maybeOpenModal(event, '@tp.Player.Name', '@tp.PDGANumber')">
-                                            @tp.Player.Name
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="@cardClass">@tp.Player.Name</div>
-                                    }
+                                    var tp = i < players.Count ? players[i] : null;
+                                    var cardClass = tp != null ?
+                                    "player-card " + (tp.Status == nameof(RosterStatus.Starter) ? "starter-card" : tp.Status == nameof(RosterStatus.Bench) ? "bench-card" : "ir-card")
+                                    : "player-card";
+
+                                    <div class="drop-slot @(!isOwnTeam ? "locked-slot" : "")" data-status="@rosterGroup.Key">
+                                        @if (tp != null)
+                                        {
+                                            @if (isOwnTeam)
+                                            {
+                                                <div class="@cardClass draggable-player"
+                                                     draggable="true"
+                                                     data-id="@tp.PDGANumber"
+                                                     data-name="@tp.Player.Name">
+                                                    @tp.Player.Name
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="@cardClass">@tp.Player.Name</div>
+                                            }
+                                        }
+                                    </div>
                                 }
                             </div>
                         }
                     </div>
-                }
+                </div>
             </div>
+        </div>
 
-            @if (isOwnTeam)
-            {
-                <button class="btn btn-primary mt-3" onclick="openLockModal()">Lock Roster For Tournament</button>
-            }
+        <div id="lockModal" class="modal" tabindex="-1">
+            <div class="modal-content bg-white p-4 rounded">
+                <div class="modal-header">
+                    <h5 class="modal-title">Select Tournament to Lock</h5>
+                    <button type="button" class="btn-close" onclick="closeLockModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" asp-action="LockRoster">
+                        <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
+                        <label for="tournamentId">Tournament:</label>
+                        <select id="lockTournamentDropdown" name="tournamentId" class="form-select" onchange="loadStarterPreview(); updateLockButtonLabel();">
+                            @foreach (var t in ViewBag.AllTournaments as List<TournamentLockView>)
+                            {
+                                <option value="@t.Id" data-locked="@t.IsLocked.ToString().ToLower()">
+                                    @t.Name @(t.IsLocked ? "(Locked)" : "")
+                                </option>
+                            }
+                        </select>
 
+                        <div id="starterPreview" class="mt-3"></div>
+
+                        <button type="submit" class="btn btn-success mt-3" id="lockButton"></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="playerModal">
+            <div class="modal-content bg-white p-4 rounded">
+                <button onclick="closeModal()"
+                        style="position:absolute; top:10px; right:15px; border:none; background:none; font-size:1.5rem; cursor:pointer;">
+                    &times;
+                </button>
+                <h4 id="playerModalName"></h4>
+                <p>PDGA #: <span id="playerModalId"></span></p>
+                <form method="post" asp-controller="Team" asp-action="DropPlayer">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
+                    <input type="hidden" name="pdgaNumber" id="modalPdgaNumber" />
+                    <input type="hidden" name="tournamentId" value="@ViewBag.SelectedTournamentId" />
+                    <button type="submit" class="btn btn-danger mt-2">Drop Player</button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-
-<div id="lockModal" class="modal" tabindex="-1">
-    <div class="modal-content bg-white p-4 rounded">
-        <div class="modal-header">
-            <h5 class="modal-title">Select Tournament to Lock</h5>
-            <button type="button" class="btn-close" onclick="closeLockModal()"></button>
-        </div>
-        <div class="modal-body">
-            <form method="post" asp-action="LockRoster">
-                <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
-                <label for="tournamentId">Tournament:</label>
-                <select id="lockTournamentDropdown" name="tournamentId" class="form-select" onchange="loadStarterPreview(); updateLockButtonLabel();">
-                    @foreach (var t in ViewBag.AllTournaments as List<TournamentLockView>)
-                    {
-                        <option value="@t.Id" data-locked="@t.IsLocked.ToString().ToLower()">
-                            @t.Name @(t.IsLocked ? "(Locked)" : "")
-                        </option>
-                    }
-                </select>
-
-                <div id="starterPreview" class="mt-3"></div>
-
-                <button type="submit" class="btn btn-success mt-3" id="lockButton"></button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div id="playerModal">
-    <div class="modal-content bg-white p-4 rounded">
-        <button onclick="closeModal()"
-                style="position:absolute; top:10px; right:15px; border:none; background:none; font-size:1.5rem; cursor:pointer;">
-            &times;
-        </button>
-        <h4 id="playerModalName"></h4>
-        <p>PDGA #: <span id="playerModalId"></span></p>
-        <form method="post" asp-controller="Team" asp-action="DropPlayer">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
-            <input type="hidden" name="pdgaNumber" id="modalPdgaNumber" />
-            <input type="hidden" name="tournamentId" value="@ViewBag.SelectedTournamentId" />
-            <button type="submit" class="btn btn-danger mt-2">Drop Player</button>
-        </form>
-    </div>
-</div>
-
-
-@section Scripts {
-    <script>
-            document.addEventListener("DOMContentLoaded", function () {
-            // Allow drag if it's your own team, regardless of lock
-                if (!@isOwnTeam.ToString().ToLower()) return;
-
-            // Setup dragstart for player cards
-            document.querySelectorAll(".draggable-player").forEach(card => {
-                card.addEventListener("dragstart", function (ev) {
-                    ev.dataTransfer.setData("playerId", ev.target.dataset.id);
-                });
-            });
-
-            // Setup dragover/drop for slots
-            document.querySelectorAll(".drop-slot").forEach(slot => {
-                slot.addEventListener("dragover", function (ev) {
-                    ev.preventDefault();
-                });
-
-                slot.addEventListener("drop", function (ev) {
-                    ev.preventDefault();
-                    const draggedId = ev.dataTransfer.getData("playerId");
-                    const draggedCard = document.querySelector(`[data-id='${draggedId}']`);
-                    const dropSlot = ev.currentTarget;
-                    const existingCard = dropSlot.querySelector('.player-card');
-
-                    const getClassForStatus = (status) => {
-                        switch (status) {
-                            case "Starter": return "starter-card";
-                            case "Bench": return "bench-card";
-                            case "InjuryReserve": return "ir-card";
-                            default: return "";
-                        }
-                    };
-
-                    if (existingCard && existingCard !== draggedCard) {
-                        const originalSlot = draggedCard.closest('.drop-slot');
-                        const fromStatus = originalSlot.dataset.status;
-                        const toStatus = dropSlot.dataset.status;
-
-                        originalSlot.appendChild(existingCard);
-                        dropSlot.appendChild(draggedCard);
-
-                        draggedCard.className = `player-card draggable-player ${getClassForStatus(toStatus)}`;
-                        existingCard.className = `player-card draggable-player ${getClassForStatus(fromStatus)}`;
-
-                        updateStatus(draggedId, toStatus);
-                        updateStatus(existingCard.dataset.id, fromStatus);
-                    } else {
-                        const originalSlot = draggedCard.closest('.drop-slot');
-                        const newStatus = dropSlot.dataset.status;
-
-                        if (originalSlot !== dropSlot) {
-                            dropSlot.appendChild(draggedCard);
-                            originalSlot.innerHTML = '';
-
-                            draggedCard.className = `player-card draggable-player ${getClassForStatus(newStatus)}`;
-                            updateStatus(draggedId, newStatus);
-                        }
-                    }
-                });
-            });
-
-            function updateStatus(pdgaNumber, newStatus) {
-                fetch(`/Team/ChangeStatus/${pdgaNumber}`, {
-                    method: 'POST',
-                    headers: {
-                        'RequestVerificationToken': '@tokens.RequestToken',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ newStatus })
-                });
-            }
-        });
-
-        function allowDrop(ev) {
-            if (!@isOwnTeam.ToString().ToLower()) return;
-            ev.preventDefault();
-        }
-
-        function drag(ev) {
-            if (!@isOwnTeam.ToString().ToLower()) return;
-            ev.dataTransfer.setData("playerId", ev.target.dataset.id);
-        }
-
-        function drop(ev) {
-            if (!@isOwnTeam.ToString().ToLower()) return;
-            ev.preventDefault();
-
-            const draggedId = ev.dataTransfer.getData("playerId");
-            const draggedCard = document.querySelector(`[data-id='${draggedId}']`);
-            const dropSlot = ev.currentTarget;
-
-            const existingCard = dropSlot.querySelector('.player-card');
-
-            const getClassForStatus = (status) => {
-                switch (status) {
-                    case "Starter": return "starter-card";
-                    case "Bench": return "bench-card";
-                    case "InjuryReserve": return "ir-card";
-                    default: return "";
-                }
-            };
-
-            // If the slot already has a card, swap them
-            if (existingCard && existingCard !== draggedCard) {
-                const originalSlot = draggedCard.closest('.drop-slot');
-                const fromStatus = originalSlot.dataset.status;
-                const toStatus = dropSlot.dataset.status;
-
-                // DOM swap
-                originalSlot.appendChild(existingCard);
-                dropSlot.appendChild(draggedCard);
-
-                // Update card classes
-                draggedCard.classList.remove("starter-card", "bench-card", "ir-card");
-                draggedCard.classList.add(getClassForStatus(toStatus));
-
-                existingCard.classList.remove("starter-card", "bench-card", "ir-card");
-                existingCard.classList.add(getClassForStatus(fromStatus));
-
-                // Update backend if status changed
-                if (fromStatus !== toStatus) {
-                    fetch(`/Team/ChangeStatus/${draggedId}`, {
-                        method: 'POST',
-                        headers: {
-                            'RequestVerificationToken': '@tokens.RequestToken',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ newStatus: toStatus })
-                    });
-
-                    const swappedId = existingCard.dataset.id;
-
-                    fetch(`/Team/ChangeStatus/${swappedId}`, {
-                        method: 'POST',
-                        headers: {
-                            'RequestVerificationToken': '@tokens.RequestToken',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ newStatus: fromStatus })
-                    });
-                }
-
-            } else {
-                // No existing card in slot — simple move
-                const newStatus = dropSlot.dataset.status;
-                const originalSlot = draggedCard.closest('.drop-slot');
-
-                if (originalSlot !== dropSlot) {
-                    dropSlot.appendChild(draggedCard);
-                    originalSlot.innerHTML = '';
-
-                    draggedCard.classList.remove("starter-card", "bench-card", "ir-card");
-                    draggedCard.classList.add(getClassForStatus(newStatus));
-
-                    fetch(`/Team/ChangeStatus/${draggedId}`, {
-                        method: 'POST',
-                        headers: {
-                            'RequestVerificationToken': '@tokens.RequestToken',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ newStatus })
-                    });
-                }
-            }
-        }
-
-        let mouseDownTime = null;
-
-        function trackClickStart(event) {
-            mouseDownTime = new Date().getTime();
-        }
-
-        function showPlayerModal(name, pdgaNumber) {
-            document.getElementById('playerModalName').textContent = name;
-            document.getElementById('playerModalId').textContent = pdgaNumber;
-            document.getElementById('modalPdgaNumber').value = pdgaNumber;
-            document.getElementById('playerModal').style.display = 'block';
-        }
-
-        function maybeOpenModal(event, name, pdgaNumber) {
-            const duration = new Date().getTime() - mouseDownTime;
-            if (duration < 200) { // treat as a click
-                showPlayerModal(name, pdgaNumber);
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('playerModal').style.display = 'none';
-        }
-
-        function openLockModal() {
-            document.getElementById("lockModal").style.display = "block";
-            loadStarterPreview();
-            updateLockButtonLabel();
-        }
-
-        function closeLockModal() {
-            document.getElementById("lockModal").style.display = "none";
-        }
-
-        function loadStarterPreview() {
-            const dropdown = document.getElementById("lockTournamentDropdown");
-            const selectedOption = dropdown.options[dropdown.selectedIndex];
-            const tournamentId = selectedOption.value;
-            const isLocked = selectedOption.getAttribute("data-locked") === "true";
-
-            fetch(`/Team/GetStarterPreview?teamId=${@ViewBag.TeamId}&tournamentId=${tournamentId}&isLocked=${isLocked}`)
-                .then(res => res.text())
-                .then(html => {
-                    document.getElementById("starterPreview").innerHTML = html;
-                });
-        }
-
-        function unlockRoster() {
-            const tournamentId = document.getElementById("lockTournamentDropdown").value;
-            const form = document.createElement("form");
-            form.method = "post";
-            form.action = "/Team/UnlockRoster";
-
-            const teamInput = document.createElement("input");
-            teamInput.type = "hidden";
-            teamInput.name = "teamId";
-            teamInput.value = "@ViewBag.TeamId";
-
-            const tourInput = document.createElement("input");
-            tourInput.type = "hidden";
-            tourInput.name = "tournamentId";
-            tourInput.value = tournamentId;
-
-            const token = document.createElement("input");
-            token.type = "hidden";
-            token.name = "__RequestVerificationToken";
-            token.value = '@tokens.RequestToken';
-
-            form.appendChild(teamInput);
-            form.appendChild(tourInput);
-            form.appendChild(token);
-
-            document.body.appendChild(form);
-            form.submit();
-        }
-
-        function updateLockButtonLabel() {
-            const dropdown = document.getElementById("lockTournamentDropdown");
-            const selected = dropdown.options[dropdown.selectedIndex];
-            const button = document.getElementById("lockButton");
-
-            const isLocked = selected.getAttribute("data-locked") === "true";
-
-            if (isLocked) {
-                button.innerText = "Unlock Tournament";
-                button.className = "btn btn-danger mt-3";
-            } else {
-                button.innerText = "Confirm Lock";
-                button.className = "btn btn-success mt-3";
-            }
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('playerModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        }
-    </script>
-}
-
-<style>
-    .roster-section {
-        padding: 0 12px;
-    }
-
-        .roster-section h5 {
-            font-weight: 600;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-    .drop-slot {
-        border: 2px dashed #bbb;
-        border-radius: 6px;
-        height: 52px;
-        padding: 4px 12px;
-        margin-bottom: 14px;
-        background-color: transparent;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        min-width: 250px;
-        max-width: 800px;
-        margin-left: auto;
-        margin-right: auto;
-        color: inherit;
-    }
-
-    .locked-slot {
-        background-color: #eee;
-        cursor: not-allowed;
-    }
-
-    .player-card {
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
-        padding: 6px 12px;
-        font-size: 14px;
-        font-weight: 500;
-        text-align: center;
-        width: 100%;
-        max-height: 100%;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        cursor: grab;
-        user-select: none;
-    }
-
-    .starter-card {
-        background-color: #d4edda; /* light green */
-        color: #155724;
-    }
-
-    .bench-card {
-        background-color: #fff3cd; /* light yellow */
-        color: #856404;
-    }
-
-    .ir-card {
-        background-color: #f8d7da; /* light red */
-        color: #721c24;
-    }
-
-    .player-card:active {
-        cursor: grabbing;
-    }
-
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.65);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1050;
-    }
-
-    .modal-content {
-        background: #fff;
-        padding: 1.5rem;
-        border-radius: 8px;
-        position: relative;
-        width: 400px;
-        max-width: 150%;
-        text-align: center;
-        margin: 10% auto;
-        position: relative;
-    }
-
-    .close-button {
-        position: absolute;
-        right: 10px;
-        top: 6px;
-        font-size: 24px;
-        cursor: pointer;
-    }
-
-    #playerModal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 1050;
-    }
-
-    #lockModal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 1050;
-    }
-</style>
+</body>

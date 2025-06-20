@@ -29,25 +29,18 @@ namespace fantasydg.Controllers
         }
 
         // Prompt the tournament input view
-        public async Task<IActionResult> Input(TournamentInputView? model)
+        [HttpPost]
+        public async Task<IActionResult> Input(int TournamentId, int leagueId)
         {
-            if (HttpContext.Request.Method == "POST" && model != null)
+            string[] divisions = { "MPO", "FPO" };
+
+            foreach (var division in divisions)
             {
-                string[] divisions = { "MPO", "FPO" };
-
-                // Request API endpoints for tournament URLs in each division and enters them into the database
-                foreach (var division in divisions)
-                {
-                    await _dataService.FetchTournaments(model.TournamentId, division);
-                }
-
-                // Find the id of the tournament just entered
-                var tournamentId = await GetTournamentName(model.TournamentId);
-                var defaultDivision = "MPO";
-                return RedirectToAction("Index", "Home");
+                await _dataService.FetchTournaments(TournamentId, division);
             }
 
-            return View(model);
+            TempData["TournamentInputSuccess"] = "Tournament successfully added or updated!";
+            return RedirectToAction("Settings", "League", new { id = leagueId });
         }
 
         // Return the name of the tournament given its ID

@@ -224,6 +224,43 @@ namespace fantasydg.Controllers
             return Content(html, "text/html");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Settings(int teamId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var team = await _db.Teams
+                .Include(t => t.League)
+                .FirstOrDefaultAsync(t => t.TeamId == teamId && t.OwnerId == userId);
+            if (team == null)
+                return Unauthorized();
+
+            ViewBag.TeamId = team.TeamId;
+            ViewBag.TeamName = team.Name;
+            return View(team.League);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveSettings(int TeamId, string Name)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var team = await _db.Teams.FirstOrDefaultAsync(t => t.TeamId == TeamId && t.OwnerId == userId);
+            if (team == null)
+                return Unauthorized();
+
+            if (string.IsNullOrWhiteSpace(Name) || Name.Length > 20)
+            {
+                TempData["TeamSettingsSaved"] = "Team name must be between 1 and 20 characters.";
+                return View("Settings", team);
+            }
+
+            team.Name = Name;
+            await _db.SaveChangesAsync();
+
+            TempData["TeamSettingsSaved"] = "Team name updated successfully!";
+            return RedirectToAction("Settings", new { teamId = TeamId });
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddPlayer(int teamId, int PDGANumber, int leagueId, int tournamentId, string division)

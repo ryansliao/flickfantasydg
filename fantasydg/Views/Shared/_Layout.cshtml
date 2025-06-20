@@ -73,9 +73,6 @@
                                 }
                                 </ul>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Tournament" asp-action="Input">Input</a>
-                            </li>
                         </ul>
                         <partial name="_LoginPartial" />
                     </div>
@@ -107,5 +104,6 @@
         <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css" />
         <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
         @RenderSection("Scripts", required: false)
+        @RenderSection("Styles", required: false)
     </body>
 </html>
