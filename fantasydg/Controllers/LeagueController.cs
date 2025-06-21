@@ -101,248 +101,134 @@ namespace fantasydg.Controllers
 
         private async Task<List<LeagueStandingsViewModel>> GetStandings(int leagueId)
         {
-            var league = await _db.Leagues.FirstOrDefaultAsync(l => l.LeagueId == leagueId);
-            if (league == null) return new List<LeagueStandingsViewModel>();
-
-            var standings = await _db.Teams
-                .Where(t => t.LeagueId == leagueId)
-                .Include(t => t.Owner)
-                .Include(t => t.TeamPlayerTournaments)
+            var league = await _db.Leagues
+                .Include(l => l.Teams).ThenInclude(t => t.Owner)
+                .Include(l => l.Teams).ThenInclude(t => t.TeamPlayerTournaments)
                     .ThenInclude(tpt => tpt.Player)
                     .ThenInclude(p => p.PlayerTournaments)
-                .ToListAsync();
+                .FirstOrDefaultAsync(l => l.LeagueId == leagueId);
 
-            var ordered = standings
-                .Select(t => new
+            if (league == null) return new List<LeagueStandingsViewModel>();
+
+            var tournaments = await _db.Tournaments.ToListAsync();
+
+            var results = new List<(Team Team, string OwnerName, double Points)>();
+
+            foreach (var team in league.Teams)
+            {
+                double total = 0;
+
+                if (league.LeagueScoringMode == League.ScoringMode.TotalPoints)
                 {
-                    Team = t,
-                    OwnerName = t.Owner.UserName,
-                    Points = t.TeamPlayerTournaments
+                    total = team.TeamPlayerTournaments
                         .Where(tpt => tpt.Status == nameof(RosterStatus.Starter) && tpt.IsLocked)
-                        .Select(tpt =>
-                            tpt.Player.PlayerTournaments
-                                .FirstOrDefault(pt => pt.TournamentId == tpt.TournamentId))
+                        .Select(tpt => tpt.Player.PlayerTournaments
+                            .FirstOrDefault(pt => pt.TournamentId == tpt.TournamentId))
                         .Where(pt => pt != null)
                         .Sum(pt =>
-                            pt.Place * league.PlacementWeight +
-                            pt.Fairway * league.FairwayWeight +
-                            pt.C1InReg * league.C1InRegWeight +
-                            pt.C2InReg * league.C2InRegWeight +
-                            pt.Parked * league.ParkedWeight +
-                            pt.Scramble * league.ScrambleWeight +
-                            pt.C1Putting * league.C1PuttWeight +
-                            pt.C1xPutting * league.C1xPuttWeight +
-                            pt.C2Putting * league.C2PuttWeight +
-                            pt.ObRate * league.OBWeight +
-                            pt.Par * league.ParWeight +
-                            pt.Birdie * league.BirdieWeight +
-                            pt.BirdieMinus * league.BirdieMinusWeight +
-                            pt.EagleMinus * league.EagleMinusWeight +
-                            pt.BogeyPlus * league.BogeyPlusWeight +
-                            pt.DoubleBogeyPlus * league.DoubleBogeyPlusWeight +
-                            pt.TotalPuttDistance * league.TotalPuttDistWeight +
-                            pt.AvgPuttDistance * league.AvgPuttDistWeight +
-                            pt.LongThrowIn * league.LongThrowInWeight +
-                            pt.StrokesGainedTotal * league.TotalSGWeight +
-                            pt.StrokesGainedPutting * league.PuttingSGWeight +
-                            pt.StrokesGainedTeeToGreen * league.TeeToGreenSGWeight +
-                            pt.StrokesGainedC1xPutting * league.C1xSGWeight +
-                            pt.StrokesGainedC2Putting * league.C2SGWeight
-                        )
-                })
-                .OrderByDescending(t => t.Points)
-                .Select((s, index) => new LeagueStandingsViewModel
+                        {
+                            var t = tournaments.FirstOrDefault(t => t.Id == pt.TournamentId);
+                            double weight = t?.Weight ?? 1;
+                            return weight * (
+                                pt.Place * league.PlacementWeight +
+                                pt.Fairway * league.FairwayWeight +
+                                pt.C1InReg * league.C1InRegWeight +
+                                pt.C2InReg * league.C2InRegWeight +
+                                pt.Parked * league.ParkedWeight +
+                                pt.Scramble * league.ScrambleWeight +
+                                pt.C1Putting * league.C1PuttWeight +
+                                pt.C1xPutting * league.C1xPuttWeight +
+                                pt.C2Putting * league.C2PuttWeight +
+                                pt.ObRate * league.OBWeight +
+                                pt.Par * league.ParWeight +
+                                pt.Birdie * league.BirdieWeight +
+                                pt.BirdieMinus * league.BirdieMinusWeight +
+                                pt.EagleMinus * league.EagleMinusWeight +
+                                pt.BogeyPlus * league.BogeyPlusWeight +
+                                pt.DoubleBogeyPlus * league.DoubleBogeyPlusWeight +
+                                pt.TotalPuttDistance * league.TotalPuttDistWeight +
+                                pt.AvgPuttDistance * league.AvgPuttDistWeight +
+                                pt.LongThrowIn * league.LongThrowInWeight +
+                                pt.StrokesGainedTotal * league.TotalSGWeight +
+                                pt.StrokesGainedPutting * league.PuttingSGWeight +
+                                pt.StrokesGainedTeeToGreen * league.TeeToGreenSGWeight +
+                                pt.StrokesGainedC1xPutting * league.C1xSGWeight +
+                                pt.StrokesGainedC2Putting * league.C2SGWeight
+                            );
+                        });
+                }
+                else if (league.LeagueScoringMode == League.ScoringMode.WinsPerTournament)
                 {
-                    Placement = index + 1,
-                    MemberName = s.OwnerName,
-                    TeamName = s.Team.Name,
-                    FantasyPoints = s.Points
+                    var participatedTournamentIds = team.TeamPlayerTournaments
+                        .Where(tpt => tpt.Status == nameof(RosterStatus.Starter) && tpt.IsLocked)
+                        .Select(tpt => tpt.TournamentId)
+                        .Distinct()
+                        .ToList();
+
+                    foreach (var tournament in tournaments.Where(t => participatedTournamentIds.Contains(t.Id)))
+                    {
+                        var teamScores = league.Teams.ToDictionary(
+                            otherTeam => otherTeam.TeamId,
+                            otherTeam =>
+                            {
+                                var pts = otherTeam.TeamPlayerTournaments
+                                    .Where(tpt => tpt.TournamentId == tournament.Id && tpt.IsLocked && tpt.Status == nameof(RosterStatus.Starter))
+                                    .Join(_db.PlayerTournaments,
+                                        tpt => new { tpt.PDGANumber, tpt.TournamentId },
+                                        pt => new { pt.PDGANumber, pt.TournamentId },
+                                        (tpt, pt) => pt)
+                                    .ToList();
+
+                                return pts.Sum(pt =>
+                                    pt.Place * league.PlacementWeight +
+                                    pt.Fairway * league.FairwayWeight +
+                                    pt.C1InReg * league.C1InRegWeight +
+                                    pt.C2InReg * league.C2InRegWeight +
+                                    pt.Parked * league.ParkedWeight +
+                                    pt.Scramble * league.ScrambleWeight +
+                                    pt.C1Putting * league.C1PuttWeight +
+                                    pt.C1xPutting * league.C1xPuttWeight +
+                                    pt.C2Putting * league.C2PuttWeight +
+                                    pt.ObRate * league.OBWeight +
+                                    pt.Par * league.ParWeight +
+                                    pt.Birdie * league.BirdieWeight +
+                                    pt.BirdieMinus * league.BirdieMinusWeight +
+                                    pt.EagleMinus * league.EagleMinusWeight +
+                                    pt.BogeyPlus * league.BogeyPlusWeight +
+                                    pt.DoubleBogeyPlus * league.DoubleBogeyPlusWeight +
+                                    pt.TotalPuttDistance * league.TotalPuttDistWeight +
+                                    pt.AvgPuttDistance * league.AvgPuttDistWeight +
+                                    pt.LongThrowIn * league.LongThrowInWeight +
+                                    pt.StrokesGainedTotal * league.TotalSGWeight +
+                                    pt.StrokesGainedPutting * league.PuttingSGWeight +
+                                    pt.StrokesGainedTeeToGreen * league.TeeToGreenSGWeight +
+                                    pt.StrokesGainedC1xPutting * league.C1xSGWeight +
+                                    pt.StrokesGainedC2Putting * league.C2SGWeight
+                                );
+                            });
+
+                        var ranked = teamScores.OrderByDescending(kvp => kvp.Value).ToList();
+                        int index = ranked.FindIndex(kvp => kvp.Key == team.TeamId);
+                        int wins = index >= 0 ? ranked.Count(kvp => kvp.Value < ranked[index].Value) : 0;
+                        total += wins;
+                    }
+                }
+
+                results.Add((team, team.Owner.UserName, total));
+            }
+
+            var ordered = results
+                .OrderByDescending(x => x.Points)
+                .Select((x, i) => new LeagueStandingsViewModel
+                {
+                    Placement = i + 1,
+                    MemberName = x.OwnerName,
+                    TeamName = x.Team.Name,
+                    FantasyPoints = x.Points
                 })
                 .ToList();
 
             return ordered;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> TeamTournamentResultsView(int leagueId, int? tournamentId = null, string? division = null, int? round = null)
-        {
-            // Load tournaments and set default selection
-            var allTournaments = await _repository.GetAllTournamentsAsync();
-            var orderedTournaments = allTournaments.OrderByDescending(t => t.Date).ToList();
-            ViewBag.Tournaments = orderedTournaments;
-
-            tournamentId ??= orderedTournaments.FirstOrDefault()?.Id;
-            var selectedTournament = orderedTournaments.FirstOrDefault(t => t.Id == tournamentId);
-            if (selectedTournament == null) return NotFound();
-
-            ViewBag.SelectedTournamentId = selectedTournament.Id;
-
-            // Load divisions and set default
-            var divisions = await _repository.GetDivisionsForTournamentAsync(selectedTournament.Id);
-            ViewBag.Divisions = divisions.OrderByDescending(d => d).ToList();
-
-            division ??= divisions.Contains("MPO") ? "MPO" : divisions.FirstOrDefault();
-            ViewBag.SelectedDivision = division;
-
-            // Get all assigned players in league
-            var assignedPDGAs = await _db.TeamPlayers
-                .Where(tp => tp.LeagueId == leagueId)
-                .Select(tp => tp.PDGANumber)
-                .ToListAsync();
-
-            // Filter players who participated in the selected tournament
-            var participatingPlayers = await _db.TeamPlayerTournaments
-                .Where(tpt =>
-                    tpt.TournamentId == selectedTournament.Id &&
-                    tpt.IsLocked &&
-                    assignedPDGAs.Contains(tpt.PDGANumber))
-                .Include(tpt => tpt.Player)
-                    .ThenInclude(p => p.PlayerTournaments)
-                .ToListAsync();
-
-            // You can filter division here if needed, but only if it's stored in TeamPlayerTournament
-            participatingPlayers = participatingPlayers
-                .Where(tpt => tpt.Division == division)
-                .ToList();
-
-            // Then convert to PlayerTournaments (if needed by view)
-            var playerTournamentList = participatingPlayers.Select(tpt =>
-            {
-                var ptMatch = tpt.Player?.PlayerTournaments
-                    ?.FirstOrDefault(pt => pt.TournamentId == tpt.TournamentId);
-
-                return new PlayerTournament
-                {
-                    PDGANumber = tpt.PDGANumber,
-                    Player = tpt.Player,
-                    TournamentId = tpt.TournamentId,
-                    Division = tpt.Division,
-                    Place = ptMatch?.Place ?? -1,
-                    TotalToPar = ptMatch?.TotalToPar ?? 999,
-                    Fairway = ptMatch?.Fairway ?? -1,
-                    C1InReg = ptMatch?.C1InReg ?? -1,
-                    C2InReg = ptMatch?.C2InReg ?? -1,
-                    Scramble = ptMatch?.Scramble ?? -1,
-                    C1Putting = ptMatch?.C1Putting ?? -1,
-                    C2Putting = ptMatch?.C2Putting ?? -1,
-                    ObRate = ptMatch?.ObRate ?? -1,
-                    BirdieMinus = ptMatch?.BirdieMinus ?? -1,
-                    Par = ptMatch?.Par ?? -1,
-                    BogeyPlus = ptMatch?.BogeyPlus ?? -1,
-                    DoubleBogeyPlus = ptMatch?.DoubleBogeyPlus ?? -1,
-                    StrokesGainedTeeToGreen = ptMatch?.StrokesGainedTeeToGreen ?? -1,
-                    StrokesGainedPutting = ptMatch?.StrokesGainedPutting ?? -1,
-                    StrokesGainedC1xPutting = ptMatch?.StrokesGainedC1xPutting ?? -1,
-                    StrokesGainedC2Putting = ptMatch?.StrokesGainedC2Putting ?? -1
-                };
-            }).ToList();
-
-            // Load league and teams
-            var league = await _db.Leagues
-                .Include(l => l.Teams)
-                .ThenInclude(t => t.TeamPlayers)
-                .FirstOrDefaultAsync(l => l.LeagueId == leagueId);
-            if (league == null) return NotFound();
-
-            // Ensure fantasy points are up to date
-            await _leagueService.UpdateFantasyPointsForLeagueAsync(leagueId);
-            var fantasyMap = await _leagueService.GetFantasyPointsMapAsync(leagueId);
-
-            // Prepare view model
-            var model = new LeaguePlayersViewModel
-            {
-                League = league,
-                Players = playerTournamentList
-            };
-
-            var playerTeamMap = await _db.TeamPlayers
-                .Where(tp => tp.LeagueId == leagueId)
-                .ToDictionaryAsync(tp => tp.PDGANumber, tp => tp.Team.Name);
-
-            // ViewBag values
-            ViewBag.LeagueId = league.LeagueId;
-            ViewBag.LeagueName = league.Name;
-            ViewBag.FantasyMap = fantasyMap;
-            ViewBag.PlayerTeamMap = playerTeamMap;
-            ViewBag.TeamId = await _db.Teams
-                .Where(t => t.LeagueId == leagueId && t.OwnerId == User.FindFirstValue(ClaimTypes.NameIdentifier))
-                .Select(t => (int?)t.TeamId)
-                .FirstOrDefaultAsync();
-
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                return PartialView("~/Views/Tournaments/TeamPlayerTable.cshtml", model);
-
-            return View("~/Views/Tournaments/TeamTournamentResultsView.cshtml", model);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Players(int leagueId, int? tournamentId = null, string? division = null, int? round = null)
-        {
-            var allTournaments = await _repository.GetAllTournamentsAsync();
-            ViewBag.Tournaments = allTournaments.OrderByDescending(t => t.Date).ToList();
-
-            if (!tournamentId.HasValue)
-                tournamentId = allTournaments.FirstOrDefault()?.Id;
-
-            var selectedTournament = allTournaments.FirstOrDefault(t => t.Id == tournamentId);
-
-            tournamentId = selectedTournament.Id;
-            ViewBag.SelectedTournamentId = tournamentId;
-
-            var divisions = await _repository.GetDivisionsForTournamentAsync(tournamentId.Value);
-            ViewBag.Divisions = divisions.OrderByDescending(d => d).ToList();
-
-            if (string.IsNullOrEmpty(division))
-                division = divisions.Contains("MPO") ? "MPO" : divisions.FirstOrDefault();
-
-            ViewBag.SelectedDivision = division;
-
-            var league = await _db.Leagues
-                .Include(l => l.Teams)
-                .ThenInclude(t => t.TeamPlayers)
-                .FirstOrDefaultAsync(l => l.LeagueId == leagueId);
-
-            if (league == null) return NotFound();
-
-            await _leagueService.UpdateFantasyPointsForLeagueAsync(leagueId);
-
-            var fantasyMap = await _leagueService.GetFantasyPointsMapAsync(leagueId);
-            ViewBag.FantasyMap = fantasyMap;
-
-            var assignedPDGANumbers = await _db.TeamPlayers
-                .Where(tp => tp.LeagueId == leagueId)
-                .Select(tp => tp.PDGANumber)
-                .ToListAsync();
-
-            var unassigned = await _db.PlayerTournaments
-                .Include(pt => pt.Player)
-                .Include(pt => pt.Tournament)
-                .Where(pt =>
-                    pt.Tournament.Division == division &&
-                    pt.TournamentId == tournamentId &&
-                    !assignedPDGANumbers.Contains(pt.PDGANumber))
-                .ToListAsync();
-
-            var model = new LeaguePlayersViewModel
-            {
-                League = league,
-                Players = unassigned
-            };
-
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var team = await _db.Teams
-                .FirstOrDefaultAsync(t => t.LeagueId == leagueId && t.OwnerId == userId);
-
-            ViewBag.LeagueId = leagueId;
-            ViewBag.LeagueName = league.Name;
-            ViewBag.TeamId = team.TeamId;
-
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                return PartialView("~/Views/Players/PlayerTable.cshtml", model);
-            }
-
-            return View("~/Views/Players/LeaguePlayersView.cshtml", model);
         }
 
         [HttpGet]
@@ -397,43 +283,113 @@ namespace fantasydg.Controllers
 
                 foreach (var tournament in tournaments)
                 {
-                    var lockedStarters = team.TeamPlayerTournaments
-                        .Where(tpt => tpt.TournamentId == tournament.Id && tpt.Status == nameof(RosterStatus.Starter) && tpt.IsLocked)
-                        .Select(tpt => tpt.Player?.PlayerTournaments.FirstOrDefault(pt => pt.TournamentId == tournament.Id))
-                        .Where(pt => pt != null);
+                    if (league.LeagueScoringMode == League.ScoringMode.TotalPoints)
+                    {
+                        var lockedStarters = team.TeamPlayerTournaments
+                            .Where(tpt => tpt.TournamentId == tournament.Id && tpt.IsLocked && tpt.Status == "Starter")
+                            .Join(_db.PlayerTournaments,
+                                tpt => new { tpt.PDGANumber, tpt.TournamentId },
+                                pt => new { pt.PDGANumber, pt.TournamentId },
+                                (tpt, pt) => pt)
+                            .ToList();
 
-                    double score = lockedStarters.Sum(pt =>
-                        pt.Place * league.PlacementWeight +
-                        pt.Fairway * league.FairwayWeight +
-                        pt.C1InReg * league.C1InRegWeight +
-                        pt.C2InReg * league.C2InRegWeight +
-                        pt.Parked * league.ParkedWeight +
-                        pt.Scramble * league.ScrambleWeight +
-                        pt.C1Putting * league.C1PuttWeight +
-                        pt.C1xPutting * league.C1xPuttWeight +
-                        pt.C2Putting * league.C2PuttWeight +
-                        pt.ObRate * league.OBWeight +
-                        pt.Par * league.ParWeight +
-                        pt.Birdie * league.BirdieWeight +
-                        pt.BirdieMinus * league.BirdieMinusWeight +
-                        pt.EagleMinus * league.EagleMinusWeight +
-                        pt.BogeyPlus * league.BogeyPlusWeight +
-                        pt.DoubleBogeyPlus * league.DoubleBogeyPlusWeight +
-                        pt.TotalPuttDistance * league.TotalPuttDistWeight +
-                        pt.AvgPuttDistance * league.AvgPuttDistWeight +
-                        pt.LongThrowIn * league.LongThrowInWeight +
-                        pt.StrokesGainedTotal * league.TotalSGWeight +
-                        pt.StrokesGainedPutting * league.PuttingSGWeight +
-                        pt.StrokesGainedTeeToGreen * league.TeeToGreenSGWeight +
-                        pt.StrokesGainedC1xPutting * league.C1xSGWeight +
-                        pt.StrokesGainedC2Putting * league.C2SGWeight
-                    );
+                        double score = lockedStarters.Sum(pt =>
+                        {
+                            double weight = tournament.Weight;
+                            return weight * (
+                                pt.Place * league.PlacementWeight +
+                                pt.Fairway * league.FairwayWeight +
+                                pt.C1InReg * league.C1InRegWeight +
+                                pt.C2InReg * league.C2InRegWeight +
+                                pt.Parked * league.ParkedWeight +
+                                pt.Scramble * league.ScrambleWeight +
+                                pt.C1Putting * league.C1PuttWeight +
+                                pt.C1xPutting * league.C1xPuttWeight +
+                                pt.C2Putting * league.C2PuttWeight +
+                                pt.ObRate * league.OBWeight +
+                                pt.Par * league.ParWeight +
+                                pt.Birdie * league.BirdieWeight +
+                                pt.BirdieMinus * league.BirdieMinusWeight +
+                                pt.EagleMinus * league.EagleMinusWeight +
+                                pt.BogeyPlus * league.BogeyPlusWeight +
+                                pt.DoubleBogeyPlus * league.DoubleBogeyPlusWeight +
+                                pt.TotalPuttDistance * league.TotalPuttDistWeight +
+                                pt.AvgPuttDistance * league.AvgPuttDistWeight +
+                                pt.LongThrowIn * league.LongThrowInWeight +
+                                pt.StrokesGainedTotal * league.TotalSGWeight +
+                                pt.StrokesGainedPutting * league.PuttingSGWeight +
+                                pt.StrokesGainedTeeToGreen * league.TeeToGreenSGWeight +
+                                pt.StrokesGainedC1xPutting * league.C1xSGWeight +
+                                pt.StrokesGainedC2Putting * league.C2SGWeight
+                            );
+                        });
 
-                    row.PointsByTournament[tournament.Id] = score;
+                        row.PointsByTournament[tournament.Id] = score;
+                    }
+                    else if (league.LeagueScoringMode == League.ScoringMode.WinsPerTournament)
+                    {
+                        // Step 1: Score all teams for this tournament
+                        var teamScores = league.Teams.ToDictionary(
+                            otherTeam => otherTeam.TeamId,
+                            otherTeam =>
+                            {
+                                var pts = otherTeam.TeamPlayerTournaments
+                                    .Where(tpt => tpt.TournamentId == tournament.Id && tpt.IsLocked && tpt.Status == "Starter")
+                                    .Join(_db.PlayerTournaments,
+                                        tpt => new { tpt.PDGANumber, tpt.TournamentId },
+                                        pt => new { pt.PDGANumber, pt.TournamentId },
+                                        (tpt, pt) => pt)
+                                    .ToList();
+
+                                return pts.Sum(pt =>
+                                    pt.Place * league.PlacementWeight +
+                                    pt.Fairway * league.FairwayWeight +
+                                    pt.C1InReg * league.C1InRegWeight +
+                                    pt.C2InReg * league.C2InRegWeight +
+                                    pt.Parked * league.ParkedWeight +
+                                    pt.Scramble * league.ScrambleWeight +
+                                    pt.C1Putting * league.C1PuttWeight +
+                                    pt.C1xPutting * league.C1xPuttWeight +
+                                    pt.C2Putting * league.C2PuttWeight +
+                                    pt.ObRate * league.OBWeight +
+                                    pt.Par * league.ParWeight +
+                                    pt.Birdie * league.BirdieWeight +
+                                    pt.BirdieMinus * league.BirdieMinusWeight +
+                                    pt.EagleMinus * league.EagleMinusWeight +
+                                    pt.BogeyPlus * league.BogeyPlusWeight +
+                                    pt.DoubleBogeyPlus * league.DoubleBogeyPlusWeight +
+                                    pt.TotalPuttDistance * league.TotalPuttDistWeight +
+                                    pt.AvgPuttDistance * league.AvgPuttDistWeight +
+                                    pt.LongThrowIn * league.LongThrowInWeight +
+                                    pt.StrokesGainedTotal * league.TotalSGWeight +
+                                    pt.StrokesGainedPutting * league.PuttingSGWeight +
+                                    pt.StrokesGainedTeeToGreen * league.TeeToGreenSGWeight +
+                                    pt.StrokesGainedC1xPutting * league.C1xSGWeight +
+                                    pt.StrokesGainedC2Putting * league.C2SGWeight
+                                );
+                            });
+
+                        // Step 2: Rank teams by score
+                        var ranked = teamScores.OrderByDescending(kvp => kvp.Value).ToList();
+
+                        // Step 3: Compute wins for this team (teams outscored)
+                        int thisTeamIndex = ranked.FindIndex(kvp => kvp.Key == team.TeamId);
+                        int wins = thisTeamIndex >= 0 ? ranked.Count(kvp => kvp.Value < ranked[thisTeamIndex].Value) : 0;
+
+                        row.PointsByTournament[tournament.Id] = wins;
+                    }
                 }
 
                 model.Teams.Add(row);
             }
+
+
+            // NEW BLOCK: determine if any teams have scores
+            var teamsWithPoints = model.Teams
+                .Where(tr => tr.PointsByTournament.Any()) // Includes teams with 0s
+                .ToList();
+
+            ViewBag.NoFantasyPoints = !teamsWithPoints.Any();
 
             ViewBag.LeagueName = league.Name;
             ViewBag.LeagueId = league.LeagueId;
@@ -442,6 +398,204 @@ namespace fantasydg.Controllers
             ViewBag.Divisions = divisions;
 
             return View("~/Views/Leaderboard/LeagueLeaderboardView.cshtml", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TeamTournamentResultsView(int leagueId, int? tournamentId = null, string? division = null, int? round = null)
+        {
+            // Load league and teams
+            var league = await _db.Leagues
+                .Include(l => l.Teams)
+                .ThenInclude(t => t.TeamPlayers)
+                .FirstOrDefaultAsync(l => l.LeagueId == leagueId);
+            if (league == null) return NotFound();
+
+            // Load tournaments and set default selection
+            var allTournaments = await _repository.GetAllTournamentsAsync();
+            var orderedTournaments = allTournaments.OrderByDescending(t => t.Date).ToList();
+            ViewBag.Tournaments = orderedTournaments;
+
+            tournamentId ??= orderedTournaments.FirstOrDefault()?.Id;
+            var selectedTournament = orderedTournaments.FirstOrDefault(t => t.Id == tournamentId);
+            if (selectedTournament == null) return NotFound();
+
+            ViewBag.SelectedTournamentId = selectedTournament.Id;
+
+            // Load divisions and set default
+            var divisions = await _repository.GetDivisionsForTournamentAsync(selectedTournament.Id);
+            divisions = divisions
+                .Where(d => (d == "MPO" && league.IncludeMPO) || (d == "FPO" && league.IncludeFPO))
+                .OrderByDescending(d => d)
+                .ToList();
+
+            ViewBag.Divisions = divisions;
+            division ??= divisions.Contains("MPO") ? "MPO" : divisions.FirstOrDefault();
+            ViewBag.SelectedDivision = division;
+
+            // Get all assigned players in league
+            var assignedPDGAs = await _db.TeamPlayers
+                .Where(tp => tp.LeagueId == leagueId)
+                .Select(tp => tp.PDGANumber)
+                .ToListAsync();
+
+            // Filter players who participated in the selected tournament
+            var participatingPlayers = await _db.TeamPlayerTournaments
+                .Where(tpt =>
+                    tpt.TournamentId == selectedTournament.Id &&
+                    tpt.IsLocked &&
+                    assignedPDGAs.Contains(tpt.PDGANumber))
+                .Include(tpt => tpt.Player)
+                    .ThenInclude(p => p.PlayerTournaments)
+                .ToListAsync();
+
+            // You can filter division here if needed, but only if it's stored in TeamPlayerTournament
+            participatingPlayers = participatingPlayers
+                .Where(tpt => tpt.Division == division)
+                .ToList();
+
+            // Then convert to PlayerTournaments (if needed by view)
+            var playerTournamentList = participatingPlayers.Select(tpt =>
+            {
+                var ptMatch = tpt.Player?.PlayerTournaments
+                    ?.FirstOrDefault(pt => pt.TournamentId == tpt.TournamentId);
+
+                return new PlayerTournament
+                {
+                    PDGANumber = tpt.PDGANumber,
+                    Player = tpt.Player,
+                    TournamentId = tpt.TournamentId,
+                    Division = tpt.Division,
+                    Place = ptMatch?.Place ?? -1,
+                    TotalToPar = ptMatch?.TotalToPar ?? 999,
+                    Fairway = ptMatch?.Fairway ?? -1,
+                    C1InReg = ptMatch?.C1InReg ?? -1,
+                    C2InReg = ptMatch?.C2InReg ?? -1,
+                    Scramble = ptMatch?.Scramble ?? -1,
+                    C1Putting = ptMatch?.C1Putting ?? -1,
+                    C1xPutting = ptMatch?.C1xPutting ?? -1,
+                    C2Putting = ptMatch?.C2Putting ?? -1,
+                    ObRate = ptMatch?.ObRate ?? -1,
+                    BirdieMinus = ptMatch?.BirdieMinus ?? -1,
+                    Par = ptMatch?.Par ?? -1,
+                    BogeyPlus = ptMatch?.BogeyPlus ?? -1,
+                    DoubleBogeyPlus = ptMatch?.DoubleBogeyPlus ?? -1,
+                    TotalPuttDistance = ptMatch?.TotalPuttDistance ?? -1,
+                    LongThrowIn = ptMatch?.LongThrowIn ?? -1,
+                    AvgPuttDistance = ptMatch?.AvgPuttDistance ?? -1,
+                    StrokesGainedTotal = ptMatch?.StrokesGainedTotal ?? -1,
+                    StrokesGainedPutting = ptMatch?.StrokesGainedPutting ?? -1,
+                    StrokesGainedTeeToGreen = ptMatch?.StrokesGainedTeeToGreen ?? -1,
+                    StrokesGainedC1xPutting = ptMatch?.StrokesGainedC1xPutting ?? -1,
+                    StrokesGainedC2Putting = ptMatch?.StrokesGainedC2Putting ?? -1
+                };
+            }).ToList();
+
+            // Ensure fantasy points are up to date
+            await _leagueService.UpdateFantasyPointsForLeagueAsync(leagueId);
+            var fantasyMap = await _leagueService.GetFantasyPointsMapAsync(leagueId);
+
+            // Prepare view model
+            var model = new LeaguePlayersViewModel
+            {
+                League = league,
+                Players = playerTournamentList
+            };
+
+            var playerTeamMap = await _db.TeamPlayers
+                .Where(tp => tp.LeagueId == leagueId)
+                .ToDictionaryAsync(tp => tp.PDGANumber, tp => tp.Team.Name);
+
+            // ViewBag values
+            ViewBag.LeagueId = league.LeagueId;
+            ViewBag.LeagueName = league.Name;
+            ViewBag.Divisions = divisions;
+            ViewBag.SelectedDivision = division;
+            ViewBag.FantasyMap = fantasyMap;
+            ViewBag.PlayerTeamMap = playerTeamMap;
+            ViewBag.TeamId = await _db.Teams
+                .Where(t => t.LeagueId == leagueId && t.OwnerId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                .Select(t => (int?)t.TeamId)
+                .FirstOrDefaultAsync();
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return PartialView("~/Views/Tournaments/TeamPlayerTable.cshtml", model);
+
+            return View("~/Views/Tournaments/TeamTournamentResultsView.cshtml", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Players(int leagueId, int? tournamentId = null, string? division = null, int? round = null)
+        {
+            var league = await _db.Leagues
+                .Include(l => l.Teams)
+                .ThenInclude(t => t.TeamPlayers)
+                .FirstOrDefaultAsync(l => l.LeagueId == leagueId);
+
+            if (league == null) return NotFound();
+
+            var allTournaments = await _repository.GetAllTournamentsAsync();
+            ViewBag.Tournaments = allTournaments.OrderByDescending(t => t.Date).ToList();
+
+            if (!tournamentId.HasValue)
+                tournamentId = allTournaments.FirstOrDefault()?.Id;
+
+            var selectedTournament = allTournaments.FirstOrDefault(t => t.Id == tournamentId);
+
+            tournamentId = selectedTournament.Id;
+            ViewBag.SelectedTournamentId = tournamentId;
+
+            var divisions = await _repository.GetDivisionsForTournamentAsync(tournamentId.Value);
+            divisions = divisions
+                .Where(d => (d == "MPO" && league.IncludeMPO) || (d == "FPO" && league.IncludeFPO))
+                .OrderByDescending(d => d)
+                .ToList();
+
+            ViewBag.Divisions = divisions.OrderByDescending(d => d).ToList();
+
+            if (string.IsNullOrEmpty(division))
+                division = divisions.Contains("MPO") ? "MPO" : divisions.FirstOrDefault();
+
+            ViewBag.SelectedDivision = division;
+
+            await _leagueService.UpdateFantasyPointsForLeagueAsync(leagueId);
+
+            var fantasyMap = await _leagueService.GetFantasyPointsMapAsync(leagueId);
+            ViewBag.FantasyMap = fantasyMap;
+
+            var assignedPDGANumbers = await _db.TeamPlayers
+                .Where(tp => tp.LeagueId == leagueId)
+                .Select(tp => tp.PDGANumber)
+                .ToListAsync();
+
+            var unassigned = await _db.PlayerTournaments
+                .Include(pt => pt.Player)
+                .Include(pt => pt.Tournament)
+                .Where(pt =>
+                    pt.Tournament.Division == division &&
+                    pt.TournamentId == tournamentId &&
+                    !assignedPDGANumbers.Contains(pt.PDGANumber))
+                .ToListAsync();
+
+            var model = new LeaguePlayersViewModel
+            {
+                League = league,
+                Players = unassigned
+            };
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var team = await _db.Teams
+                .FirstOrDefaultAsync(t => t.LeagueId == leagueId && t.OwnerId == userId);
+
+            ViewBag.LeagueId = leagueId;
+            ViewBag.LeagueName = league.Name;
+            ViewBag.TeamId = team.TeamId;
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("~/Views/Players/PlayerTable.cshtml", model);
+            }
+
+            return View("~/Views/Players/LeaguePlayersView.cshtml", model);
         }
 
         // View and manage settings for a specific league
@@ -469,7 +623,72 @@ namespace fantasydg.Controllers
                 .Select(t => (int?)t.TeamId)
                 .FirstOrDefaultAsync();
 
+            var tournaments = await _db.Tournaments.OrderByDescending(t => t.Date).ToListAsync();
+
+            foreach (var t in tournaments)
+            {
+                if (t.Weight == 0)
+                    t.Weight = 1;
+            }
+
+            ViewBag.AllTournaments = tournaments;
+
             return View(league);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveIncludedDivisions(IFormCollection form)
+        {
+            if (!int.TryParse(form["LeagueId"], out int leagueId))
+                return BadRequest("Missing or invalid LeagueId");
+
+            bool includeMPO = bool.TryParse(form["IncludeMPO"], out var mpo) && mpo;
+            bool includeFPO = bool.TryParse(form["IncludeFPO"], out var fpo) && fpo;
+
+            var league = await _db.Leagues.FindAsync(leagueId);
+            if (league == null) return NotFound();
+
+            league.IncludeMPO = includeMPO;
+            league.IncludeFPO = includeFPO;
+
+            await _db.SaveChangesAsync();
+            TempData["IncludedDivisionsSaved"] = "Division settings updated!";
+            return RedirectToAction("Settings", new { id = leagueId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveScoringMode(int id, League.ScoringMode LeagueScoringMode)
+        {
+            var league = await _db.Leagues.FindAsync(id);
+            if (league == null) return NotFound();
+
+            league.LeagueScoringMode = LeagueScoringMode;
+            await _db.SaveChangesAsync();
+
+            TempData["ScoringModeSaved"] = "Scoring mode updated!";
+            return RedirectToAction("Settings", new { id = league.LeagueId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveTournamentWeights(int leagueId, Dictionary<int, double> Weights)
+        {
+            foreach (var pair in Weights)
+            {
+                var tournament = await _db.Tournaments.FindAsync(pair.Key);
+                if (tournament != null)
+                {
+                    tournament.Weight = pair.Value;
+                    _db.Entry(tournament).State = EntityState.Modified;
+                }
+            }
+
+            await _db.SaveChangesAsync();
+
+            TempData["TournamentWeightsSaved"] = "Tournament weights updated!";
+            return RedirectToAction("Settings", new { id = leagueId });
         }
 
         [HttpPost]

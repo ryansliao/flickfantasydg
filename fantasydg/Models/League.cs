@@ -14,6 +14,14 @@ namespace fantasydg.Models
         public string Name { get; set; }
         public string OwnerId { get; set; }
         public int PlayerNumber {  get; set; }
+        public bool IncludeMPO { get; set; } = true;
+        public bool IncludeFPO { get; set; } = true;
+        public enum ScoringMode
+        {
+            TotalPoints = 0,
+            WinsPerTournament = 1
+        }
+        public ScoringMode LeagueScoringMode { get; set; } = ScoringMode.TotalPoints;
 
         [Range(3, 20)]
         public int StarterCount { get; set; } = 6;

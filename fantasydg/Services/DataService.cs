@@ -26,7 +26,7 @@ namespace fantasydg.Services
         }
 
         // Get tournament name and date
-        private async Task<List<string>> GetTournamentNameDate(int tournamentId)
+        private async Task<List<string>> GetTournamentInfo(int tournamentId)
         {
             try
             {
@@ -35,13 +35,14 @@ namespace fantasydg.Services
                 
                 var name = JObject.Parse(json)?["data"]?["MultiLineName"]?["main"]?.ToString() ?? $"Tournament {tournamentId}";
                 var dateStr = JObject.Parse(json)?["data"]?["StartDate"]?.ToString();
+                var tier = JObject.Parse(json)?["data"]?["TierPro"]?.ToString();
 
                 DateTime? date = null;
                 if (DateTime.TryParse(dateStr, out var parsedDate))
                 {
                     date = parsedDate;
                 }
-                return new List<string> { name, dateStr };
+                return new List<string> { name, dateStr, tier };
             }
             catch
             {
@@ -92,25 +93,26 @@ namespace fantasydg.Services
                     {
                         Id = tournamentId,
                         Division = division,
-                        Weight = 1.0
                     };
                     _db.Tournaments.Add(tournament);
                 }
 
                 // Assign tournament name and date
-                var nameDate = await GetTournamentNameDate(tournamentId);
-                var dateStr = nameDate[1];
+                var info = await GetTournamentInfo(tournamentId);
+                var dateStr = info[1];
                 DateTime date = DateTime.TryParse(dateStr, out var parsedDate)
                     ? parsedDate
                     : DateTime.UtcNow;
-                tournament.Name = nameDate[0];
+                tournament.Name = info[0];
+                tournament.Tier = info[2];
                 tournament.Date = date;
 
                 await _db.SaveChangesAsync(); // Save tournament object to database
 
                 var playerTournaments = new Dictionary<int, PlayerTournament>(); // Initialize dictionary of PlayerTournament objects
 
-                var (finalRoundStats, resultToPdga) = await FetchRounds(tournamentId, division); //Initialize player from the final round
+                var (finalRoundStats, resultToPdga, roundNumber) = await FetchRounds(tournamentId, division); //Initialize player from the final round
+                tournament.RoundNumber = roundNumber;
 
                 // Assign PlayerTournament stats for every player present in API response
                 foreach (var playerData in statsArray ?? new JArray())
@@ -265,12 +267,13 @@ namespace fantasydg.Services
         }
 
         // Get round stats and populates round object
-        private async Task<(Dictionary<int, (int Place, int ToPar)> finalStats, Dictionary<int, int> resultToPdga)>
+        private async Task<(Dictionary<int, (int Place, int ToPar)> finalStats, Dictionary<int, int> resultToPdga, int roundNumber)>
         FetchRounds(int tournamentId, string division)
         {
             Dictionary<int, (int Place, int ToPar)> latestRoundStats = new();
             Dictionary<int, int> resultToPdga = new();
             bool httpError = false;
+            int roundNumber = 0;
 
             for (int pdgaRound = 1; pdgaRound <= 12; pdgaRound++)
             {
@@ -289,6 +292,8 @@ namespace fantasydg.Services
                     {
                         continue;
                     }
+
+                    roundNumber += 1;
 
                     var currentRoundStats = new Dictionary<int, (int Place, int ToPar)>();
                     foreach (var p in roundData["scores"])
@@ -317,7 +322,8 @@ namespace fantasydg.Services
                     continue;
                 }
             }
-            return (latestRoundStats, resultToPdga);
+
+            return (latestRoundStats, resultToPdga, roundNumber);
         }
     }
 }

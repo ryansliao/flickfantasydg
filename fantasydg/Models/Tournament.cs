@@ -12,7 +12,9 @@ public class Tournament
 
     public DateTime Date { get; set; }
     public string? Name { get; set; }
-    public double Weight { get; set; }
+    public string? Tier { get; set; }
+    public int RoundNumber { get; set; }
+    public double Weight {  get; set; }
 
     public ICollection<PlayerTournament> PlayerTournaments { get; set; }
 }

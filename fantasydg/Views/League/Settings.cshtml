@@ -1,4 +1,6 @@
 ﻿@model fantasydg.Models.League
+@using fantasydg.Migrations
+@using fantasydg.Models
 
 @{
     ViewBag.Title = "League Settings";
@@ -79,6 +81,116 @@
 
             <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
 
+            <h4>Included Divisions</h4>
+
+            @if (TempData["IncludedDivisionsSaved"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                    @TempData["IncludedDivisionsSaved"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <form method="post" asp-action="SaveIncludedDivisions" asp-controller="League" class="mt-4" style="max-width: 400px;" onsubmit="return validateDivisionSelection()">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="LeagueId" value="@Model.LeagueId" />
+
+                <input type="hidden" name="IncludeMPO" id="IncludeMPO" value="@Model.IncludeMPO.ToString().ToLower()" />
+                <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="ToggleMPO" @(Model.IncludeMPO ? "checked" : "") onchange="document.getElementById('IncludeMPO').value = this.checked;" />
+                    <label class="form-check-label" for="ToggleMPO">MPO</label>
+                </div>
+
+                <input type="hidden" name="IncludeFPO" id="IncludeFPO" value="@Model.IncludeFPO.ToString().ToLower()" />
+                <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="ToggleFPO" @(Model.IncludeFPO ? "checked" : "") onchange="document.getElementById('IncludeFPO').value = this.checked;" />
+                    <label class="form-check-label" for="ToggleFPO">FPO</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-2">Save Included Divisions</button>
+            </form>
+
+            <script>
+                function validateDivisionSelection() {
+                    const mpoChecked = document.getElementById("ToggleMPO").checked;
+                    const fpoChecked = document.getElementById("ToggleFPO").checked;
+                    if (!mpoChecked && !fpoChecked) {
+                        alert("You must include at least one division (MPO or FPO).");
+                        return false;
+                    }
+                    return true;
+                }
+            </script>
+
+            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+
+            <h4>Scoring Mode</h4>
+            @if (TempData["ScoringModeSaved"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["ScoringModeSaved"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            <form asp-action="SaveScoringMode" asp-route-id="@Model.LeagueId" asp-controller="League" method="post" class="mt-4" style="max-width: 400px;">
+                <div class="mb-3">
+                    <div class="mb-2 form-check">
+                        <input class="form-check-input" type="radio" name="LeagueScoringMode" value="0"
+                        @(Model.LeagueScoringMode == League.ScoringMode.TotalPoints ? "checked" : "") />
+                        <label class="form-check-label">Total Fantasy Points</label>
+                    </div>
+                    <div class="mb-2 form-check">
+                        <input class="form-check-input" type="radio" name="LeagueScoringMode" value="1"
+                               @(Model.LeagueScoringMode == League.ScoringMode.WinsPerTournament ? "checked" : "") />
+                        <label class="form-check-label">Tournament Wins</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Save Scoring Mode</button>
+                </div>
+            </form>
+
+            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+            
+            <h4>Tournament Weights</h4>
+
+            @if (TempData["TournamentWeightsSaved"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                    @TempData["TournamentWeightsSaved"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (ViewBag.AllTournaments != null)
+            {
+                <form asp-action="SaveTournamentWeights" asp-controller="League" method="post" class="mt-4 w-100">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="leagueId" value="@Model.LeagueId" />
+
+                    @foreach (var tournament in ViewBag.AllTournaments)
+                    {
+                        string division = tournament.Division as string ?? "";
+
+                        if ((division == "MPO" && Model.IncludeMPO) || (division == "FPO" && Model.IncludeFPO))
+                        {
+                            <div class="row mb-2 align-items-center">
+                                <div class="col-auto">
+                                    <input type="number" step="0.1" min="0"
+                                           name="Weights[@tournament.Id]" id="Weights_@tournament.Id" value="@tournament.Weight"
+                                           class="form-control" style="width: 80px; height: 40px;" />
+                                </div>
+                                <div class="col ps-2">
+                                    <label for="Weights_@tournament.Id" class="form-label mb-0">@tournament.Name (@division)</label>
+                                </div>
+                            </div>
+                        }
+                    }
+
+                    <button type="submit" class="btn btn-primary mt-2">Save Tournament Weights</button>
+                </form>
+            }
+
+            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+
             <h4>Scoring Settings</h4>
             @if (TempData["ScoringSaved"] != null)
             {
@@ -87,129 +199,47 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
-            <form asp-action="SaveScoringSettings" asp-controller="League" method="post" class="mt-4" style="max-width: 400px;">
+            <form asp-action="SaveScoringSettings" asp-controller="League" method="post" class="mt-4" style="max-width: 500px;">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="leagueId" value="@Model.LeagueId" />
 
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="PlacementWeight" class="me-2">Placement:</label>
-                    <input type="number" step="0.001" name="PlacementWeight" value="@Model.PlacementWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="FairwayWeight" class="me-2">Fairway Hit %:</label>
-                    <input type="number" step="0.001" name="FairwayWeight" value="@Model.FairwayWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="C1InRegWeight" class="me-2">C1 In-Regulation %:</label>
-                    <input type="number" step="0.001" name="C1InRegWeight" value="@Model.C1InRegWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="C2InRegWeight" class="me-2">C2 In-Regulation %:</label>
-                    <input type="number" step="0.001" name="C2InRegWeight" value="@Model.C2InRegWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="ParkedWeight" class="me-2">Parked %:</label>
-                    <input type="number" step="0.001" name="ParkedWeight" value="@Model.ParkedWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="ScrambleWeight" class="me-2">Scramble %:</label>
-                    <input type="number" step="0.001" name="ScrambleWeight" value="@Model.ScrambleWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="C1PuttWeight" class="me-2">C1 Putting %:</label>
-                    <input type="number" step="0.001" name="C1PuttWeight" value="@Model.C1PuttWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="C1xPuttWeight" class="me-2">C1x Putting %:</label>
-                    <input type="number" step="0.001" name="C1xPuttWeight" value="@Model.C1xPuttWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="C2PuttWeight" class="me-2">C2 Putting %:</label>
-                    <input type="number" step="0.001" name="C2PuttWeight" value="@Model.C2PuttWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="OBWeight" class="me-2">Out-of-Bounds %:</label>
-                    <input type="number" step="0.001" name="OBWeight" value="@Model.OBWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="ParWeight" class="me-2">Par %:</label>
-                    <input type="number" step="0.001" name="ParWeight" value="@Model.ParWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="BirdieWeight" class="me-2">Birdie %:</label>
-                    <input type="number" step="0.001" name="BirdieWeight" value="@Model.BirdieWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="BirdieMinusWeight" class="me-2">Birdie- %:</label>
-                    <input type="number" step="0.001" name="BirdieMinusWeight" value="@Model.BirdieMinusWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="EagleMinusWeight" class="me-2">Eagle- %:</label>
-                    <input type="number" step="0.001" name="EagleMinusWeight" value="@Model.EagleMinusWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="BogeyPlusWeight" class="me-2">Bogey+ %:</label>
-                    <input type="number" step="0.001" name="BogeyPlusWeight" value="@Model.BogeyPlusWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="DoubleBogeyPlusWeight" class="me-2">Double Bogey+ %:</label>
-                    <input type="number" step="0.001" name="DoubleBogeyPlusWeight" value="@Model.DoubleBogeyPlusWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="TotalPuttDistWeight" class="me-2">Total Putt Distance:</label>
-                    <input type="number" step="0.001" name="TotalPuttDistWeight" value="@Model.TotalPuttDistWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="AvgPuttDistWeight" class="me-2">Avg. Putt Distance:</label>
-                    <input type="number" step="0.001" name="AvgPuttDistWeight" value="@Model.AvgPuttDistWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="LongThrowInWeight" class="me-2">Long Throw-In:</label>
-                    <input type="number" step="0.001" name="LongThrowInWeight" value="@Model.LongThrowInWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="TotalSGWeight" class="me-2">Total Stroked Gained:</label>
-                    <input type="number" step="0.001" name="TotalSGWeightt" value="@Model.TotalSGWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="PuttingSGWeight" class="me-2">Strokes Gained Putting:</label>
-                    <input type="number" step="0.001" name="PuttingSGWeight" value="@Model.PuttingSGWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="TeeToGreenSGWeight" class="me-2">Strokes Gained Tee-to-Green:</label>
-                    <input type="number" step="0.001" name="TeeToGreenSGWeight" value="@Model.TeeToGreenSGWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="C1xSGWeight" class="me-2">Strokes Gained C1x Putting:</label>
-                    <input type="number" step="0.001" name="C1xSGWeight" value="@Model.C1xSGWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-3 d-flex justify-content-between align-items-center">
-                    <label for="C2SGWeight" class="me-2">Strokes Gained C2 Putting:</label>
-                    <input type="number" step="0.001" name="C2SGWeight" value="@Model.C2SGWeight" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
+                @foreach (var field in new[]
+                {
+                    ("PlacementWeight", "Placement:", @Model.PlacementWeight),
+                    ("FairwayWeight", "Fairway Hit %:", @Model.FairwayWeight),
+                    ("C1InRegWeight", "C1 In-Regulation %:", @Model.C1InRegWeight),
+                    ("C2InRegWeight", "C2 In-Regulation %:", @Model.C2InRegWeight),
+                    ("ParkedWeight", "Parked %:", @Model.ParkedWeight),
+                    ("ScrambleWeight", "Scramble %:", @Model.ScrambleWeight),
+                    ("C1PuttWeight", "C1 Putting %:", @Model.C1PuttWeight),
+                    ("C1xPuttWeight", "C1x Putting %:", @Model.C1xPuttWeight),
+                    ("C2PuttWeight", "C2 Putting %:", @Model.C2PuttWeight),
+                    ("OBWeight", "Out-of-Bounds %:", @Model.OBWeight),
+                    ("ParWeight", "Par %:", @Model.ParWeight),
+                    ("BirdieWeight", "Birdie %:", @Model.BirdieWeight),
+                    ("BirdieMinusWeight", "Birdie- %:", @Model.BirdieMinusWeight),
+                    ("EagleMinusWeight", "Eagle- %:", @Model.EagleMinusWeight),
+                    ("BogeyPlusWeight", "Bogey+ %:", @Model.BogeyPlusWeight),
+                    ("DoubleBogeyPlusWeight", "Double Bogey+ %:", @Model.DoubleBogeyPlusWeight),
+                    ("TotalPuttDistWeight", "Total Putt Distance:", @Model.TotalPuttDistWeight),
+                    ("AvgPuttDistWeight", "Avg. Putt Distance:", @Model.AvgPuttDistWeight),
+                    ("LongThrowInWeight", "Long Throw-In:", @Model.LongThrowInWeight),
+                    ("TotalSGWeightt", "Total Stroked Gained:", @Model.TotalSGWeight),
+                    ("PuttingSGWeight", "Strokes Gained Putting:", @Model.PuttingSGWeight),
+                    ("TeeToGreenSGWeight", "Strokes Gained Tee-to-Green:", @Model.TeeToGreenSGWeight),
+                    ("C1xSGWeight", "Strokes Gained C1x Putting:", @Model.C1xSGWeight),
+                    ("C2SGWeight", "Strokes Gained C2 Putting:", @Model.C2SGWeight)
+                })
+                {
+                    <div class="mb-2 row align-items-center">
+                        <div class="col-auto">
+                            <input type="number" step="0.001" name="@field.Item1" value="@field.Item3" class="form-control" style="width: 80px; height: 40px;" />
+                        </div>
+                        <div class="col ps-2">
+                            <label for="@field.Item1" class="mb-0">@field.Item2</label>
+                        </div>
+                    </div>
+                }
 
                 <button type="submit" class="btn btn-primary mt-2">Save Scoring Settings</button>
             </form>

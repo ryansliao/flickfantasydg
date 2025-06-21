@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasydg.Data;
 
@@ -11,9 +12,11 @@ using fantasydg.Data;
 namespace fantasydg.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250620232211_weight")]
+    partial class weight
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -273,12 +276,6 @@ namespace fantasydg.Migrations
 
                     b.Property<double>("FairwayWeight")
                         .HasColumnType("float");
-
-                    b.Property<bool>("IncludeFPO")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IncludeMPO")
-                        .HasColumnType("bit");
 
                     b.Property<int>("InjuryReserveLimit")
                         .HasColumnType("int");

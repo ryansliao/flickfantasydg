@@ -1,2 +1,0 @@
-C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\wwwroot\css\leagueTournamentResultsView.css
-C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\wwwroot\js\leagueTournamentResultsView.js
