@@ -32,6 +32,10 @@ namespace fantasydg.Data
             modelBuilder.Entity<Tournament>()
                 .HasKey(t => new { t.Id, t.Division });
 
+            modelBuilder.Entity<Tournament>()
+                .Property(t => t.Weight)
+                .HasDefaultValue(1);
+
             modelBuilder.Entity<PlayerTournament>()
                 .HasOne(pt => pt.Tournament)
                 .WithMany(t => t.PlayerTournaments)

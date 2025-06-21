@@ -14,7 +14,7 @@ public class Tournament
     public string? Name { get; set; }
     public string? Tier { get; set; }
     public int RoundNumber { get; set; }
-    public double Weight {  get; set; }
+    public double Weight { get; set; } = 1;
 
     public ICollection<PlayerTournament> PlayerTournaments { get; set; }
 }

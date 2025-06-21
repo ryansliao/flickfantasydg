@@ -4,7 +4,43 @@
 
 @{
     ViewBag.Title = "League Settings";
+    var toastMessages = new List<object>();
+
+    if (TempData["TournamentInputSuccess"] != null)
+        toastMessages.Add(new { text = TempData["TournamentInputSuccess"], type = "success" });
+
+    if (TempData["RosterSettingsSaved"] != null)
+        toastMessages.Add(new { text = TempData["RosterSettingsSaved"], type = "success" });
+
+    if (TempData["RosterSettingsError"] != null)
+        toastMessages.Add(new { text = TempData["RosterSettingsError"], type = "danger" });
+
+    if (TempData["IncludedDivisionsSaved"] != null)
+        toastMessages.Add(new { text = TempData["IncludedDivisionsSaved"], type = "success" });
+
+    if (TempData["ScoringModeSaved"] != null)
+        toastMessages.Add(new { text = TempData["ScoringModeSaved"], type = "success" });
+
+    if (TempData["TournamentWeightsSaved"] != null)
+        toastMessages.Add(new { text = TempData["TournamentWeightsSaved"], type = "success" });
+
+    if (TempData["ScoringSaved"] != null)
+        toastMessages.Add(new { text = TempData["ScoringSaved"], type = "success" });
+
+    if (TempData["InviteResult"] != null)
+        toastMessages.Add(new { text = TempData["InviteResult"], type = "info" });
+
+    if (TempData["LeagueNameSaved"] != null)
+        toastMessages.Add(new { text = TempData["LeagueNameSaved"], type = "success" });
+
+    var toastJson = System.Text.Json.JsonSerializer.Serialize(toastMessages);
 }
+
+<script id="server-toast-data" type="application/json">
+    @Html.Raw(toastJson)
+</script>
+
+<div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer" style="z-index: 1100;"></div>
 
 <div class="container-fluid">
     <div class="row">
@@ -18,14 +54,6 @@
             <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
 
             <button class="btn btn-primary" onclick="openTournamentModal()">Add/Update Tournament</button>
-
-            @if (TempData["TournamentInputSuccess"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
-                    @TempData["TournamentInputSuccess"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
 
             <div id="tournamentInputModal" class="modal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog" onclick="event.stopPropagation()">
@@ -49,14 +77,6 @@
 
             <h4>Roster Configuration</h4>
 
-            @if (TempData["RosterSettingsSaved"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
-                    @TempData["RosterSettingsSaved"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
-
             <form asp-action="SaveRosterSettings" asp-controller="League" method="post" class="mt-4" style="max-width: 400px;">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="leagueId" value="@Model.LeagueId" />
@@ -67,13 +87,8 @@
                 </div>
 
                 <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="RosterLimit" class="me-2">Total Roster Spots</label>
-                    <input type="number" step="1" name="RosterLimit" value="@Model.RosterLimit" class="form-control" style="width: 80px; height: 40px;" />
-                </div>
-
-                <div class="mb-2 d-flex justify-content-between align-items-center">
-                    <label for="InjuryReserveLimit" class="me-2">Injury Reserve Slots</label>
-                    <input type="number" step="1" name="InjuryReserveLimit" value="@Model.InjuryReserveLimit" class="form-control" style="width: 80px; height: 40px;" />
+                    <label for="BenchCount" class="me-2">Number of Bench Players</label>
+                    <input type="number" step="1" name="BenchCount" value="@Model.BenchCount" class="form-control" style="width: 80px; height: 40px;" />
                 </div>
 
                 <button type="submit" class="btn btn-primary mt-2">Save Roster Settings</button>
@@ -82,14 +97,6 @@
             <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
 
             <h4>Included Divisions</h4>
-
-            @if (TempData["IncludedDivisionsSaved"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
-                    @TempData["IncludedDivisionsSaved"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
 
             <form method="post" asp-action="SaveIncludedDivisions" asp-controller="League" class="mt-4" style="max-width: 400px;" onsubmit="return validateDivisionSelection()">
                 @Html.AntiForgeryToken()
@@ -125,13 +132,7 @@
             <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
 
             <h4>Scoring Mode</h4>
-            @if (TempData["ScoringModeSaved"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    @TempData["ScoringModeSaved"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
+
             <form asp-action="SaveScoringMode" asp-route-id="@Model.LeagueId" asp-controller="League" method="post" class="mt-4" style="max-width: 400px;">
                 <div class="mb-3">
                     <div class="mb-2 form-check">
@@ -152,14 +153,6 @@
             
             <h4>Tournament Weights</h4>
 
-            @if (TempData["TournamentWeightsSaved"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
-                    @TempData["TournamentWeightsSaved"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
-
             @if (ViewBag.AllTournaments != null)
             {
                 <form asp-action="SaveTournamentWeights" asp-controller="League" method="post" class="mt-4 w-100">
@@ -175,8 +168,11 @@
                             <div class="row mb-2 align-items-center">
                                 <div class="col-auto">
                                     <input type="number" step="0.1" min="0"
-                                           name="Weights[@tournament.Id]" id="Weights_@tournament.Id" value="@tournament.Weight"
-                                           class="form-control" style="width: 80px; height: 40px;" />
+                                           name="Weights[@($"{tournament.Id}|{division}")]"
+                                           id="Weights_@($"{tournament.Id}_{division}")"
+                                           value="@tournament.Weight"
+                                           class="form-control" 
+                                           style="width: 80px; height: 40px;" />
                                 </div>
                                 <div class="col ps-2">
                                     <label for="Weights_@tournament.Id" class="form-label mb-0">@tournament.Name (@division)</label>
@@ -192,13 +188,7 @@
             <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
 
             <h4>Scoring Settings</h4>
-            @if (TempData["ScoringSaved"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    @TempData["ScoringSaved"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
+            
             <form asp-action="SaveScoringSettings" asp-controller="League" method="post" class="mt-4" style="max-width: 500px;">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="leagueId" value="@Model.LeagueId" />
@@ -252,19 +242,31 @@
                 <input type="hidden" name="leagueId" value="@Model.LeagueId" />
 
                 <div class="form-group">
-                    <label for="usernameOrEmail">Username or Email</label>
-                    <input name="usernameOrEmail" class="form-control" required />
+                    <label for="usernameOrEmail" class="form-label mb-1">Username or Email</label>
+                    <input type="text" name="usernameOrEmail" class="form-control" required />
                 </div>
 
                 <button type="submit" class="btn btn-primary mt-3">Send Invite</button>
             </form>
 
-            @if (TempData["InviteResult"] != null)
-            {
-                <div class="alert alert-info mt-2">@TempData["InviteResult"]</div>
-            }
+            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+
+            <h4>Change League Name</h4>
+
+            <form asp-action="SaveLeagueName" asp-controller="League" method="post">
+                <input type="hidden" name="LeagueId" value="@Model.LeagueId" />
+
+                <div class="form-group">
+                    <label for="LeagueName" class="form-label mb-1">League Name</label>
+                    <input type="text" name="LeagueName" id="LeagueName" value="@Model.Name"
+                           class="form-control" maxlength="50" required />
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3">Save League Name</button>
+            </form>
 
             <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+
             <h4>Administrator Functions</h4>
 
             @if (User?.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value == Model.OwnerId)

@@ -9,6 +9,7 @@ namespace fantasydg.Models
         [Required]
         [StringLength(20, ErrorMessage = "Team name cannot exceed 20 characters.")]
         public string Name { get; set; }
+        public double Points { get; set; } = 0;
 
         // The league this team belongs to
         public int LeagueId { get; set; }

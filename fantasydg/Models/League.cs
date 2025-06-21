@@ -23,14 +23,11 @@ namespace fantasydg.Models
         }
         public ScoringMode LeagueScoringMode { get; set; } = ScoringMode.TotalPoints;
 
-        [Range(3, 20)]
-        public int StarterCount { get; set; } = 6;
+        [Range(3, 25)]
+        public int StarterCount { get; set; } = 5;
 
-        [Range(5, 25)]
-        public int RosterLimit { get; set; } = 12;
-
-        [Range(0, 10)]
-        public int InjuryReserveLimit { get; set; } = 1;
+        [Range(3, 25)]
+        public int BenchCount { get; set; } = 5;
 
         // Scoring settings
         public double PlacementWeight { get; set; } = -0.05;

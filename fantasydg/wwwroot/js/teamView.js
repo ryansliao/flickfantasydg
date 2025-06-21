@@ -160,4 +160,53 @@
     window.loadStarterPreview = loadStarterPreview;
     window.unlockRoster = unlockRoster;
     window.updateLockButtonLabel = updateLockButtonLabel;
+
+    const toastScript = document.getElementById("server-toast-data");
+    if (!toastScript) {
+        console.warn("No toast data block found.");
+        return;
+    }
+
+    try {
+        const messages = JSON.parse(toastScript.textContent);
+        messages.forEach(m => showToast(m.text, m.type));
+    } catch (err) {
+        console.error("Toast parse error:", err);
+    }
+
+    window.showToast = showToast;
 });
+
+function showToast(message, type = "success") {
+    const toastId = `toast-${Date.now()}`;
+    const bgMap = {
+        success: "bg-success",
+        warning: "bg-warning text-dark", 
+        danger: "bg-danger" 
+    };
+
+    const bgClass = bgMap[type] || "bg-secondary";
+
+    const toastHtml = `
+            <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0 mb-2"
+                 role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                            data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>`;
+
+    const container = document.getElementById("toastContainer");
+    if (!container) {
+        console.error("Missing #toastContainer");
+        return;
+    }
+
+    container.insertAdjacentHTML("beforeend", toastHtml);
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+
+    toastElement.addEventListener("hidden.bs.toast", () => toastElement.remove());
+}

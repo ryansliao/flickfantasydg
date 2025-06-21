@@ -3,8 +3,7 @@
 public enum RosterStatus
 {
     Starter,
-    Bench,
-    InjuryReserve
+    Bench
 }
 
 namespace fantasydg.Models

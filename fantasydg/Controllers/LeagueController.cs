@@ -99,6 +99,95 @@ namespace fantasydg.Controllers
             return View("LeagueView", league);
         }
 
+        private double CalculatePoints(League league, PlayerTournament pt, Tournament tournament)
+        {
+            if (pt == null || tournament == null) return 0;
+
+            double score =
+                pt.Place * league.PlacementWeight +
+                pt.Fairway * league.FairwayWeight +
+                pt.C1InReg * league.C1InRegWeight +
+                pt.C2InReg * league.C2InRegWeight +
+                pt.Parked * league.ParkedWeight +
+                pt.Scramble * league.ScrambleWeight +
+                pt.C1Putting * league.C1PuttWeight +
+                pt.C1xPutting * league.C1xPuttWeight +
+                pt.C2Putting * league.C2PuttWeight +
+                pt.ObRate * league.OBWeight +
+                pt.Par * league.ParWeight +
+                pt.Birdie * league.BirdieWeight +
+                pt.BirdieMinus * league.BirdieMinusWeight +
+                pt.EagleMinus * league.EagleMinusWeight +
+                pt.BogeyPlus * league.BogeyPlusWeight +
+                pt.DoubleBogeyPlus * league.DoubleBogeyPlusWeight +
+                pt.TotalPuttDistance * league.TotalPuttDistWeight +
+                pt.AvgPuttDistance * league.AvgPuttDistWeight +
+                pt.LongThrowIn * league.LongThrowInWeight +
+                pt.StrokesGainedTotal * league.TotalSGWeight +
+                pt.StrokesGainedPutting * league.PuttingSGWeight +
+                pt.StrokesGainedTeeToGreen * league.TeeToGreenSGWeight +
+                pt.StrokesGainedC1xPutting * league.C1xSGWeight +
+                pt.StrokesGainedC2Putting * league.C2SGWeight;
+
+            return score;
+        }
+
+        private double CalculateTeamPoints(League league, Team team, List<Tournament> tournaments)
+        {
+            double total = 0;
+
+            if (league.LeagueScoringMode == League.ScoringMode.TotalPoints)
+            {
+                foreach (var tournament in tournaments)
+                {
+                    total += GetTeamScoreForTournament(league, team, tournament) * tournament.Weight;
+                }
+            }
+            else if (league.LeagueScoringMode == League.ScoringMode.WinsPerTournament)
+            {
+                foreach (var tournament in tournaments)
+                {
+                    total += GetWinScoreForTeam(league, team, tournament) * tournament.Weight;
+                }
+            }
+
+            return total;
+        }
+
+        private double GetTeamScoreForTournament(League league, Team team, Tournament tournament)
+        {
+            var lockedStarters = team.TeamPlayerTournaments
+                .Where(tpt => tpt.TournamentId == tournament.Id && tpt.IsLocked && tpt.Status == nameof(RosterStatus.Starter))
+                .Select(tpt => tpt.Player.PlayerTournaments
+                    .FirstOrDefault(pt => pt.TournamentId == tpt.TournamentId && pt.PDGANumber == tpt.PDGANumber))
+                .Where(pt => pt != null)
+                .ToList();
+
+            return lockedStarters.Sum(pt => CalculatePoints(league, pt, tournament));
+        }
+
+        private double GetWinScoreForTeam(League league, Team team, Tournament tournament)
+        {
+            var teamScores = league.Teams.ToDictionary(
+                otherTeam => otherTeam.TeamId,
+                otherTeam =>
+                {
+                    return otherTeam.TeamPlayerTournaments
+                        .Where(tpt => tpt.TournamentId == tournament.Id && tpt.IsLocked && tpt.Status == nameof(RosterStatus.Starter))
+                        .Select(tpt => tpt.Player.PlayerTournaments
+                            .FirstOrDefault(pt => pt.TournamentId == tpt.TournamentId && pt.PDGANumber == tpt.PDGANumber))
+                        .Where(pt => pt != null)
+                        .Sum(pt => CalculatePoints(league, pt, tournament));
+                });
+
+            if (!teamScores.TryGetValue(team.TeamId, out var thisScore))
+                return 0;
+
+            return teamScores
+                .Where(kvp => kvp.Key != team.TeamId && kvp.Value < thisScore)
+                .Count();
+        }
+
         private async Task<List<LeagueStandingsViewModel>> GetStandings(int leagueId)
         {
             var league = await _db.Leagues
@@ -110,125 +199,29 @@ namespace fantasydg.Controllers
 
             if (league == null) return new List<LeagueStandingsViewModel>();
 
-            var tournaments = await _db.Tournaments.ToListAsync();
-
-            var results = new List<(Team Team, string OwnerName, double Points)>();
+            var tournaments = await _db.Tournaments
+                .Where(t => (league.IncludeMPO && t.Division == "MPO") || (league.IncludeFPO && t.Division == "FPO"))
+                .ToListAsync();
 
             foreach (var team in league.Teams)
             {
-                double total = 0;
-
-                if (league.LeagueScoringMode == League.ScoringMode.TotalPoints)
-                {
-                    total = team.TeamPlayerTournaments
-                        .Where(tpt => tpt.Status == nameof(RosterStatus.Starter) && tpt.IsLocked)
-                        .Select(tpt => tpt.Player.PlayerTournaments
-                            .FirstOrDefault(pt => pt.TournamentId == tpt.TournamentId))
-                        .Where(pt => pt != null)
-                        .Sum(pt =>
-                        {
-                            var t = tournaments.FirstOrDefault(t => t.Id == pt.TournamentId);
-                            double weight = t?.Weight ?? 1;
-                            return weight * (
-                                pt.Place * league.PlacementWeight +
-                                pt.Fairway * league.FairwayWeight +
-                                pt.C1InReg * league.C1InRegWeight +
-                                pt.C2InReg * league.C2InRegWeight +
-                                pt.Parked * league.ParkedWeight +
-                                pt.Scramble * league.ScrambleWeight +
-                                pt.C1Putting * league.C1PuttWeight +
-                                pt.C1xPutting * league.C1xPuttWeight +
-                                pt.C2Putting * league.C2PuttWeight +
-                                pt.ObRate * league.OBWeight +
-                                pt.Par * league.ParWeight +
-                                pt.Birdie * league.BirdieWeight +
-                                pt.BirdieMinus * league.BirdieMinusWeight +
-                                pt.EagleMinus * league.EagleMinusWeight +
-                                pt.BogeyPlus * league.BogeyPlusWeight +
-                                pt.DoubleBogeyPlus * league.DoubleBogeyPlusWeight +
-                                pt.TotalPuttDistance * league.TotalPuttDistWeight +
-                                pt.AvgPuttDistance * league.AvgPuttDistWeight +
-                                pt.LongThrowIn * league.LongThrowInWeight +
-                                pt.StrokesGainedTotal * league.TotalSGWeight +
-                                pt.StrokesGainedPutting * league.PuttingSGWeight +
-                                pt.StrokesGainedTeeToGreen * league.TeeToGreenSGWeight +
-                                pt.StrokesGainedC1xPutting * league.C1xSGWeight +
-                                pt.StrokesGainedC2Putting * league.C2SGWeight
-                            );
-                        });
-                }
-                else if (league.LeagueScoringMode == League.ScoringMode.WinsPerTournament)
-                {
-                    var participatedTournamentIds = team.TeamPlayerTournaments
-                        .Where(tpt => tpt.Status == nameof(RosterStatus.Starter) && tpt.IsLocked)
-                        .Select(tpt => tpt.TournamentId)
-                        .Distinct()
-                        .ToList();
-
-                    foreach (var tournament in tournaments.Where(t => participatedTournamentIds.Contains(t.Id)))
-                    {
-                        var teamScores = league.Teams.ToDictionary(
-                            otherTeam => otherTeam.TeamId,
-                            otherTeam =>
-                            {
-                                var pts = otherTeam.TeamPlayerTournaments
-                                    .Where(tpt => tpt.TournamentId == tournament.Id && tpt.IsLocked && tpt.Status == nameof(RosterStatus.Starter))
-                                    .Join(_db.PlayerTournaments,
-                                        tpt => new { tpt.PDGANumber, tpt.TournamentId },
-                                        pt => new { pt.PDGANumber, pt.TournamentId },
-                                        (tpt, pt) => pt)
-                                    .ToList();
-
-                                return pts.Sum(pt =>
-                                    pt.Place * league.PlacementWeight +
-                                    pt.Fairway * league.FairwayWeight +
-                                    pt.C1InReg * league.C1InRegWeight +
-                                    pt.C2InReg * league.C2InRegWeight +
-                                    pt.Parked * league.ParkedWeight +
-                                    pt.Scramble * league.ScrambleWeight +
-                                    pt.C1Putting * league.C1PuttWeight +
-                                    pt.C1xPutting * league.C1xPuttWeight +
-                                    pt.C2Putting * league.C2PuttWeight +
-                                    pt.ObRate * league.OBWeight +
-                                    pt.Par * league.ParWeight +
-                                    pt.Birdie * league.BirdieWeight +
-                                    pt.BirdieMinus * league.BirdieMinusWeight +
-                                    pt.EagleMinus * league.EagleMinusWeight +
-                                    pt.BogeyPlus * league.BogeyPlusWeight +
-                                    pt.DoubleBogeyPlus * league.DoubleBogeyPlusWeight +
-                                    pt.TotalPuttDistance * league.TotalPuttDistWeight +
-                                    pt.AvgPuttDistance * league.AvgPuttDistWeight +
-                                    pt.LongThrowIn * league.LongThrowInWeight +
-                                    pt.StrokesGainedTotal * league.TotalSGWeight +
-                                    pt.StrokesGainedPutting * league.PuttingSGWeight +
-                                    pt.StrokesGainedTeeToGreen * league.TeeToGreenSGWeight +
-                                    pt.StrokesGainedC1xPutting * league.C1xSGWeight +
-                                    pt.StrokesGainedC2Putting * league.C2SGWeight
-                                );
-                            });
-
-                        var ranked = teamScores.OrderByDescending(kvp => kvp.Value).ToList();
-                        int index = ranked.FindIndex(kvp => kvp.Key == team.TeamId);
-                        int wins = index >= 0 ? ranked.Count(kvp => kvp.Value < ranked[index].Value) : 0;
-                        total += wins;
-                    }
-                }
-
-                results.Add((team, team.Owner.UserName, total));
+                team.Points = CalculateTeamPoints(league, team, tournaments);
             }
 
-            var ordered = results
-                .OrderByDescending(x => x.Points)
-                .Select((x, i) => new LeagueStandingsViewModel
+            await _db.SaveChangesAsync();
+
+            var results = league.Teams
+                .OrderByDescending(t => t.Points)
+                .Select((t, index) => new LeagueStandingsViewModel
                 {
-                    Placement = i + 1,
-                    MemberName = x.OwnerName,
-                    TeamName = x.Team.Name,
-                    FantasyPoints = x.Points
+                    Placement = index + 1,
+                    MemberName = t.Owner?.UserName ?? "Unknown",
+                    TeamName = t.Name,
+                    FantasyPoints = t.Points
                 })
                 .ToList();
 
-            return ordered;
+            return results;
         }
 
         [HttpGet]
@@ -258,13 +251,16 @@ namespace fantasydg.Controllers
 
             division ??= divisions.Contains("MPO") ? "MPO" : divisions.FirstOrDefault();
 
+            var enabledDivisions = new List<string>();
+            if (league.IncludeMPO) enabledDivisions.Add("MPO");
+            if (league.IncludeFPO) enabledDivisions.Add("FPO");
+
             var tournaments = await _db.Tournaments
+                .Where(t => enabledDivisions.Contains(t.Division))
                 .OrderBy(t => t.Date)
                 .ToListAsync();
 
-            tournaments = tournaments
-                .DistinctBy(t => t.Id)
-                .ToList();
+            tournaments = tournaments.DistinctBy(t => t.Id).ToList();
 
             var model = new LeagueLeaderboardViewModel
             {
@@ -278,119 +274,27 @@ namespace fantasydg.Controllers
                 var row = new LeagueLeaderboardViewModel.TeamRow
                 {
                     TeamName = team.Name,
-                    OwnerName = team.Owner?.UserName ?? "Unknown"
+                    OwnerName = team.Owner?.UserName ?? "Unknown",
+                    PointsByTournament = new Dictionary<int, double>()
                 };
 
                 foreach (var tournament in tournaments)
                 {
-                    if (league.LeagueScoringMode == League.ScoringMode.TotalPoints)
+                    double score = league.LeagueScoringMode switch
                     {
-                        var lockedStarters = team.TeamPlayerTournaments
-                            .Where(tpt => tpt.TournamentId == tournament.Id && tpt.IsLocked && tpt.Status == "Starter")
-                            .Join(_db.PlayerTournaments,
-                                tpt => new { tpt.PDGANumber, tpt.TournamentId },
-                                pt => new { pt.PDGANumber, pt.TournamentId },
-                                (tpt, pt) => pt)
-                            .ToList();
+                        League.ScoringMode.TotalPoints => GetTeamScoreForTournament(league, team, tournament) * tournament.Weight,
+                        League.ScoringMode.WinsPerTournament => GetWinScoreForTeam(league, team, tournament) * tournament.Weight,
+                        _ => 0
+                    };
 
-                        double score = lockedStarters.Sum(pt =>
-                        {
-                            double weight = tournament.Weight;
-                            return weight * (
-                                pt.Place * league.PlacementWeight +
-                                pt.Fairway * league.FairwayWeight +
-                                pt.C1InReg * league.C1InRegWeight +
-                                pt.C2InReg * league.C2InRegWeight +
-                                pt.Parked * league.ParkedWeight +
-                                pt.Scramble * league.ScrambleWeight +
-                                pt.C1Putting * league.C1PuttWeight +
-                                pt.C1xPutting * league.C1xPuttWeight +
-                                pt.C2Putting * league.C2PuttWeight +
-                                pt.ObRate * league.OBWeight +
-                                pt.Par * league.ParWeight +
-                                pt.Birdie * league.BirdieWeight +
-                                pt.BirdieMinus * league.BirdieMinusWeight +
-                                pt.EagleMinus * league.EagleMinusWeight +
-                                pt.BogeyPlus * league.BogeyPlusWeight +
-                                pt.DoubleBogeyPlus * league.DoubleBogeyPlusWeight +
-                                pt.TotalPuttDistance * league.TotalPuttDistWeight +
-                                pt.AvgPuttDistance * league.AvgPuttDistWeight +
-                                pt.LongThrowIn * league.LongThrowInWeight +
-                                pt.StrokesGainedTotal * league.TotalSGWeight +
-                                pt.StrokesGainedPutting * league.PuttingSGWeight +
-                                pt.StrokesGainedTeeToGreen * league.TeeToGreenSGWeight +
-                                pt.StrokesGainedC1xPutting * league.C1xSGWeight +
-                                pt.StrokesGainedC2Putting * league.C2SGWeight
-                            );
-                        });
-
-                        row.PointsByTournament[tournament.Id] = score;
-                    }
-                    else if (league.LeagueScoringMode == League.ScoringMode.WinsPerTournament)
-                    {
-                        // Step 1: Score all teams for this tournament
-                        var teamScores = league.Teams.ToDictionary(
-                            otherTeam => otherTeam.TeamId,
-                            otherTeam =>
-                            {
-                                var pts = otherTeam.TeamPlayerTournaments
-                                    .Where(tpt => tpt.TournamentId == tournament.Id && tpt.IsLocked && tpt.Status == "Starter")
-                                    .Join(_db.PlayerTournaments,
-                                        tpt => new { tpt.PDGANumber, tpt.TournamentId },
-                                        pt => new { pt.PDGANumber, pt.TournamentId },
-                                        (tpt, pt) => pt)
-                                    .ToList();
-
-                                return pts.Sum(pt =>
-                                    pt.Place * league.PlacementWeight +
-                                    pt.Fairway * league.FairwayWeight +
-                                    pt.C1InReg * league.C1InRegWeight +
-                                    pt.C2InReg * league.C2InRegWeight +
-                                    pt.Parked * league.ParkedWeight +
-                                    pt.Scramble * league.ScrambleWeight +
-                                    pt.C1Putting * league.C1PuttWeight +
-                                    pt.C1xPutting * league.C1xPuttWeight +
-                                    pt.C2Putting * league.C2PuttWeight +
-                                    pt.ObRate * league.OBWeight +
-                                    pt.Par * league.ParWeight +
-                                    pt.Birdie * league.BirdieWeight +
-                                    pt.BirdieMinus * league.BirdieMinusWeight +
-                                    pt.EagleMinus * league.EagleMinusWeight +
-                                    pt.BogeyPlus * league.BogeyPlusWeight +
-                                    pt.DoubleBogeyPlus * league.DoubleBogeyPlusWeight +
-                                    pt.TotalPuttDistance * league.TotalPuttDistWeight +
-                                    pt.AvgPuttDistance * league.AvgPuttDistWeight +
-                                    pt.LongThrowIn * league.LongThrowInWeight +
-                                    pt.StrokesGainedTotal * league.TotalSGWeight +
-                                    pt.StrokesGainedPutting * league.PuttingSGWeight +
-                                    pt.StrokesGainedTeeToGreen * league.TeeToGreenSGWeight +
-                                    pt.StrokesGainedC1xPutting * league.C1xSGWeight +
-                                    pt.StrokesGainedC2Putting * league.C2SGWeight
-                                );
-                            });
-
-                        // Step 2: Rank teams by score
-                        var ranked = teamScores.OrderByDescending(kvp => kvp.Value).ToList();
-
-                        // Step 3: Compute wins for this team (teams outscored)
-                        int thisTeamIndex = ranked.FindIndex(kvp => kvp.Key == team.TeamId);
-                        int wins = thisTeamIndex >= 0 ? ranked.Count(kvp => kvp.Value < ranked[thisTeamIndex].Value) : 0;
-
-                        row.PointsByTournament[tournament.Id] = wins;
-                    }
+                    row.PointsByTournament[tournament.Id] = score;
                 }
 
+                row.TotalPoints = row.PointsByTournament.Values.Sum();
                 model.Teams.Add(row);
             }
 
-
-            // NEW BLOCK: determine if any teams have scores
-            var teamsWithPoints = model.Teams
-                .Where(tr => tr.PointsByTournament.Any()) // Includes teams with 0s
-                .ToList();
-
-            ViewBag.NoFantasyPoints = !teamsWithPoints.Any();
-
+            ViewBag.NoFantasyPoints = !model.Teams.Any(tr => tr.PointsByTournament.Any());
             ViewBag.LeagueName = league.Name;
             ViewBag.LeagueId = league.LeagueId;
             ViewBag.TeamId = league.Teams.FirstOrDefault(t => t.OwnerId == User.FindFirstValue(ClaimTypes.NameIdentifier))?.TeamId;
@@ -518,7 +422,7 @@ namespace fantasydg.Controllers
                 .FirstOrDefaultAsync();
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                return PartialView("~/Views/Tournaments/TeamPlayerTable.cshtml", model);
+                return PartialView("~/Views/Tournaments/TeamPlayersTable.cshtml", model.Players);
 
             return View("~/Views/Tournaments/TeamTournamentResultsView.cshtml", model);
         }
@@ -592,7 +496,7 @@ namespace fantasydg.Controllers
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return PartialView("~/Views/Players/PlayerTable.cshtml", model);
+                return PartialView("~/Views/Players/PlayersTable.cshtml", model.Players);
             }
 
             return View("~/Views/Players/LeaguePlayersView.cshtml", model);
@@ -673,19 +577,27 @@ namespace fantasydg.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveTournamentWeights(int leagueId, Dictionary<int, double> Weights)
+        public async Task<IActionResult> SaveTournamentWeights(int leagueId, Dictionary<string, double> Weights)
         {
             foreach (var pair in Weights)
             {
-                var tournament = await _db.Tournaments.FindAsync(pair.Key);
+                var keyParts = pair.Key.Split('|');
+                if (keyParts.Length != 2) continue;
+
+                int tournamentId = int.Parse(keyParts[0]);
+                string division = keyParts[1];
+
+                var tournament = await _db.Tournaments
+                    .FirstOrDefaultAsync(t => t.Id == tournamentId && t.Division == division);
+
                 if (tournament != null)
                 {
                     tournament.Weight = pair.Value;
                     _db.Entry(tournament).State = EntityState.Modified;
                 }
             }
-
             await _db.SaveChangesAsync();
+
 
             TempData["TournamentWeightsSaved"] = "Tournament weights updated!";
             return RedirectToAction("Settings", new { id = leagueId });
@@ -734,28 +646,47 @@ namespace fantasydg.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveRosterSettings(int leagueId, int starterCount, int rosterLimit, int injuryReserveLimit)
+        public async Task<IActionResult> SaveRosterSettings(int leagueId, int starterCount, int benchCount)
         {
             var league = await _db.Leagues.FindAsync(leagueId);
             if (league == null) return NotFound();
 
             // Server-side validation
-            if (starterCount < 3 || starterCount > 20 ||
-                rosterLimit < 5 || rosterLimit > 25 ||
-                injuryReserveLimit < 0 || injuryReserveLimit > 10)
+            if (starterCount < 3 || starterCount > 25 ||
+                benchCount < 3 || benchCount > 25 )
             {
                 TempData["RosterSettingsError"] = "Invalid roster settings.";
                 return RedirectToAction("Settings", new { id = league.LeagueId });
             }
 
             league.StarterCount = starterCount;
-            league.RosterLimit = rosterLimit;
-            league.InjuryReserveLimit = injuryReserveLimit;
+            league.BenchCount = benchCount;
 
             await _db.SaveChangesAsync();
 
             TempData["RosterSettingsSaved"] = "Roster settings updated!";
             return RedirectToAction("Settings", new { id = league.LeagueId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveLeagueName(int LeagueId, string LeagueName)
+        {
+            var league = await _db.Leagues.FindAsync(LeagueId);
+            if (league == null) return NotFound();
+
+            if (!string.IsNullOrWhiteSpace(LeagueName) && LeagueName.Length <= 50)
+            {
+                league.Name = LeagueName;
+                await _db.SaveChangesAsync();
+                TempData["LeagueNameSaved"] = "League name updated!";
+            }
+            else
+            {
+                TempData["LeagueNameSaved"] = "Invalid league name.";
+            }
+
+            return RedirectToAction("Settings", new { id = LeagueId });
         }
 
         [HttpGet]
@@ -770,7 +701,7 @@ namespace fantasydg.Controllers
             if (league == null || league.OwnerId != userId)
                 return Forbid();
 
-            return View(league); // This expects /Views/League/TransferOwnership.cshtml
+            return View(league);
         }
 
         [HttpPost]

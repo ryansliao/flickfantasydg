@@ -35,15 +35,14 @@
             <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
             <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <form method="get" asp-action="Players" asp-controller="League" class="d-flex align-items-center flex-wrap gap-2 mb-0">
-                    <input type="hidden" name="leagueId" value="@Model.League.LeagueId" />
+                <div id="playerFilterControls" class="d-flex align-items-center flex-wrap gap-2 mb-0" data-league-id="@Model.League.LeagueId">
 
                     @{
                         int selectedId = ViewBag.SelectedTournamentId ?? -1;
                     }
 
                     <label for="tournamentDropdown" class="me-2">Tournament:</label>
-                    <select id="tournamentDropdown" name="tournamentId" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select id="tournamentDropdown" class="form-select form-select-sm">
                         @foreach (var t in ViewBag.Tournaments as List<fantasydg.Models.Tournament>)
                         {
                             @if (t.Id == selectedId)
@@ -58,7 +57,7 @@
                     </select>
 
                     <label for="divisionDropdown" class="ms-3 me-2">Division:</label>
-                    <select id="divisionDropdown" name="division" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select id="divisionDropdown" class="form-select form-select-sm">
                         @foreach (var d in ViewBag.Divisions as List<string>)
                         {
                             @if ((string)ViewBag.SelectedDivision == d)
@@ -71,7 +70,7 @@
                             }
                         }
                     </select>
-                </form>
+                </div>
 
                 <div id="searchContainer" class="ms-auto"></div>
             </div>
@@ -85,7 +84,11 @@
             }
             else
             {
-                @await Html.PartialAsync("~/Views/Players/PlayersTable.cshtml", Model.Players)
+                <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer" style="z-index: 1100;"></div>
+
+                <div id="playerTableContainer" >
+                    @await Html.PartialAsync("~/Views/Players/PlayersTable.cshtml", Model.Players)
+                </div>
             }
         </div>
     </div>

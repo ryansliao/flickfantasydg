@@ -262,28 +262,41 @@ namespace fantasydg.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPlayer(int teamId, int PDGANumber, int leagueId, int tournamentId, string division)
+        public async Task<IActionResult> AddPlayer(int teamId, int PDGANumber, int leagueId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var team = await _db.Teams.FirstOrDefaultAsync(t => t.TeamId == teamId && t.OwnerId == userId);
-            if (team == null) return Unauthorized();
+            var team = await _db.Teams.Include(t => t.League)
+                .FirstOrDefaultAsync(t => t.TeamId == teamId && t.OwnerId == userId);
 
-            bool alreadyAdded = await _db.TeamPlayers
-                .AnyAsync(tp => tp.TeamId == teamId && tp.PDGANumber == PDGANumber);
+            if (team == null)
+                return Json(new { success = false, message = "Team not found or unauthorized." });
 
-            if (!alreadyAdded)
+            if (await _db.TeamPlayers.AnyAsync(tp => tp.TeamId == teamId && tp.PDGANumber == PDGANumber))
+                return Json(new { success = false, message = "Player already on your team." });
+
+            var league = team.League;
+            int starters = await _db.TeamPlayers.CountAsync(tp => tp.TeamId == teamId && tp.Status == RosterStatus.Starter);
+            int bench = await _db.TeamPlayers.CountAsync(tp => tp.TeamId == teamId && tp.Status == RosterStatus.Bench);
+
+            RosterStatus assignedStatus;
+            if (starters < league.StarterCount)
+                assignedStatus = RosterStatus.Starter;
+            else if (bench < league.BenchCount)
+                assignedStatus = RosterStatus.Bench;
+            else
+                return Json(new { success = false, message = "Your roster is full. No available slots." });
+
+            _db.TeamPlayers.Add(new TeamPlayer
             {
-                _db.TeamPlayers.Add(new TeamPlayer
-                {
-                    TeamId = teamId,
-                    PDGANumber = PDGANumber,
-                    LeagueId = leagueId
-                });
-                await _db.SaveChangesAsync();
-            }
+                TeamId = teamId,
+                LeagueId = leagueId,
+                PDGANumber = PDGANumber,
+                Status = assignedStatus
+            });
 
-            return RedirectToAction("View", "Team", new { teamId, tournamentId });
+            await _db.SaveChangesAsync();
+
+            return Json(new { success = true, message = $"Player added as {assignedStatus}" });
         }
 
         [HttpPost]
@@ -344,13 +357,14 @@ namespace fantasydg.Controllers
 
             if (alreadyLocked)
             {
-                // Unlock: remove existing entries
                 var existing = await _db.TeamPlayerTournaments
                     .Where(tpt => tpt.TeamId == teamId && tpt.TournamentId == tournamentId)
                     .ToListAsync();
 
                 _db.TeamPlayerTournaments.RemoveRange(existing);
                 await _db.SaveChangesAsync();
+
+                TempData["RosterLock"] = "Roster unlocked.";
             }
             else
             {
@@ -367,14 +381,11 @@ namespace fantasydg.Controllers
                 if (missingStarters.Any())
                 {
                     string names = string.Join(", ", missingStarters.Select(p => p.Player.Name));
-                    TempData["RosterLockError"] = $"Cannot lock roster. The following starters are not in this tournament: {names}";
-                    return RedirectToAction("View", new { teamId, tournamentId });
+                    TempData["RosterLockWarning"] = $"Locked roster. The following starters are not in this tournament and were still saved: {names}";
                 }
 
-                // Lock: create snapshot
                 foreach (var tp in starters)
                 {
-                    // Try to find the matching player tournament record for this tournament
                     var pt = tp.Player.PlayerTournaments
                         .FirstOrDefault(p => p.TournamentId == tournamentId);
 
@@ -385,7 +396,7 @@ namespace fantasydg.Controllers
                             TeamId = teamId,
                             PDGANumber = tp.PDGANumber,
                             TournamentId = tournamentId,
-                            Division = pt.Division, // ✅ Derive division from player tournament stats
+                            Division = pt.Division,
                             Status = tp.Status.ToString(),
                             IsLocked = true
                         });
@@ -393,6 +404,8 @@ namespace fantasydg.Controllers
                 }
 
                 await _db.SaveChangesAsync();
+
+                TempData["RosterLock"] = "Roster locked successfully.";
             }
 
             return RedirectToAction("View", new { teamId, tournamentId });

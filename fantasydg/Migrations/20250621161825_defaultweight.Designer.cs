@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasydg.Data;
 
@@ -11,9 +12,11 @@ using fantasydg.Data;
 namespace fantasydg.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250621161825_defaultweight")]
+    partial class defaultweight
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -235,9 +238,6 @@ namespace fantasydg.Migrations
                     b.Property<double>("AvgPuttDistWeight")
                         .HasColumnType("float");
 
-                    b.Property<int>("BenchCount")
-                        .HasColumnType("int");
-
                     b.Property<double>("BirdieMinusWeight")
                         .HasColumnType("float");
 
@@ -283,6 +283,9 @@ namespace fantasydg.Migrations
                     b.Property<bool>("IncludeMPO")
                         .HasColumnType("bit");
 
+                    b.Property<int>("InjuryReserveLimit")
+                        .HasColumnType("int");
+
                     b.Property<int>("LeagueScoringMode")
                         .HasColumnType("int");
 
@@ -314,6 +317,9 @@ namespace fantasydg.Migrations
 
                     b.Property<double>("PuttingSGWeight")
                         .HasColumnType("float");
+
+                    b.Property<int>("RosterLimit")
+                        .HasColumnType("int");
 
                     b.Property<double>("ScrambleWeight")
                         .HasColumnType("float");
@@ -570,9 +576,6 @@ namespace fantasydg.Migrations
                     b.Property<string>("OwnerId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<double>("Points")
-                        .HasColumnType("float");
 
                     b.HasKey("TeamId");
 

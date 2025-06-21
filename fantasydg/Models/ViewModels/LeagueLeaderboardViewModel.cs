@@ -11,7 +11,7 @@
             public string TeamName { get; set; }
             public string OwnerName { get; set; }
             public Dictionary<int, double> PointsByTournament { get; set; } = new();
-            public double TotalPoints => PointsByTournament.Values.Sum();
+            public double TotalPoints { get; set; }
         }
     }
 }
