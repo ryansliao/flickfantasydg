@@ -46,7 +46,7 @@ namespace fantasydg.Models
         public double ParWeight { get; set; } = 0;
         public double BogeyPlusWeight { get; set; } = -0.1;
         public double DoubleBogeyPlusWeight { get; set; } = -0.25;
-        public double TotalPuttDistWeight { get; set; } = 0.01;
+        public double TotalPuttDistWeight { get; set; } = 0.003;
         public double AvgPuttDistWeight { get; set; } = 0;
         public double LongThrowInWeight { get; set; } = 0;
         public double TotalSGWeight { get; set; } = 0;
