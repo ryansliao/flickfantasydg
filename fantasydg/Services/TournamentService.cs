@@ -32,7 +32,12 @@ public class TournamentService : BackgroundService
 
             try
             {
-                await DiscoverNewTournamentsAsync(nowPT, db, dataService, httpClient);
+                if (nowPT.DayOfWeek == DayOfWeek.Tuesday && nowPT.Hour == 0 && _lastDiscoveryDate.Date != nowPT.Date)
+                {
+                    await DiscoverNewTournamentsAsync(nowPT, db, dataService, httpClient);
+                    await WeeklyTournamentRefreshAsync(nowPT, db, dataService);
+                    _lastDiscoveryDate = nowPT.Date;
+                }
                 await UpdateActiveTournamentsAsync(nowPT, db, dataService);
             }
             catch (Exception ex)
@@ -104,6 +109,28 @@ public class TournamentService : BackgroundService
                         _logger.LogError(ex, "Failed to update tournament {Id}", tournament.Id);
                     }
                 }
+            }
+        }
+    }
+
+    private async Task WeeklyTournamentRefreshAsync(DateTime nowPT, ApplicationDbContext db, DataService dataService)
+    {
+        int currentYear = nowPT.Year;
+
+        var tournaments = await db.Tournaments
+            .Where(t => t.StartDate.Year == currentYear && !string.IsNullOrEmpty(t.Division))
+            .ToListAsync();
+
+        foreach (var tournament in tournaments)
+        {
+            try
+            {
+                _logger.LogInformation("Weekly refresh: Updating tournament {Id}", tournament.Id);
+                await dataService.FetchTournaments(tournament.Id, tournament.Division);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Weekly refresh failed for tournament {Id}", tournament.Id);
             }
         }
     }
