@@ -6,7 +6,12 @@ by editing this MSBuild file. In order to learn more about this please visit htt
 <Project>
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <History>True|2025-06-22T00:08:13.0831114Z||;True|2025-06-21T17:03:46.5894599-07:00||;True|2025-06-21T17:00:07.6113363-07:00||;True|2025-06-21T16:54:30.6803969-07:00||;</History>
+    <History>True|2025-06-22T01:30:08.9578710Z||;True|2025-06-21T18:26:58.6625793-07:00||;False|2025-06-21T18:24:41.2344373-07:00||;True|2025-06-21T18:21:51.0391276-07:00||;True|2025-06-21T18:16:41.1670187-07:00||;True|2025-06-21T18:13:57.9989459-07:00||;True|2025-06-21T18:06:17.7811563-07:00||;False|2025-06-21T18:00:25.0040256-07:00||;False|2025-06-21T17:58:14.8298691-07:00||;False|2025-06-21T17:48:38.3081533-07:00||;True|2025-06-21T17:43:58.1910218-07:00||;True|2025-06-21T17:39:40.7586272-07:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
+  <ItemGroup>
+    <EFMigrations Include="fantasydg.Data.ApplicationDbContext">
+      <Value>Server=tcp:flickfantasyserver.database.windows.net,1433%3b Initial Catalog=flickfantasy%3b User ID=sqladmin%3b Password=%40Ethereal1228%3b MultipleActiveResultSets=False%3b Encrypt=True%3b TrustServerCertificate=False%3b Connection Timeout=30%3b</Value>
+    </EFMigrations>
+  </ItemGroup>
 </Project>

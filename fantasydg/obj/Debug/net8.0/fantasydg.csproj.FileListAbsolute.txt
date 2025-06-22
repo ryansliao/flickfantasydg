@@ -310,10 +310,10 @@ C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\staticweba
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\fantasydg.csproj.Up2Date
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\fantasydg.dll
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\refint\fantasydg.dll
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\fantasydg.pdb
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\fantasydg.genruntimeconfig.cache
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\ref\fantasydg.dll
+C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

@@ -3,4 +3,7 @@
   <parameter name="IIS Web Application Name" description="" value="flickfantasydg" tags="IisApp">
     <parameterEntry kind="ProviderPath" scope="IisApp" match="^C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\obj\\Release\\net8\.0\\PubTmp\\Out\\$" />
   </parameter>
+  <parameter name="fantasydg.Data.ApplicationDbContext" description="" value="Server=tcp:flickfantasyserver.database.windows.net,1433; Initial Catalog=flickfantasy; User ID=sqladmin; Password=@Ethereal1228; MultipleActiveResultSets=False; Encrypt=True; TrustServerCertificate=False; Connection Timeout=30;" tags="dbfullsql">
+    <parameterEntry kind="ProviderPath" scope="dbfullsql" match="^C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\obj\\Release\\net8\.0\\PubTmp\\EFSQLScripts\\fantasydg\.Data\.ApplicationDbContext\.sql$" />
+  </parameter>
 </parameters>
