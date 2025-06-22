@@ -41,9 +41,13 @@ jobs:
             name: webapp
             path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
-        - name: Deploy to Azure Web App using publish profile
+        - name: Log in to Azure
+          uses: azure/login@v1
+          with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+        - name: Deploy to Azure Web App
           uses: azure/webapps-deploy@v2
           with:
             app-name: ${{ env.AZURE_WEBAPP_NAME }}
-            publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
             package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
