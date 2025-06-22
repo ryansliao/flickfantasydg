@@ -53,11 +53,11 @@
 
             <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
 
-            <button class="btn btn-primary" onclick="openTournamentModal()">Add/Update Tournament</button>
+            <button type="submit" class="btn btn-primary" onclick="openTournamentModal()">Add/Update Tournament</button>
 
             <div id="tournamentInputModal" class="modal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog" onclick="event.stopPropagation()">
-                    <button type="button" class="btn-close" onclick="closeTournamentModal()">×</button>
+                    <button type="submit" class="btn-close" onclick="closeTournamentModal()">×</button>
                     <h4 class="mb-3">Add/Update Tournament</h4>
                     <form asp-controller="Tournament" asp-action="Input" method="post">
                         <input type="hidden" name="leagueId" value="@Model.LeagueId" />
@@ -153,29 +153,33 @@
             
             <h4>Tournament Weights</h4>
 
-            @if (ViewBag.AllTournaments != null)
+            @if (ViewBag.TournamentWeights != null)
             {
                 <form asp-action="SaveTournamentWeights" asp-controller="League" method="post" class="mt-4 w-100">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="leagueId" value="@Model.LeagueId" />
 
-                    @foreach (var tournament in ViewBag.AllTournaments)
+                    @foreach (var item in ViewBag.TournamentWeights)
                     {
-                        string division = tournament.Division as string ?? "";
+                        var tournament = item.Tournament as fantasydg.Models.Tournament;
+                        string division = item.Division as string ?? "";
+                        double weight = item.Weight;
 
-                        if ((division == "MPO" && Model.IncludeMPO) || (division == "FPO" && Model.IncludeFPO))
+                        @if ((division == "MPO" && Model.IncludeMPO) || (division == "FPO" && Model.IncludeFPO))
                         {
                             <div class="row mb-2 align-items-center">
                                 <div class="col-auto">
                                     <input type="number" step="0.1" min="0"
                                            name="Weights[@($"{tournament.Id}|{division}")]"
                                            id="Weights_@($"{tournament.Id}_{division}")"
-                                           value="@tournament.Weight"
-                                           class="form-control" 
+                                           value="@weight"
+                                           class="form-control"
                                            style="width: 80px; height: 40px;" />
                                 </div>
                                 <div class="col ps-2">
-                                    <label for="Weights_@tournament.Id" class="form-label mb-0">@tournament.Name (@division)</label>
+                                    <label for="Weights_@($"{tournament.Id}_{division}")" class="form-label mb-0">
+                                        @tournament.Name (@division)
+                                    </label>
                                 </div>
                             </div>
                         }

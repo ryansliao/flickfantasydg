@@ -3,7 +3,19 @@
 
 @{
     ViewBag.Title = "Available Players";
-    bool hasData = Model != null && Model.Players != null && Model.Players.Any();
+    bool hasData = false;
+
+    if (Model != null && Model.Players != null)
+    {
+        try
+        {
+            hasData = Model.Players.Any();
+        }
+        catch
+        {
+            hasData = false;
+        }
+    }
 }
 
 @section Styles {

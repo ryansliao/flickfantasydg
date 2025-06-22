@@ -52,11 +52,11 @@
                 <tr>
                     <td>
                         <form method="post" asp-action="AddPlayer" asp-controller="Team" class="ajax-add-player-form">
-                            <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
-                            <input type="hidden" name="leagueId" value="@ViewBag.LeagueId" />
+                            <input type="hidden" name="teamId" value="@(ViewBag.TeamId ?? 0)" />
+                            <input type="hidden" name="leagueId" value="@(ViewBag.LeagueId ?? 0)" />
                             <input type="hidden" name="PDGANumber" value="@pt.PDGANumber" />
-                            <input type="hidden" name="tournamentId" value="@ViewBag.SelectedTournamentId" />
-                            <input type="hidden" name="division" value="@ViewBag.SelectedDivision" />
+                            <input type="hidden" name="tournamentId" value="@(ViewBag.SelectedTournamentId ?? 0)" />
+                            <input type="hidden" name="division" value="@(ViewBag.SelectedDivision ?? "")" />
                             <button type="submit" class="btn btn-sm btn-success">+</button>
                         </form>
                     </td>

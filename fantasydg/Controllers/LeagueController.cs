@@ -132,23 +132,29 @@ namespace fantasydg.Controllers
             return score;
         }
 
-        private double CalculateTeamPoints(League league, Team team, List<Tournament> tournaments)
+        private double CalculateTeamPoints(
+            League league,
+            Team team,
+            List<Tournament> tournaments,
+            Dictionary<(int TournamentId, string Division), double> leagueWeights)
         {
             double total = 0;
 
-            if (league.LeagueScoringMode == League.ScoringMode.TotalPoints)
+            foreach (var tournament in tournaments)
             {
-                foreach (var tournament in tournaments)
+                leagueWeights.TryGetValue((tournament.Id, tournament.Division), out double weight);
+                if (weight == 0) weight = 1;
+
+                total += league.LeagueScoringMode switch
                 {
-                    total += GetTeamScoreForTournament(league, team, tournament) * tournament.Weight;
-                }
-            }
-            else if (league.LeagueScoringMode == League.ScoringMode.WinsPerTournament)
-            {
-                foreach (var tournament in tournaments)
-                {
-                    total += GetWinScoreForTeam(league, team, tournament) * tournament.Weight;
-                }
+                    League.ScoringMode.TotalPoints =>
+                        GetTeamScoreForTournament(league, team, tournament) * weight,
+
+                    League.ScoringMode.WinsPerTournament =>
+                        GetWinScoreForTeam(league, team, tournament) * weight,
+
+                    _ => 0
+                };
             }
 
             return total;
@@ -203,9 +209,17 @@ namespace fantasydg.Controllers
                 .Where(t => (league.IncludeMPO && t.Division == "MPO") || (league.IncludeFPO && t.Division == "FPO"))
                 .ToListAsync();
 
+            // Get all league-specific weights
+            var leagueWeights = await _db.LeagueTournaments
+                .Where(lt => lt.LeagueId == leagueId)
+                .ToDictionaryAsync(
+                    lt => (lt.TournamentId, lt.Division),
+                    lt => lt.Weight
+                );
+
             foreach (var team in league.Teams)
             {
-                team.Points = CalculateTeamPoints(league, team, tournaments);
+                team.Points = CalculateTeamPoints(league, team, tournaments, leagueWeights);
             }
 
             await _db.SaveChangesAsync();
@@ -262,6 +276,13 @@ namespace fantasydg.Controllers
 
             tournaments = tournaments.DistinctBy(t => t.Id).ToList();
 
+            var leagueWeights = await _db.LeagueTournaments
+                .Where(lt => lt.LeagueId == leagueId)
+                .ToDictionaryAsync(
+                    lt => (lt.TournamentId, lt.Division),
+                    lt => lt.Weight
+                );
+
             var model = new LeagueLeaderboardViewModel
             {
                 League = league,
@@ -280,10 +301,13 @@ namespace fantasydg.Controllers
 
                 foreach (var tournament in tournaments)
                 {
+                    leagueWeights.TryGetValue((tournament.Id, tournament.Division), out var weight);
+                    if (weight == 0) weight = 1;
+
                     double score = league.LeagueScoringMode switch
                     {
-                        League.ScoringMode.TotalPoints => GetTeamScoreForTournament(league, team, tournament) * tournament.Weight,
-                        League.ScoringMode.WinsPerTournament => GetWinScoreForTeam(league, team, tournament) * tournament.Weight,
+                        League.ScoringMode.TotalPoints => GetTeamScoreForTournament(league, team, tournament) * weight,
+                        League.ScoringMode.WinsPerTournament => GetWinScoreForTeam(league, team, tournament) * weight,
                         _ => 0
                     };
 
@@ -440,12 +464,37 @@ namespace fantasydg.Controllers
             var allTournaments = await _repository.GetAllTournamentsAsync();
             ViewBag.Tournaments = allTournaments.OrderByDescending(t => t.Date).ToList();
 
+            // 🛑 Early return if no tournaments exist
+            if (allTournaments == null || !allTournaments.Any())
+            {
+                var emptyModel = new LeaguePlayersViewModel
+                {
+                    League = league,
+                    Players = new List<PlayerTournament>()
+                };
+
+                ViewBag.SelectedTournamentId = null;
+                ViewBag.Divisions = new List<string>();
+                ViewBag.SelectedDivision = null;
+
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var team = await _db.Teams.FirstOrDefaultAsync(t => t.LeagueId == leagueId && t.OwnerId == userId);
+                ViewBag.LeagueId = leagueId;
+                ViewBag.LeagueName = league.Name;
+                ViewBag.TeamId = team?.TeamId;
+
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    return PartialView("~/Views/Players/PlayerTable.cshtml", emptyModel);
+
+                return View("~/Views/Players/LeaguePlayers.cshtml", emptyModel);
+            }
+
+            // ✅ Proceed safely now that we know tournaments exist
             if (!tournamentId.HasValue)
                 tournamentId = allTournaments.FirstOrDefault()?.Id;
 
             var selectedTournament = allTournaments.FirstOrDefault(t => t.Id == tournamentId);
-
-            tournamentId = selectedTournament.Id;
+            tournamentId = selectedTournament?.Id;
             ViewBag.SelectedTournamentId = tournamentId;
 
             var divisions = await _repository.GetDivisionsForTournamentAsync(tournamentId.Value);
@@ -454,15 +503,13 @@ namespace fantasydg.Controllers
                 .OrderByDescending(d => d)
                 .ToList();
 
-            ViewBag.Divisions = divisions.OrderByDescending(d => d).ToList();
-
+            ViewBag.Divisions = divisions;
             if (string.IsNullOrEmpty(division))
-                division = divisions.Contains("MPO") ? "MPO" : divisions.FirstOrDefault();
+                division = divisions?.Contains("MPO") == true ? "MPO" : divisions?.FirstOrDefault();
 
             ViewBag.SelectedDivision = division;
 
             await _leagueService.UpdateFantasyPointsForLeagueAsync(leagueId);
-
             var fantasyMap = await _leagueService.GetFantasyPointsMapAsync(leagueId);
             ViewBag.FantasyMap = fantasyMap;
 
@@ -471,14 +518,20 @@ namespace fantasydg.Controllers
                 .Select(tp => tp.PDGANumber)
                 .ToListAsync();
 
-            var unassigned = await _db.PlayerTournaments
-                .Include(pt => pt.Player)
-                .Include(pt => pt.Tournament)
-                .Where(pt =>
-                    pt.Tournament.Division == division &&
-                    pt.TournamentId == tournamentId &&
-                    !assignedPDGANumbers.Contains(pt.PDGANumber))
-                .ToListAsync();
+            List<PlayerTournament> unassigned = new();
+            if (tournamentId.HasValue && !string.IsNullOrEmpty(division))
+            {
+                unassigned = await _db.PlayerTournaments
+                    .Include(pt => pt.Player)
+                    .Include(pt => pt.Tournament)
+                    .Where(pt =>
+                        pt.Tournament != null &&
+                        pt.Player != null &&
+                        pt.Tournament.Division == division &&
+                        pt.TournamentId == tournamentId &&
+                        !assignedPDGANumbers.Contains(pt.PDGANumber))
+                    .ToListAsync();
+            }
 
             var model = new LeaguePlayersViewModel
             {
@@ -486,13 +539,13 @@ namespace fantasydg.Controllers
                 Players = unassigned
             };
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var team = await _db.Teams
-                .FirstOrDefaultAsync(t => t.LeagueId == leagueId && t.OwnerId == userId);
+            var userIdFinal = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var teamFinal = await _db.Teams
+                .FirstOrDefaultAsync(t => t.LeagueId == leagueId && t.OwnerId == userIdFinal);
 
             ViewBag.LeagueId = leagueId;
             ViewBag.LeagueName = league.Name;
-            ViewBag.TeamId = team.TeamId;
+            ViewBag.TeamId = teamFinal?.TeamId;
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
@@ -527,15 +580,27 @@ namespace fantasydg.Controllers
                 .Select(t => (int?)t.TeamId)
                 .FirstOrDefaultAsync();
 
-            var tournaments = await _db.Tournaments.OrderByDescending(t => t.Date).ToListAsync();
+            var tournaments = await _db.Tournaments
+                .OrderByDescending(t => t.Date)
+                .ToListAsync();
 
-            foreach (var t in tournaments)
-            {
-                if (t.Weight == 0)
-                    t.Weight = 1;
-            }
+            var leagueTournaments = await _db.LeagueTournaments
+                .Where(lt => lt.LeagueId == id)
+                .ToListAsync();
 
-            ViewBag.AllTournaments = tournaments;
+            // 💡 Make sure every tournament shows, even without LeagueTournament entry
+            var tournamentWeights = tournaments
+                .Where(t => !string.IsNullOrEmpty(t.Division))
+                .Select(t => new
+                {
+                    Tournament = t,
+                    Division = t.Division,
+                    Weight = leagueTournaments
+                        .FirstOrDefault(lt => lt.TournamentId == t.Id && lt.Division == t.Division)?.Weight ?? 1
+                })
+                .ToList();
+
+            ViewBag.TournamentWeights = tournamentWeights;
 
             return View(league);
         }
@@ -584,20 +649,30 @@ namespace fantasydg.Controllers
                 var keyParts = pair.Key.Split('|');
                 if (keyParts.Length != 2) continue;
 
-                int tournamentId = int.Parse(keyParts[0]);
+                if (!int.TryParse(keyParts[0], out int tournamentId)) continue;
                 string division = keyParts[1];
 
-                var tournament = await _db.Tournaments
-                    .FirstOrDefaultAsync(t => t.Id == tournamentId && t.Division == division);
+                var leagueTournament = await _db.LeagueTournaments
+                    .FirstOrDefaultAsync(lt => lt.LeagueId == leagueId && lt.TournamentId == tournamentId && lt.Division == division);
 
-                if (tournament != null)
+                if (leagueTournament != null)
                 {
-                    tournament.Weight = pair.Value;
-                    _db.Entry(tournament).State = EntityState.Modified;
+                    leagueTournament.Weight = pair.Value;
+                }
+                else
+                {
+                    // Add new entry if it doesn't exist
+                    _db.LeagueTournaments.Add(new LeagueTournament
+                    {
+                        LeagueId = leagueId,
+                        TournamentId = tournamentId,
+                        Division = division,
+                        Weight = pair.Value
+                    });
                 }
             }
-            await _db.SaveChangesAsync();
 
+            await _db.SaveChangesAsync();
 
             TempData["TournamentWeightsSaved"] = "Tournament weights updated!";
             return RedirectToAction("Settings", new { id = leagueId });

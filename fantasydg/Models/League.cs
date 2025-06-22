@@ -61,5 +61,6 @@ namespace fantasydg.Models
         public ICollection<LeagueMember> Members { get; set; }
         [ValidateNever]
         public ICollection<Team> Teams { get; set; }
+        public ICollection<LeagueTournament> LeagueTournaments { get; set; }
     }
 }

@@ -151,6 +151,7 @@
     document.querySelectorAll(".drop-slot").forEach(setupDropSlot);
 
     document.body.addEventListener("click", (event) => {
+        if (event.target.closest('.dropdown-menu, .dropdown-toggle')) return;
         if (event.target.id === 'playerModal') closeModal();
     });
 
@@ -175,6 +176,15 @@
     }
 
     window.showToast = showToast;
+
+    document.querySelectorAll('.dropdown-toggle').forEach(function (toggle) {
+        const dropdown = new bootstrap.Dropdown(toggle);
+        toggle.addEventListener('click', function (e) {
+            e.stopImmediatePropagation(); // force override
+            e.preventDefault(); // prevent other handlers from stealing it
+            dropdown.toggle();
+        });
+    });
 });
 
 function showToast(message, type = "success") {

@@ -12,6 +12,7 @@ namespace fantasydg.Data
         public DbSet<League> Leagues { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<TeamPlayer> TeamPlayers { get; set; }
+        public DbSet<LeagueTournament> LeagueTournaments { get; set; }
         public DbSet<TeamPlayerTournament> TeamPlayerTournaments { get; set; }
         public DbSet<LeagueMember> LeagueMembers { get; set; }
         public DbSet<LeaguePlayerFantasyPoints> LeaguePlayerFantasyPoints { get; set; }
@@ -32,9 +33,23 @@ namespace fantasydg.Data
             modelBuilder.Entity<Tournament>()
                 .HasKey(t => new { t.Id, t.Division });
 
-            modelBuilder.Entity<Tournament>()
-                .Property(t => t.Weight)
+            modelBuilder.Entity<LeagueTournament>()
+                .Property(lt => lt.Weight)
                 .HasDefaultValue(1);
+
+            modelBuilder.Entity<LeagueTournament>()
+                .HasKey(lt => new { lt.LeagueId, lt.TournamentId, lt.Division });
+
+            modelBuilder.Entity<LeagueTournament>()
+                .HasOne(lt => lt.League)
+                .WithMany(l => l.LeagueTournaments)
+                .HasForeignKey(lt => lt.LeagueId);
+
+            modelBuilder.Entity<LeagueTournament>()
+                .HasOne(lt => lt.Tournament)
+                .WithMany(t => t.LeagueTournaments)
+                .HasForeignKey(lt => new { lt.TournamentId, lt.Division })
+                .HasPrincipalKey(t => new { t.Id, t.Division });
 
             modelBuilder.Entity<PlayerTournament>()
                 .HasOne(pt => pt.Tournament)

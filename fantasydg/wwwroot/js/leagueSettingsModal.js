@@ -10,6 +10,35 @@ function closeTournamentModal() {
     document.body.classList.remove("modal-open");
 }
 
+function showToast(message, isSuccess = true) {
+    const toastId = `toast_${Date.now()}`;
+    const toast = document.createElement("div");
+
+    toast.className = `toast align-items-center text-white bg-${isSuccess ? 'success' : 'danger'} border-0`;
+    toast.setAttribute("role", "alert");
+    toast.setAttribute("aria-live", "assertive");
+    toast.setAttribute("aria-atomic", "true");
+    toast.setAttribute("id", toastId);
+
+    toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+
+    const container = document.getElementById("toastContainer");
+    container.appendChild(toast);
+
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+
+    // Auto-remove after shown
+    toast.addEventListener('hidden.bs.toast', () => toast.remove());
+}
+
 // Clicking outside modal-dialog closes the modal
 document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById("tournamentInputModal");
@@ -53,4 +82,35 @@ document.addEventListener("DOMContentLoaded", function () {
         const toast = new bootstrap.Toast(toastElem, { delay: 4000 });
         toast.show();
     }
+
+    document.querySelectorAll("form").forEach(form => {
+        // Skip if it has data-no-ajax (for exceptions)
+        if (form.dataset.noAjax !== undefined) return;
+
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const formData = new FormData(form);
+            const action = form.getAttribute("action") || window.location.href;
+            const method = form.getAttribute("method")?.toUpperCase() || "POST";
+
+            const tokenInput = form.querySelector('input[name="__RequestVerificationToken"]');
+            const headers = tokenInput
+                ? { 'RequestVerificationToken': tokenInput.value }
+                : {};
+
+            const response = await fetch(action, {
+                method,
+                body: formData,
+                headers
+            });
+
+            if (response.ok) {
+                showToast("Saved successfully!", true);
+            } else {
+                showToast("Failed to save. Please try again.", false);
+            }
+        });
+    });
 });

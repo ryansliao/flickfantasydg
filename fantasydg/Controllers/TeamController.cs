@@ -26,6 +26,7 @@ namespace fantasydg.Controllers
             _leagueService = leagueService;
         }
 
+        // GET: Show the team creation form
         [HttpGet]
         public IActionResult Create(int leagueId)
         {
@@ -33,6 +34,7 @@ namespace fantasydg.Controllers
             return View();
         }
 
+        // POST: Process the form submission
         [HttpPost]
         public async Task<IActionResult> Create(string name, int leagueId)
         {
