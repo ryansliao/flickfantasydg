@@ -1,0 +1,146 @@
+﻿body, html {
+    margin: 0;
+    padding: 0;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.players-page-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: calc(85vh);
+    width: calc(75vw);
+}
+
+.players-content-row {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+#mainContent {
+    flex: 1;
+    padding: 0 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+}
+
+#searchContainer,
+div.dataTables_filter {
+    display: flex;
+    align-items: flex-end;
+    margin-left: auto;
+    padding-left: 12px;
+}
+
+    #searchContainer label {
+        margin-bottom: 0;
+    }
+
+    #searchContainer input[type="search"] {
+        height: 32px;
+        padding: 4px 8px;
+        font-size: 0.9rem;
+        margin-left: 10px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+
+#tournamentDropdown {
+    width: 15vw;
+    min-width: 100px;
+}
+
+#divisionDropdown {
+    width: 5vw;
+    min-width: 80px;
+}
+
+form.filter-form label {
+    font-weight: 500;
+    margin-bottom: 0;
+}
+
+.table-scroll-container {
+    flex: none;
+    overflow: visible;
+    padding-bottom: 50px;
+}
+
+/* Base table layout */
+.stats-table,
+table.dataTable {
+    table-layout: fixed;
+    border-collapse: collapse;
+    box-sizing: border-box;
+    vertical-align: middle;
+
+}
+
+    .stats-table th,
+    .stats-table td,
+    div.DTFC_LeftWrapper table th,
+    div.DTFC_LeftWrapper table td {
+        font-size: 0.8rem;
+        padding: 2px 4px;
+        line-height: 1.1;
+        box-sizing: border-box;
+        vertical-align: middle;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
+        height: auto;
+        min-height: 0;
+    }
+
+    /* Button inside table cells */
+    .stats-table button.btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        font-size: 0.9rem;
+        padding: 0;
+        margin: 0;
+        line-height: 1;
+    }
+
+    /* Header styling */
+    table.dataTable thead th,
+    div.DTFC_LeftWrapper table thead th {
+        background-color: #e1e1e1 !important;
+        color: #000;
+        font-weight: bold;
+        font-size: 0.75rem;
+        padding: 4px 5px;
+        line-height: 1.1;
+        text-align: center !important;
+        white-space: normal !important;
+        vertical-align: middle;
+    }
+
+        /* Sorting icons */
+        table.dataTable thead th.sorting::before,
+        table.dataTable thead th.sorting::after,
+        table.dataTable thead th.sorting_asc::before,
+        table.dataTable thead th.sorting_asc::after,
+        table.dataTable thead th.sorting_desc::before,
+        table.dataTable thead th.sorting_desc::after {
+            font-size: 0.5rem !important;
+            margin-left: 4px;
+            vertical-align: middle;
+            display: inline-block;
+            transform: translateY(1px);
+        }
+
+/* Scroll body override */
+div.dataTables_scrollBody {
+    overflow-x: auto !important;
+    overflow-y: scroll !important;
+}
