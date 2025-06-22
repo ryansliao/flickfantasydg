@@ -29,12 +29,12 @@ namespace fantasydg.Models.Repository
         public async Task<List<Tournament>> GetAllTournamentsAsync()
         {
             var all = await _db.Tournaments
-                .OrderByDescending(t => t.Date)
+                .OrderByDescending(t => t.StartDate)
                 .ToListAsync(); // Execute SQL first
 
             return all
                 .GroupBy(t => t.Name)
-                .Select(g => g.OrderByDescending(t => t.Date).First())
+                .Select(g => g.OrderByDescending(t => t.StartDate).First())
                 .ToList(); // Now this is safe in-memory
         }
 

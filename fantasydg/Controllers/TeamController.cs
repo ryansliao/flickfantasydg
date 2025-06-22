@@ -109,17 +109,17 @@ namespace fantasydg.Controllers
                 .ToListAsync();
 
             ViewBag.AllTournaments = allTournaments
-                 .OrderByDescending(t => t.Date)
+                 .OrderByDescending(t => t.StartDate)
                  .Select(t => new TournamentLockViewModel
                  {
                      Id = t.Id,
                      Name = t.Name,
-                     Date = t.Date,
+                     Date = t.StartDate,
                      IsLocked = lockedTournamentIds.Contains(t.Id)
                  }).ToList();
 
             // Show latest locked or unlocked tournament
-            var latestTournamentId = allTournaments.OrderByDescending(t => t.Date).FirstOrDefault()?.Id ?? -1;
+            var latestTournamentId = allTournaments.OrderByDescending(t => t.StartDate).FirstOrDefault()?.Id ?? -1;
 
             var lockedRoster = await _db.TeamPlayerTournaments
                 .Include(tpt => tpt.Player)
@@ -160,11 +160,11 @@ namespace fantasydg.Controllers
                 .ToListAsync();
 
             var results = tournaments
-                .OrderByDescending(t => t.Date)
+                .OrderByDescending(t => t.StartDate)
                 .Select(t => new {
                     t.Id,
                     t.Name,
-                    t.Date,
+                    t.StartDate,
                     IsLocked = lockedIds.Contains(t.Id)
                 });
 

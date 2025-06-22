@@ -40,6 +40,7 @@ try
     builder.Services.AddHttpClient<DataService>();
     builder.Services.AddScoped<DatabaseRepository>();
     builder.Services.AddScoped<LeagueService>();
+    builder.Services.AddHostedService<TournamentService>();
 
     var app = builder.Build();
 

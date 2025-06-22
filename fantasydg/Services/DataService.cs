@@ -26,7 +26,7 @@ namespace fantasydg.Services
         }
 
         // Get tournament name and date
-        private async Task<List<string>> GetTournamentInfo(int tournamentId)
+        public async Task<List<string>> GetTournamentInfo(int tournamentId)
         {
             try
             {
@@ -34,15 +34,14 @@ namespace fantasydg.Services
                 var json = await _httpClient.GetStringAsync(url);
                 
                 var name = JObject.Parse(json)?["data"]?["MultiLineName"]?["main"]?.ToString() ?? $"Tournament {tournamentId}";
-                var dateStr = JObject.Parse(json)?["data"]?["StartDate"]?.ToString();
+                var startDateStr = JObject.Parse(json)?["data"]?["StartDate"]?.ToString();
+                var endDateStr = JObject.Parse(json)?["data"]?["EndDate"]?.ToString();
                 var tier = JObject.Parse(json)?["data"]?["TierPro"]?.ToString();
 
-                DateTime? date = null;
-                if (DateTime.TryParse(dateStr, out var parsedDate))
-                {
-                    date = parsedDate;
-                }
-                return new List<string> { name, dateStr, tier };
+                DateTime.TryParse(startDateStr, out var startDate);
+                DateTime.TryParse(endDateStr, out var endDate);
+
+                return new List<string> { name, startDateStr, endDateStr, tier };
             }
             catch
             {
@@ -99,13 +98,16 @@ namespace fantasydg.Services
 
                 // Assign tournament name and date
                 var info = await GetTournamentInfo(tournamentId);
-                var dateStr = info[1];
-                DateTime date = DateTime.TryParse(dateStr, out var parsedDate)
-                    ? parsedDate
-                    : DateTime.UtcNow;
+                var startDateStr = info[1];
+                var endDateStr = info[2];
+
+                DateTime.TryParse(startDateStr, out var parsedStartDate);
+                DateTime.TryParse(endDateStr, out var parsedEndDate);
+
                 tournament.Name = info[0];
                 tournament.Tier = info[2];
-                tournament.Date = date;
+                tournament.StartDate = parsedStartDate == default ? DateTime.UtcNow : parsedStartDate;
+                tournament.EndDate = parsedEndDate == default ? DateTime.UtcNow : parsedEndDate;
 
                 await _db.SaveChangesAsync(); // Save tournament object to database
 

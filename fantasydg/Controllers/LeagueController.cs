@@ -271,7 +271,7 @@ namespace fantasydg.Controllers
 
             var tournaments = await _db.Tournaments
                 .Where(t => enabledDivisions.Contains(t.Division))
-                .OrderBy(t => t.Date)
+                .OrderBy(t => t.StartDate)
                 .ToListAsync();
 
             tournaments = tournaments.DistinctBy(t => t.Id).ToList();
@@ -340,7 +340,7 @@ namespace fantasydg.Controllers
 
             // Load tournaments and set default selection
             var allTournaments = await _repository.GetAllTournamentsAsync();
-            var orderedTournaments = allTournaments.OrderByDescending(t => t.Date).ToList();
+            var orderedTournaments = allTournaments.OrderByDescending(t => t.StartDate).ToList();
             ViewBag.Tournaments = orderedTournaments;
 
             tournamentId ??= orderedTournaments.FirstOrDefault()?.Id;
@@ -462,7 +462,7 @@ namespace fantasydg.Controllers
             if (league == null) return NotFound();
 
             var allTournaments = await _repository.GetAllTournamentsAsync();
-            ViewBag.Tournaments = allTournaments.OrderByDescending(t => t.Date).ToList();
+            ViewBag.Tournaments = allTournaments.OrderByDescending(t => t.StartDate).ToList();
 
             // 🛑 Early return if no tournaments exist
             if (allTournaments == null || !allTournaments.Any())
@@ -581,7 +581,7 @@ namespace fantasydg.Controllers
                 .FirstOrDefaultAsync();
 
             var tournaments = await _db.Tournaments
-                .OrderByDescending(t => t.Date)
+                .OrderByDescending(t => t.StartDate)
                 .ToListAsync();
 
             var leagueTournaments = await _db.LeagueTournaments

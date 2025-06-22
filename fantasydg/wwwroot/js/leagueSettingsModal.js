@@ -113,4 +113,46 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+
+    const tournamentForm = document.getElementById("tournamentInputForm");
+    const spinner = document.getElementById("tournamentLoadingSpinner");
+
+    if (tournamentForm && spinner) {
+        tournamentForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            spinner.classList.remove("d-none");
+
+            const formData = new FormData(tournamentForm);
+            const action = tournamentForm.getAttribute("action");
+            const token = tournamentForm.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+            try {
+                const response = await fetch(action, {
+                    method: "POST",
+                    body: formData,
+                    headers: { 'RequestVerificationToken': token }
+                });
+
+                spinner.classList.add("d-none");
+
+                if (response.ok) {
+                    showToast("Tournament added successfully!", true);
+                    closeTournamentModal();
+
+                    // Optional: manually insert new tournament into UI here
+                    // if you're not refreshing the whole page.
+                } else {
+                    const errorText = await response.text();
+                    console.error("Failed to add tournament:", errorText);
+                    showToast("Failed to add tournament.", false);
+                }
+            } catch (err) {
+                console.error("Fetch error:", err);
+                spinner.classList.add("d-none");
+                showToast("Error occurred. Please try again.", false);
+            }
+        });
+    }
 });

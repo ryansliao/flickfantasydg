@@ -59,7 +59,7 @@
                 <div class="modal-dialog" onclick="event.stopPropagation()">
                     <button type="submit" class="btn-close" onclick="closeTournamentModal()">×</button>
                     <h4 class="mb-3">Add/Update Tournament</h4>
-                    <form asp-controller="Tournament" asp-action="Input" method="post">
+                    <form id="tournamentInputForm" asp-controller="Tournament" asp-action="Input" method="post" data-no-ajax>
                         <input type="hidden" name="leagueId" value="@Model.LeagueId" />
 
                         <div class="form-group mb-3">
@@ -69,6 +69,10 @@
                         </div>
 
                         <button type="submit" class="btn btn-success">Submit</button>
+
+                        <div id="tournamentLoadingSpinner" class="mt-3 d-none text-center">
+                            <div class="spinner-border text-success" role="status"></div>
+                        </div>
                     </form>
                 </div>
             </div>
