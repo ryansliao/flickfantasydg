@@ -172,7 +172,9 @@ namespace fantasydg.Areas.Identity.Pages.Account
                 ModelState.AddModelError(string.Empty, error.Description);
             }
 
-            return LocalRedirect(returnUrl ?? "/");
+            ProviderDisplayName = info.ProviderDisplayName;
+            ReturnUrl = returnUrl;
+            return Page();
         }
 
         private ApplicationUser CreateUser()
