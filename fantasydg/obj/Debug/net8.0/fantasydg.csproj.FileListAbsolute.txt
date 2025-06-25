@@ -317,3 +317,7 @@ C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\fantasydg.
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\fantasydg.genruntimeconfig.cache
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\ref\fantasydg.dll
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\rjimswa.dswa.cache.json
+C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json

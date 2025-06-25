@@ -3,19 +3,6 @@
 
 @{
     ViewBag.Title = "Available Players";
-    bool hasData = false;
-
-    if (Model != null && Model.Players != null)
-    {
-        try
-        {
-            hasData = Model.Players.Any();
-        }
-        catch
-        {
-            hasData = false;
-        }
-    }
 }
 
 @section Styles {
@@ -88,20 +75,9 @@
             </div>
             <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
-            @if (!hasData)
-            {
-                <div class="alert alert-warning mt-4">
-                    No data available. Please enter a tournament to begin.
-                </div>
-            }
-            else
-            {
-                <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer" style="z-index: 1100;"></div>
-
-                <div id="playerTableContainer" >
-                    @await Html.PartialAsync("~/Views/Players/PlayersTable.cshtml", Model.Players)
-                </div>
-            }
+            <div id="playerTableContainer">
+                @await Html.PartialAsync("~/Views/Players/PlayersTable.cshtml", Model.Players)
+            </div>
         </div>
     </div>
 </div>

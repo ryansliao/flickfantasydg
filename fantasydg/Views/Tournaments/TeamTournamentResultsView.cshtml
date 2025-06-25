@@ -3,7 +3,6 @@
 
 @{
     ViewBag.Title = "Tournament Results";
-    bool hasData = Model != null && Model.Players != null && Model.Players.Any();
 }
 
 @section Styles {
@@ -58,18 +57,9 @@
             </div>
             <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
-            @if (!hasData)
-            {
-                <div class="alert alert-warning mt-4">
-                    No players have been locked for this tournament.
-                </div>
-            }
-            else
-            {
-                <div id="teamTournamentResultsContainer">
-                    @await Html.PartialAsync("~/Views/Tournaments/TeamPlayersTable.cshtml", Model.Players)
-                </div>
-            }
+            <div id="teamTournamentResultsContainer">
+                 @await Html.PartialAsync("~/Views/Tournaments/TeamPlayersTable.cshtml", Model.Players)
+            </div>
         </div>
     </div>
 </div>
