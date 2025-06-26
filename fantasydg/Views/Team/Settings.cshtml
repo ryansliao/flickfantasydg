@@ -24,7 +24,7 @@
                 </div>
             }
 
-            <form asp-action="SaveSettings" asp-controller="Team" method="post" class="mt-4" style="max-width: 400px;">
+            <form asp-action="SaveTeamName" asp-controller="Team" method="post" class="mt-4" style="max-width: 400px;">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="TeamId" value="@ViewBag.TeamId" />
 

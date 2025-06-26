@@ -26,7 +26,7 @@ namespace fantasydg.Controllers
             _leagueService = leagueService;
         }
 
-        // GET: Show the team creation form
+        // Show the team creation form
         [HttpGet]
         public IActionResult Create(int leagueId)
         {
@@ -34,7 +34,7 @@ namespace fantasydg.Controllers
             return View();
         }
 
-        // POST: Process the form submission
+        // Create team after joining league
         [HttpPost]
         public async Task<IActionResult> Create(string name, int leagueId)
         {
@@ -69,6 +69,7 @@ namespace fantasydg.Controllers
             return RedirectToAction("View", new { teamId = team.TeamId });
         }
 
+        // Team Roster View
         [HttpGet]
         public async Task<IActionResult> View(int teamId, int? viewTeamId = null)
         {
@@ -94,13 +95,11 @@ namespace fantasydg.Controllers
 
             if (selectedTeam == null) return NotFound();
 
-            // Prepare ViewBags
             ViewBag.LeagueName = mainTeam.League?.Name;
-            ViewBag.TeamId = teamId;                   // user's team ID
-            ViewBag.SelectedTeamId = selectedTeamId;   // current team being viewed
-            ViewBag.OtherTeams = allTeams;             // for dropdown
+            ViewBag.TeamId = teamId;
+            ViewBag.SelectedTeamId = selectedTeamId;
+            ViewBag.OtherTeams = allTeams;
 
-            // Load all tournaments and locked status
             var allTournaments = await _repository.GetAllTournamentsAsync();
             var lockedTournamentIds = await _db.TeamPlayerTournaments
                 .Where(tpt => tpt.TeamId == selectedTeamId && tpt.IsLocked)
@@ -118,7 +117,6 @@ namespace fantasydg.Controllers
                      IsLocked = lockedTournamentIds.Contains(t.Id)
                  }).ToList();
 
-            // Show latest locked or unlocked tournament
             var latestTournamentId = allTournaments.OrderByDescending(t => t.StartDate).FirstOrDefault()?.Id ?? -1;
 
             var lockedRoster = await _db.TeamPlayerTournaments
@@ -136,10 +134,10 @@ namespace fantasydg.Controllers
                      Player = tp.Player,
                      TournamentId = latestTournamentId,
                      Status = tp.Status.ToString(),
-                     IsLocked = lockedRoster.Any(r => r.PDGANumber == tp.PDGANumber) // Flag locked players
+                     IsLocked = lockedRoster.Any(r => r.PDGANumber == tp.PDGANumber)
                  }).ToList();
 
-            var isLocked = lockedRoster.All(r => r.IsLocked); // Or use a separate field to check
+            var isLocked = lockedRoster.All(r => r.IsLocked);
             ViewBag.IsLocked = isLocked;
 
             return View("TeamView", new TeamViewModel
@@ -149,6 +147,7 @@ namespace fantasydg.Controllers
             });
         }
 
+        /* 
         [HttpGet]
         public async Task<IActionResult> GetLockOptions(int teamId)
         {
@@ -170,7 +169,9 @@ namespace fantasydg.Controllers
 
             return Json(results);
         }
+        */
 
+        // Show current roster starters in the tournament lock modal
         [HttpGet]
         public async Task<IActionResult> GetStarterPreview(int teamId, int tournamentId)
         {
@@ -226,6 +227,7 @@ namespace fantasydg.Controllers
             return Content(html, "text/html");
         }
 
+        // Team Settings View
         [HttpGet]
         public async Task<IActionResult> Settings(int teamId)
         {
@@ -241,9 +243,10 @@ namespace fantasydg.Controllers
             return View(team.League);
         }
 
+        // Change team name
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveSettings(int TeamId, string Name)
+        public async Task<IActionResult> SaveTeamName(int TeamId, string Name)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var team = await _db.Teams.FirstOrDefaultAsync(t => t.TeamId == TeamId && t.OwnerId == userId);
@@ -263,6 +266,7 @@ namespace fantasydg.Controllers
             return RedirectToAction("Settings", new { teamId = TeamId });
         }
 
+        // Add player from Available Players view
         [HttpPost]
         public async Task<IActionResult> AddPlayer(int teamId, int PDGANumber, int leagueId)
         {
@@ -301,6 +305,7 @@ namespace fantasydg.Controllers
             return Json(new { success = true, message = $"Player added as {assignedStatus}" });
         }
 
+        // Drop player from player modal
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DropPlayer(int teamId, int pdgaNumber, int tournamentId, string division)
@@ -335,6 +340,7 @@ namespace fantasydg.Controllers
             return RedirectToAction("View", new { teamId, tournamentId, division });
         }
 
+        // Lock roster for a tournament
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LockRoster(int teamId, int tournamentId)
@@ -413,6 +419,7 @@ namespace fantasydg.Controllers
             return RedirectToAction("View", new { teamId, tournamentId });
         }
 
+        // Change roster status of a player when dragging and dropping in team view
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeStatus(int id, [FromBody] ChangeStatusRequest request)
@@ -433,6 +440,7 @@ namespace fantasydg.Controllers
             return Ok();
         }
 
+        // Change roster status request
         public class ChangeStatusRequest
         {
             public string NewStatus { get; set; }

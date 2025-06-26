@@ -77,6 +77,7 @@ namespace fantasydg.Controllers
             return RedirectToAction("Create", "Team", new { leagueId = league.LeagueId });
         }
 
+        // League View
         public async Task<IActionResult> View(int id)
         {
             var league = await _db.Leagues
@@ -99,6 +100,7 @@ namespace fantasydg.Controllers
             return View("LeagueView", league);
         }
 
+        // Calculate total fantasy points for a player
         private double CalculatePoints(League league, PlayerTournament pt, Tournament tournament)
         {
             if (pt == null || tournament == null) return 0;
@@ -132,6 +134,7 @@ namespace fantasydg.Controllers
             return score;
         }
 
+        // Calculate total fantasy points for a team
         private double CalculateTeamPoints(
             League league,
             Team team,
@@ -160,6 +163,7 @@ namespace fantasydg.Controllers
             return total;
         }
 
+        // Calculate tournament fantasy points for a team
         private double GetTeamScoreForTournament(League league, Team team, Tournament tournament)
         {
             var lockedStarters = team.TeamPlayerTournaments
@@ -172,6 +176,7 @@ namespace fantasydg.Controllers
             return lockedStarters.Sum(pt => CalculatePoints(league, pt, tournament));
         }
 
+        // Calculate tournament wins based on fantasy points for a team
         private double GetWinScoreForTeam(League league, Team team, Tournament tournament)
         {
             var teamScores = league.Teams.ToDictionary(
@@ -194,6 +199,7 @@ namespace fantasydg.Controllers
                 .Count();
         }
 
+        // Calculate league standings
         private async Task<List<LeagueStandingsViewModel>> GetStandings(int leagueId)
         {
             var league = await _db.Leagues
@@ -238,6 +244,7 @@ namespace fantasydg.Controllers
             return results;
         }
 
+        // Leaderboard View
         [HttpGet]
         public async Task<IActionResult> LeagueLeaderboardView(int leagueId, string? division = null)
         {
@@ -328,6 +335,7 @@ namespace fantasydg.Controllers
             return View("~/Views/Leaderboard/LeagueLeaderboardView.cshtml", model);
         }
 
+        // Tournament Results View
         [HttpGet]
         public async Task<IActionResult> TeamTournamentResultsView(int leagueId, int? tournamentId = null, string? division = null, int? round = null)
         {
@@ -451,6 +459,7 @@ namespace fantasydg.Controllers
             return View("~/Views/Tournaments/TeamTournamentResultsView.cshtml", model);
         }
 
+        // Available Players View
         [HttpGet]
         public async Task<IActionResult> Players(int leagueId, int? tournamentId = null, string? division = null, int? round = null)
         {
@@ -464,7 +473,7 @@ namespace fantasydg.Controllers
             var allTournaments = await _repository.GetAllTournamentsAsync();
             ViewBag.Tournaments = allTournaments.OrderByDescending(t => t.StartDate).ToList();
 
-            // 🛑 Early return if no tournaments exist
+            // Early return if no tournaments exist
             if (allTournaments == null || !allTournaments.Any())
             {
                 var emptyModel = new LeaguePlayersViewModel
@@ -489,7 +498,7 @@ namespace fantasydg.Controllers
                 return View("~/Views/Players/LeaguePlayers.cshtml", emptyModel);
             }
 
-            // ✅ Proceed safely now that we know tournaments exist
+            // Proceed safely now that we know tournaments exist
             if (!tournamentId.HasValue)
                 tournamentId = allTournaments.FirstOrDefault()?.Id;
 
@@ -605,6 +614,7 @@ namespace fantasydg.Controllers
             return View(league);
         }
 
+        // Change included divisions in league settings
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveIncludedDivisions(IFormCollection form)
@@ -626,6 +636,7 @@ namespace fantasydg.Controllers
             return RedirectToAction("Settings", new { id = leagueId });
         }
 
+        // Change scoring mode in league settings
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveScoringMode(int id, League.ScoringMode LeagueScoringMode)
@@ -640,6 +651,7 @@ namespace fantasydg.Controllers
             return RedirectToAction("Settings", new { id = league.LeagueId });
         }
 
+        // Change tournament weights in league settings
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveTournamentWeights(int leagueId, Dictionary<string, double> Weights)
@@ -678,6 +690,7 @@ namespace fantasydg.Controllers
             return RedirectToAction("Settings", new { id = leagueId });
         }
 
+        // Change scoring settings in league settings
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
@@ -686,7 +699,6 @@ namespace fantasydg.Controllers
             var league = await _db.Leagues.FindAsync(model.LeagueId);
             if (league == null) return NotFound();
 
-            // Update weights
             league.PlacementWeight = model.PlacementWeight;
             league.FairwayWeight = model.FairwayWeight;
             league.C1InRegWeight = model.C1InRegWeight;
@@ -719,6 +731,7 @@ namespace fantasydg.Controllers
             return RedirectToAction("Settings", new { id = league.LeagueId });
         }
 
+        // Save roster size in league settings
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveRosterSettings(int leagueId, int starterCount, int benchCount)
@@ -726,7 +739,6 @@ namespace fantasydg.Controllers
             var league = await _db.Leagues.FindAsync(leagueId);
             if (league == null) return NotFound();
 
-            // Server-side validation
             if (starterCount < 3 || starterCount > 25 ||
                 benchCount < 3 || benchCount > 25 )
             {
@@ -743,6 +755,7 @@ namespace fantasydg.Controllers
             return RedirectToAction("Settings", new { id = league.LeagueId });
         }
 
+        // Change league name in league settings
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveLeagueName(int LeagueId, string LeagueName)
@@ -764,6 +777,7 @@ namespace fantasydg.Controllers
             return RedirectToAction("Settings", new { id = LeagueId });
         }
 
+        // Changes owner of league
         [HttpGet]
         public async Task<IActionResult> TransferOwnership(int leagueId)
         {
@@ -779,6 +793,58 @@ namespace fantasydg.Controllers
             return View(league);
         }
 
+        // Change league owner in league settings
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RequestOwnershipTransfer(int leagueId, string newOwnerId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var league = await _db.Leagues.FindAsync(leagueId);
+            if (league == null || league.OwnerId != userId)
+                return Forbid();
+
+            var exists = await _db.LeagueOwnershipTransfers
+                .AnyAsync(r => r.LeagueId == leagueId && r.NewOwnerId == newOwnerId);
+
+            if (!exists)
+            {
+                var transfer = new LeagueOwnershipTransfer
+                {
+                    LeagueId = leagueId,
+                    NewOwnerId = newOwnerId
+                };
+                _db.LeagueOwnershipTransfers.Add(transfer);
+                await _db.SaveChangesAsync();
+            }
+
+            TempData["SuccessMessage"] = "Ownership transfer request sent.";
+            return RedirectToAction("Settings", new { id = leagueId });
+        }
+
+        // Accept ownership of league from another user
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AcceptOwnershipTransfer(int transferId)
+        {
+            var transfer = await _db.LeagueOwnershipTransfers
+                .Include(t => t.League)
+                .FirstOrDefaultAsync(t => t.LeagueOwnershipTransferId == transferId);
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (transfer == null || transfer.NewOwnerId != userId)
+                return Forbid();
+
+            transfer.League.OwnerId = userId;
+            _db.LeagueOwnershipTransfers.Remove(transfer);
+            await _db.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"You are now the owner of {transfer.League.Name}.";
+            return RedirectToAction("View", "League", new { id = transfer.LeagueId });
+        }
+
+        // Invite new users to league in league settings
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Invite(int leagueId, string usernameOrEmail)
@@ -815,6 +881,8 @@ namespace fantasydg.Controllers
             return RedirectToAction("Settings", new { id = leagueId });
         }
 
+        // Shows invitations to leagues
+        [HttpGet]
         public async Task<IActionResult> Invitations()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -826,6 +894,7 @@ namespace fantasydg.Controllers
             return View(invites);
         }
 
+        // Accept invite to league
         [HttpPost]
         public async Task<IActionResult> AcceptInvite(int invitationId)
         {
@@ -854,55 +923,7 @@ namespace fantasydg.Controllers
             return RedirectToAction("Notifications", "Account");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RequestOwnershipTransfer(int leagueId, string newOwnerId)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var league = await _db.Leagues.FindAsync(leagueId);
-            if (league == null || league.OwnerId != userId)
-                return Forbid();
-
-            var exists = await _db.LeagueOwnershipTransfers
-                .AnyAsync(r => r.LeagueId == leagueId && r.NewOwnerId == newOwnerId);
-
-            if (!exists)
-            {
-                var transfer = new LeagueOwnershipTransfer
-                {
-                    LeagueId = leagueId,
-                    NewOwnerId = newOwnerId
-                };
-                _db.LeagueOwnershipTransfers.Add(transfer);
-                await _db.SaveChangesAsync();
-            }
-
-            TempData["SuccessMessage"] = "Ownership transfer request sent.";
-            return RedirectToAction("Settings", new { id = leagueId });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AcceptOwnershipTransfer(int transferId)
-        {
-            var transfer = await _db.LeagueOwnershipTransfers
-                .Include(t => t.League)
-                .FirstOrDefaultAsync(t => t.LeagueOwnershipTransferId == transferId);
-
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (transfer == null || transfer.NewOwnerId != userId)
-                return Forbid();
-
-            transfer.League.OwnerId = userId;
-            _db.LeagueOwnershipTransfers.Remove(transfer);
-            await _db.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = $"You are now the owner of {transfer.League.Name}.";
-            return RedirectToAction("View", "League", new { id = transfer.LeagueId });
-        }
-
+        // Leave league
         [HttpPost]
         public async Task<IActionResult> LeaveLeague(int leagueId)
         {
@@ -943,6 +964,7 @@ namespace fantasydg.Controllers
             return RedirectToAction("Index");
         }
 
+        // Delete league
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteLeague(int leagueId)

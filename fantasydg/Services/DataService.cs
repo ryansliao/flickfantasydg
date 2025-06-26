@@ -17,6 +17,7 @@ namespace fantasydg.Services
         private readonly HttpClient _httpClient;
         private readonly ApplicationDbContext _db;
         private readonly ILogger<DataService> _logger;
+        private object playerTournaments;
 
         public DataService(HttpClient httpClient, ApplicationDbContext db, ILogger<DataService> logger)
         {
@@ -113,8 +114,37 @@ namespace fantasydg.Services
 
                 var playerTournaments = new Dictionary<int, PlayerTournament>(); // Initialize dictionary of PlayerTournament objects
 
-                var (finalRoundStats, resultToPdga, roundNumber) = await FetchRounds(tournamentId, division); //Initialize player from the final round
+                var (finalRoundStats, resultToPdga, roundNumber, nameMap) = await FetchRounds(tournamentId, division); //Initialize player from the final round
                 tournament.RoundNumber = roundNumber;
+
+                // Initialize player tournaments with empty stats before tournament starts
+                if (statsArray == null || !statsArray.Any())
+                {
+                    foreach (var kvp in resultToPdga)
+                    {
+                        int resultId = kvp.Key;
+                        int pdgaNumber = kvp.Value;
+
+                        string name = nameMap.ContainsKey(pdgaNumber) ? nameMap[pdgaNumber] : "Unknown";
+                        var player = await GetOrCreatePlayerAsync(pdgaNumber, name);
+
+                        var pt = new PlayerTournament
+                        {
+                            ResultId = resultId,
+                            PDGANumber = pdgaNumber,
+                            TournamentId = tournamentId,
+                            Division = division
+                        };
+
+                        if (finalRoundStats.TryGetValue(pdgaNumber, out var stats))
+                        {
+                            pt.Place = stats.Place;
+                            pt.TotalToPar = stats.ToPar;
+                        }
+
+                        playerTournaments[resultId] = pt;
+                    }
+                }
 
                 // Assign PlayerTournament stats for every player present in API response
                 foreach (var playerData in statsArray ?? new JArray())
@@ -122,7 +152,7 @@ namespace fantasydg.Services
                     var result = playerData["result"];
                     var statList = playerData["stats"] as JArray;
 
-                    if (result == null || statList == null)
+                    if (result == null)
                         continue;
 
                     int resultId = result["resultId"]?.Value<int>() ?? 0;
@@ -269,11 +299,12 @@ namespace fantasydg.Services
         }
 
         // Get round stats and populates round object
-        private async Task<(Dictionary<int, (int Place, int ToPar)> finalStats, Dictionary<int, int> resultToPdga, int roundNumber)>
+        private async Task<(Dictionary<int, (int Place, int ToPar)> finalStats, Dictionary<int, int> resultToPdga, int roundNumber, Dictionary<int, string> nameMap)>
         FetchRounds(int tournamentId, string division)
         {
             Dictionary<int, (int Place, int ToPar)> latestRoundStats = new();
             Dictionary<int, int> resultToPdga = new();
+            Dictionary<int, string> nameMap = new();
             bool httpError = false;
             int roundNumber = 0;
 
@@ -295,6 +326,7 @@ namespace fantasydg.Services
                         continue;
                     }
 
+                    // Get final round placement and score
                     roundNumber += 1;
 
                     var currentRoundStats = new Dictionary<int, (int Place, int ToPar)>();
@@ -302,13 +334,18 @@ namespace fantasydg.Services
                     {
                         int PDGANumber = p["PDGANum"]?.Value<int>() ?? 0;
                         int resultId = p["ResultID"]?.Value<int>() ?? 0;
-                        int place = p["RunningPlace"]?.Value<int>() ?? 0;
-                        int toPar = p["ParThruRound"]?.Value<int>() ?? 0;
+                        int place = p["RunningPlace"]?.Type == JTokenType.Null ? 0 : p["RunningPlace"]?.Value<int>() ?? 0;
+                        int toPar = p["ParThruRound"]?.Type == JTokenType.Null ? 0 : p["ParThruRound"]?.Value<int>() ?? 0;
 
                         if (PDGANumber > 0)
                             currentRoundStats[PDGANumber] = (place, toPar);
                         if (PDGANumber > 0 && resultId > 0)
                             resultToPdga[resultId] = PDGANumber;
+                        if (PDGANumber > 0 && !nameMap.ContainsKey(PDGANumber))
+                        {
+                            string name = p["Name"]?.ToString() ?? "";
+                            nameMap[PDGANumber] = name;
+                        }
                     }
 
                     if (currentRoundStats.Count > 0)
@@ -325,7 +362,7 @@ namespace fantasydg.Services
                 }
             }
 
-            return (latestRoundStats, resultToPdga, roundNumber);
+            return (latestRoundStats, resultToPdga, roundNumber, nameMap);
         }
     }
 }
