@@ -253,7 +253,11 @@ namespace fantasydg.Services
                 // Adds PlayerTournament object if no PlayerTournament object with matching composite keys exists in database
                 foreach (var pt in playerTournaments.Values)
                 {
-                    var existing = await _db.PlayerTournaments.FindAsync(pt.ResultId);
+                    var existing = await _db.PlayerTournaments
+                        .FirstOrDefaultAsync(x =>
+                            x.PDGANumber == pt.PDGANumber &&
+                            x.TournamentId == pt.TournamentId &&
+                            x.Division == pt.Division);
                     if (existing == null)
                     {
                         _db.PlayerTournaments.Add(pt);
