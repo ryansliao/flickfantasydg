@@ -41,6 +41,7 @@ try
     builder.Services.AddScoped<DatabaseRepository>();
     builder.Services.AddScoped<LeagueService>();
     builder.Services.AddHostedService<TournamentService>();
+    builder.Services.AddScoped<PlayerService>();
 
     var app = builder.Build();
 

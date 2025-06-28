@@ -96,6 +96,7 @@ namespace fantasydg.Controllers
             if (selectedTeam == null) return NotFound();
 
             ViewBag.LeagueName = mainTeam.League?.Name;
+            ViewBag.LeagueId = mainTeam.LeagueId;
             ViewBag.TeamId = teamId;
             ViewBag.SelectedTeamId = selectedTeamId;
             ViewBag.OtherTeams = allTeams;

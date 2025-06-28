@@ -53,14 +53,10 @@
     <div id="mainContent" style="display:none;">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-auto p-0">
-                    <partial name="_LeagueSidebar" model="(ViewBag.LeagueName as string, Model.Team.LeagueId, ViewBag.TeamId as int?)" />
-                </div>
-
                 <div class="col pt-3">
 
                     <div class="d-flex justify-content-between align-items-center flex-wrap">
-                        <h2 class="team-header">@Model.Team.Name</h2>
+                        <h3 class="team-header">@Model.Team.Name</h3>
 
                         @if (isOwnTeam)
                         {
@@ -174,6 +170,11 @@
                 </button>
                 <h4 id="playerModalName"></h4>
                 <p>PDGA #: <span id="playerModalId"></span></p>
+
+                <p><strong>Total Fantasy Points:</strong> <span id="modalTotalPoints">-</span></p>
+                <p><strong>Average Finish:</strong> <span id="modalAvgPlace">-</span></p>
+                <p><strong>Tournaments Played:</strong> <span id="modalCount">-</span></p>
+
                 <form method="post" asp-controller="Team" asp-action="DropPlayer">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="teamId" value="@ViewBag.TeamId" />
@@ -183,5 +184,6 @@
                 </form>
             </div>
         </div>
+
     </div>
 </body>

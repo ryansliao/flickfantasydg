@@ -32,9 +32,9 @@
 #searchContainer,
 div.dataTables_filter {
     display: flex;
-    align-items: flex-end;
-    margin-left: auto;
-    padding-left: 12px;
+    align-items: center;
+    padding-left: 0;
+    margin-left: 0;
 }
 
     #searchContainer label {

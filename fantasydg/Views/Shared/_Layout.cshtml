@@ -9,6 +9,7 @@
         .Select(lm => lm.League)
         .OrderBy(l => l.Name)
         .ToList();
+    var leagueName = ViewBag.LeagueName as string;
 }
 
 <!DOCTYPE html>
@@ -63,9 +64,9 @@
                                 <a class="nav-link text-dark dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Leagues</a>
                                 <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="/League/Create">Create League</a></li>
-                                <li><hr class="dropdown-divider" /></li>
                                 @foreach (var league in userLeagues)
                                 {
+                                    <li><hr class="dropdown-divider" /></li>
                                     <li>
                                         <a class="dropdown-item" href="@Url.Action("View", "League", new { id = league.LeagueId })">
                                             @league.Name
@@ -74,6 +75,56 @@
                                 }
                                 </ul>
                             </li>
+                        @if (ViewBag.LeagueId is int leagueId && !string.IsNullOrEmpty(ViewBag.LeagueName as string))
+                        {
+                            var teamId = ViewBag.TeamId as int?;
+                            var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+                            var action = ViewContext.RouteData.Values["action"]?.ToString();
+                            <li class="nav-item dropdown ms-2">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="leagueMenuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @ViewBag.LeagueName
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="leagueMenuDropdown">
+                                    <li>
+                                        <a class="dropdown-item @(controller == "League" && action == "View" ? "active" : "")"
+                                           asp-controller="League" asp-action="View" asp-route-id="@leagueId">
+                                            League
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    @if (teamId.HasValue)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item @(controller == "Team" && action == "View" ? "active" : "")"
+                                               asp-controller="Team" asp-action="View" asp-route-teamId="@teamId">
+                                                My Team
+                                            </a>
+                                        </li>
+                                    }
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                        <a class="dropdown-item @(controller == "League" && action == "LeagueLeaderboardView" ? "active" : "")"
+                                           asp-controller="League" asp-action="LeagueLeaderboardView" asp-route-leagueId="@leagueId">
+                                            Leaderboard
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                        <a class="dropdown-item @(controller == "League" && action == "TeamTournamentResultsView" ? "active" : "")"
+                                           asp-controller="League" asp-action="TeamTournamentResultsView" asp-route-leagueId="@leagueId">
+                                            Tournament Results
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                        <a class="dropdown-item @(controller == "League" && action == "Players" ? "active" : "")"
+                                           asp-controller="League" asp-action="Players" asp-route-leagueId="@leagueId">
+                                            Available Players
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
                         </ul>
                         <partial name="_LoginPartial" />
                     </div>

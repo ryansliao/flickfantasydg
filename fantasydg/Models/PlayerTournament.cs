@@ -18,6 +18,7 @@ namespace fantasydg.Models
         [Required]
         public string Division { get; set; }
 
+        public double FantasyPoints { get; set; }
         public int Place { get; set; }
         public int TotalToPar { get; set; }
         public double Fairway { get; set; }

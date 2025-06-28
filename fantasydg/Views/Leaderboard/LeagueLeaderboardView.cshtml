@@ -26,12 +26,8 @@
 
 <div class="players-page-wrapper" style="display: none" id="resultsViewWrapper">
     <div class="players-content-row">
-        <div class="col-auto p-0">
-            @await Html.PartialAsync("_LeagueSidebar", ((string)ViewBag.LeagueName!, (int)ViewBag.LeagueId!, (int?)ViewBag.TeamId))
-        </div>
-
         <div id="mainContent" class="col pt-3">
-            <h2>Leaderboard</h2>
+            <h3>Leaderboard</h3>
             <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
             @if (!hasData)

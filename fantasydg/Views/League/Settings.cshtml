@@ -44,14 +44,15 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-auto p-0">
-            <partial name="_LeagueSidebar" model="(ViewBag.LeagueName as string, Model.LeagueId, ViewBag.TeamId as int?)" />
-        </div>
-
         <div class="col pt-3">
-            <h2>Settings</h2>
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <h3>Settings</h3>
+                <a class="btn btn-outline-secondary" asp-controller="League" asp-action="View" asp-route-id="@Model.LeagueId">
+                    ← Back to League
+                </a>
+            </div>
 
-            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
             <button type="submit" class="btn btn-primary" onclick="openTournamentModal()">Add/Update Tournament</button>
 
@@ -77,7 +78,7 @@
                 </div>
             </div>
 
-            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
             <h4>Roster Configuration</h4>
 
@@ -98,7 +99,7 @@
                 <button type="submit" class="btn btn-primary mt-2">Save Roster Settings</button>
             </form>
 
-            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
             <h4>Included Divisions</h4>
 
@@ -133,7 +134,7 @@
                 }
             </script>
 
-            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
             <h4>Scoring Mode</h4>
 
@@ -153,7 +154,7 @@
                 </div>
             </form>
 
-            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
             
             <h4>Tournament Weights</h4>
 
@@ -193,7 +194,7 @@
                 </form>
             }
 
-            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
             <h4>Scoring Settings</h4>
             
@@ -242,7 +243,8 @@
                 <button type="submit" class="btn btn-primary mt-2">Save Scoring Settings</button>
             </form>
 
-            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
+
             <h4>Invite Members</h4>
 
             <form asp-action="Invite" method="post">
@@ -257,7 +259,7 @@
                 <button type="submit" class="btn btn-primary mt-3">Send Invite</button>
             </form>
 
-            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
             <h4>Change League Name</h4>
 
@@ -273,7 +275,7 @@
                 <button type="submit" class="btn btn-primary mt-3">Save League Name</button>
             </form>
 
-            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
             <h4>Administrator Functions</h4>
 

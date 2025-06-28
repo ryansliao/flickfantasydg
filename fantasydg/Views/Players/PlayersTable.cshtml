@@ -1,12 +1,10 @@
-﻿@model IEnumerable<fantasydg.Models.PlayerTournament>
+﻿@model IEnumerable<fantasydg.Models.ViewModels.PlayerSeasonStatsViewModel>
 
 @{
     var fantasyMap = ViewBag.FantasyMap as Dictionary<(int, int, string), float> ?? new();
     var leagueName = ViewBag.LeagueName as string;
     var leagueId = (int)ViewBag.LeagueId;
     var teamId = (int)ViewBag.TeamId;
-    var division = (string)ViewBag.SelectedDivision;
-    var tournamentId = (int)ViewBag.SelectedTournamentId;
 }
 
 <div id="loadingSpinner">Loading table...</div>
@@ -20,7 +18,6 @@
                 <th>Player</th>
                 <th>Pts.</th>
                 <th>Place</th>
-                <th>Total</th>
                 <th>Birdie-</th>
                 <th>Eagle-</th>
                 <th>Bogey+</th>
@@ -46,44 +43,40 @@
         <tbody>
             @foreach (var pt in Model.OrderBy(pt => pt.Place))
             {
-                var key = (pt.PDGANumber, pt.TournamentId, pt.Tournament.Division);
-                float points = fantasyMap.ContainsKey(key) ? fantasyMap[key] : 0f;
+                var points = pt.FantasyPoints;
 
                 <tr>
                     <td>
                         <form method="post" asp-action="AddPlayer" asp-controller="Team" class="ajax-add-player-form">
-                            <input type="hidden" name="teamId" value="@(ViewBag.TeamId ?? 0)" />
-                            <input type="hidden" name="leagueId" value="@(ViewBag.LeagueId ?? 0)" />
+                            <input type="hidden" name="teamId" value="@teamId" />
+                            <input type="hidden" name="leagueId" value="@leagueId" />
                             <input type="hidden" name="PDGANumber" value="@pt.PDGANumber" />
-                            <input type="hidden" name="tournamentId" value="@(ViewBag.SelectedTournamentId ?? 0)" />
-                            <input type="hidden" name="division" value="@(ViewBag.SelectedDivision ?? "")" />
                             <button type="submit" class="btn btn-sm btn-success">+</button>
                         </form>
                     </td>
                     <td>@pt.Player.Name</td>
-                    <td>@points.ToString("0.0")</td>
-                    <td>@pt.Place</td>
-                    <td>@pt.TotalToPar</td>
-                    <td>@pt.BirdieMinus%</td>
-                    <td>@pt.EagleMinus%</td>
-                    <td>@pt.BogeyPlus%</td>
-                    <td>@pt.DoubleBogeyPlus%</td>
-                    <td>@pt.Fairway%</td>
-                    <td>@pt.C1InReg%</td>
-                    <td>@pt.C2InReg%</td>
-                    <td>@pt.Parked%</td>
-                    <td>@pt.Scramble%</td>
-                    <td>@pt.ObRate%</td>
-                    <td>@pt.C1xPutting%</td>
-                    <td>@pt.C2Putting%</td>
+                    <td>@pt.FantasyPoints.ToString("0.0")</td>
+                    <td>@pt.Place.ToString("0.#")</td>
+                    <td>@pt.BirdieMinus.ToString("0.#")</td>
+                    <td>@pt.EagleMinus.ToString("0.#")</td>
+                    <td>@pt.BogeyPlus.ToString("0.#")</td>
+                    <td>@pt.DoubleBogeyPlus.ToString("0.#")</td>
+                    <td>@pt.Fairway.ToString("0.#")</td>
+                    <td>@pt.C1InReg.ToString("0.#")</td>
+                    <td>@pt.C2InReg.ToString("0.#")</td>
+                    <td>@pt.Parked.ToString("0.#")</td>
+                    <td>@pt.Scramble.ToString("0.#")</td>
+                    <td>@pt.ObRate.ToString("0.#")</td>
+                    <td>@pt.C1xPutting.ToString("0.#")</td>
+                    <td>@pt.C2Putting.ToString("0.#")</td>
                     <td>@pt.TotalPuttDistance</td>
                     <td>@pt.LongThrowIn</td>
-                    <td>@pt.AvgPuttDistance</td>
-                    <td>@pt.StrokesGainedTotal</td>
-                    <td>@pt.StrokesGainedPutting</td>
-                    <td>@pt.StrokesGainedTeeToGreen</td>
-                    <td>@pt.StrokesGainedC1xPutting</td>
-                    <td>@pt.StrokesGainedC2Putting</td>
+                    <td>@pt.AvgPuttDistance.ToString("0.#")</td>
+                    <td>@pt.StrokesGainedTotal.ToString("0.#")</td>
+                    <td>@pt.StrokesGainedPutting.ToString("0.#")</td>
+                    <td>@pt.StrokesGainedTeeToGreen.ToString("0.#")</td>
+                    <td>@pt.StrokesGainedC1xPutting.ToString("0.#")</td>
+                    <td>@pt.StrokesGainedC2Putting.ToString("0.#")</td>
                 </tr>
             }
         </tbody>

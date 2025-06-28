@@ -84,6 +84,21 @@
         document.getElementById('playerModalId').textContent = pdgaNumber;
         document.getElementById('modalPdgaNumber').value = pdgaNumber;
         document.getElementById('playerModal').style.display = 'block';
+
+        fetch(`/Player/GetStats?pdgaNumber=${pdgaNumber}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log("Player stats response:", data);
+                console.log("totalPoints element:", document.getElementById('modalTotalPoints'));
+                document.getElementById('modalTotalPoints').textContent = data.totalPoints?.toFixed(1) ?? '-';
+                document.getElementById('modalAvgPlace').textContent = data.avgPlace?.toFixed(1) ?? '-';
+                document.getElementById('modalCount').textContent = data.tournamentCount ?? '-';
+            })
+            .catch(() => {
+                document.getElementById('modalTotalPoints').textContent = '-';
+                document.getElementById('modalAvgPlace').textContent = '-';
+                document.getElementById('modalCount').textContent = '-';
+            });
     };
 
     const closeModal = () => {

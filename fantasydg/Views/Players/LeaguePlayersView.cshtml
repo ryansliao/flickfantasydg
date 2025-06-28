@@ -1,5 +1,5 @@
 ﻿@using fantasydg.Models.ViewModels
-@model LeaguePlayersViewModel
+@model LeagueAvailablePlayersViewModel
 
 @{
     ViewBag.Title = "Available Players";
@@ -25,54 +25,17 @@
 
 <div class="players-page-wrapper" style="display: none;" id="playersViewWrapper">
     <div class="players-content-row">
-        <div class="col-auto p-0">
-            @await Html.PartialAsync("_LeagueSidebar", ((string)ViewBag.LeagueName!, (int)ViewBag.LeagueId!, (int?)ViewBag.TeamId))
-        </div>
-
         <div id="mainContent" class="col pt-3">
-            <h2>Available Players</h2>
+            <!-- Header row -->
+            <div class="d-flex align-items-center flex-wrap">
+                <h3>Available Players</h3>
+            </div>
+
+            <!-- Search bar row -->
             <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
-            <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <div id="playerFilterControls" class="d-flex align-items-center flex-wrap gap-2 mb-0" data-league-id="@Model.League.LeagueId">
+            <div id="searchContainer"></div>
 
-                    @{
-                        int selectedId = ViewBag.SelectedTournamentId ?? -1;
-                    }
-
-                    <label for="tournamentDropdown" class="me-2">Tournament:</label>
-                    <select id="tournamentDropdown" class="form-select form-select-sm">
-                        @foreach (var t in ViewBag.Tournaments as List<fantasydg.Models.Tournament>)
-                        {
-                            @if (t.Id == selectedId)
-                            {
-                                <option value="@t.Id" selected>@t.Name</option>
-                            }
-                            else
-                            {
-                                <option value="@t.Id">@t.Name</option>
-                            }
-                        }
-                    </select>
-
-                    <label for="divisionDropdown" class="ms-3 me-2">Division:</label>
-                    <select id="divisionDropdown" class="form-select form-select-sm">
-                        @foreach (var d in ViewBag.Divisions as List<string>)
-                        {
-                            @if ((string)ViewBag.SelectedDivision == d)
-                            {
-                                <option value="@d" selected>@d</option>
-                            }
-                            else
-                            {
-                                <option value="@d">@d</option>
-                            }
-                        }
-                    </select>
-                </div>
-
-                <div id="searchContainer" class="ms-auto"></div>
-            </div>
             <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
             <div id="playerTableContainer">

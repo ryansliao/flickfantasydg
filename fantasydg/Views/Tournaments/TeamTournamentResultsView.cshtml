@@ -1,5 +1,5 @@
 ﻿﻿@using fantasydg.Models.ViewModels
-@model LeaguePlayersViewModel
+@model LeagueTournamentPlayersViewModel
 
 @{
     ViewBag.Title = "Tournament Results";
@@ -25,18 +25,14 @@
 
 <div class="players-page-wrapper" style="display: none" id="resultsViewWrapper">
     <div class="players-content-row">
-        <div class="col-auto p-0">
-            @await Html.PartialAsync("_LeagueSidebar", ((string)ViewBag.LeagueName!, (int)ViewBag.LeagueId!, (int?)ViewBag.TeamId))
-        </div>
-
         <div id="mainContent" class="col pt-3">
-            <h2>Tournament Results</h2>
-            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
+            <!-- Header and Filters aligned on same row -->
             <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <div id="resultsFilterControls" class="d-flex align-items-center flex-wrap gap-2 mb-0" data-league-id="@Model.League.LeagueId">
+                <h3>Tournament Results</h3>
 
-                    <label for="tournamentDropdown" class="me-2">Tournament:</label>
+                <div id="resultsFilterControls" class="d-flex align-items-center flex-wrap gap-2" data-league-id="@Model.League.LeagueId">
+                    <label for="tournamentDropdown" class="mb-0 me-2">Tournament:</label>
                     <select id="tournamentDropdown" class="form-select form-select-sm">
                         @foreach (var t in ViewBag.Tournaments as List<fantasydg.Models.Tournament>)
                         {
@@ -44,7 +40,7 @@
                         }
                     </select>
 
-                    <label for="divisionDropdown" class="ms-3 me-2">Division:</label>
+                    <label for="divisionDropdown" class="mb-0 ms-3 me-2">Division:</label>
                     <select id="divisionDropdown" class="form-select form-select-sm">
                         @foreach (var d in ViewBag.Divisions as List<string>)
                         {
@@ -52,14 +48,17 @@
                         }
                     </select>
                 </div>
-
-                <div id="searchContainer" class="ms-auto"></div>
             </div>
+
+            <!-- Search bar row below -->
+            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
+            <div id="searchContainer"></div>
             <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
             <div id="teamTournamentResultsContainer">
-                 @await Html.PartialAsync("~/Views/Tournaments/TeamPlayersTable.cshtml", Model.Players)
+                @await Html.PartialAsync("~/Views/Tournaments/TeamPlayersTable.cshtml", Model.Players)
             </div>
         </div>
     </div>
 </div>
+

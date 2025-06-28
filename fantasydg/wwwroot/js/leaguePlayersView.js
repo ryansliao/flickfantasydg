@@ -11,15 +11,13 @@ function initializePlayersTable() {
         ordering: true,
         autoWidth: false,
         info: false,
-        order: [[3, 'asc']],
+        order: [[2, 'desc']],
         fixedColumns: {
             leftColumns: 3
         },
         columnDefs: [
             { orderable: false, targets: 0, width: "40px" },
             { targets: 1, width: "150px" },
-            { targets: 2, width: "50px" },
-            { targets: 3, width: "40px" },
             { targets: "_all", width: "50px" }
         ],
         dom: 'f rt<"bottom"ip>',

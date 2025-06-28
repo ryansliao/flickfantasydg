@@ -9,7 +9,7 @@
                 <tr>
                     <th>Team</th>
                     <th>Total</th>
-                    @foreach (var t in Model.Tournaments)
+                    @foreach (var t in Model.Tournaments.AsEnumerable().Reverse())
                     {
                         <th>@t.Name</th>
                     }
@@ -21,7 +21,7 @@
                     <tr>
                         <td class="fw-semibold">@team.TeamName</td>
                         <td class="fw-bold">@team.TotalPoints.ToString("0.##")</td>
-                        @foreach (var t in Model.Tournaments)
+                        @foreach (var t in Model.Tournaments.AsEnumerable().Reverse())
                         {
                             <td>
                                 @(
