@@ -1,6 +1,7 @@
 ﻿body, html {
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
 }
 
 .d-none {
@@ -51,12 +52,12 @@ div.dataTables_filter {
     }
 
 #tournamentDropdown {
-    width: 15vw;
+    width: 12vw;
     min-width: 100px;
 }
 
 #divisionDropdown {
-    width: 5vw;
+    width: 3vw;
     min-width: 80px;
 }
 
@@ -78,7 +79,6 @@ table.dataTable {
     border-collapse: collapse;
     box-sizing: border-box;
     vertical-align: middle;
-
 }
 
     .stats-table th,
@@ -141,6 +141,7 @@ table.dataTable {
 
 /* Scroll body override */
 div.dataTables_scrollBody {
-    overflow-x: auto !important;
-    overflow-y: scroll !important;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-width: 100%;
 }

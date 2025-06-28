@@ -16,9 +16,8 @@ function initializePlayersTable() {
             leftColumns: 3
         },
         columnDefs: [
-            { targets: 0, width: "150px" },
+            { targets: 0, width: "100px" },
             { targets: 1, width: "150px" },
-            { targets: 2, width: "40px" },
             { targets: "_all", width: "50px" }
         ],
         dom: 'f rt<"bottom"ip>',

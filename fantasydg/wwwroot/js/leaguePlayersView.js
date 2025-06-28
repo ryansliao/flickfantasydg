@@ -13,7 +13,7 @@ function initializePlayersTable() {
         info: false,
         order: [[2, 'desc']],
         fixedColumns: {
-            leftColumns: 3
+            leftColumns: 2
         },
         columnDefs: [
             { orderable: false, targets: 0, width: "40px" },

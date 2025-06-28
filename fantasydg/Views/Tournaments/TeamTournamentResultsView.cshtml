@@ -32,7 +32,6 @@
                 <h3>Tournament Results</h3>
 
                 <div id="resultsFilterControls" class="d-flex align-items-center flex-wrap gap-2" data-league-id="@Model.League.LeagueId">
-                    <label for="tournamentDropdown" class="mb-0 me-2">Tournament:</label>
                     <select id="tournamentDropdown" class="form-select form-select-sm">
                         @foreach (var t in ViewBag.Tournaments as List<fantasydg.Models.Tournament>)
                         {
@@ -40,7 +39,6 @@
                         }
                     </select>
 
-                    <label for="divisionDropdown" class="mb-0 ms-3 me-2">Division:</label>
                     <select id="divisionDropdown" class="form-select form-select-sm">
                         @foreach (var d in ViewBag.Divisions as List<string>)
                         {
@@ -52,8 +50,7 @@
 
             <!-- Search bar row below -->
             <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
-            <div id="searchContainer"></div>
-            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
+            <div id="searchContainer" class="mb-3"></div>
 
             <div id="teamTournamentResultsContainer">
                 @await Html.PartialAsync("~/Views/Tournaments/TeamPlayersTable.cshtml", Model.Players)

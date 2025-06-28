@@ -1,6 +1,7 @@
 ﻿body, html {
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
 }
 
 .d-none {
@@ -93,6 +94,12 @@ table.dataTable {
         min-height: 0;
     }
 
+        .stats-table td:first-child,
+        .stats-table th:first-child {
+            white-space: normal;
+            word-break: break-word;
+        }
+
     /* Button inside table cells */
     .stats-table button.btn {
         display: inline-flex;
@@ -136,6 +143,7 @@ table.dataTable {
 
 /* Scroll body override */
 div.dataTables_scrollBody {
-    overflow-x: auto !important;
-    overflow-y: scroll !important;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-width: 100%;
 }
