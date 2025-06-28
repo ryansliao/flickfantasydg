@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
-using fantasydg.Data;
+﻿using fantasydg.Data;
 using fantasydg.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 public class TournamentService : BackgroundService
 {
@@ -45,74 +46,72 @@ public class TournamentService : BackgroundService
                 _logger.LogError(ex, "TournamentService encountered an error.");
             }
 
-            await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
+            if (nowPT.Hour >= 10 && nowPT.Hour < 19)
+                await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
+            else
+                await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
         }
     }
 
+    // Auto-fetch new ES/M tournaments every Tuesday at midnight
     private async Task DiscoverNewTournamentsAsync(DateTime nowPT, ApplicationDbContext db, DataService dataService, HttpClient httpClient)
     {
-        if (nowPT.DayOfWeek == DayOfWeek.Tuesday && nowPT.Hour == 0 && _lastDiscoveryDate.Date != nowPT.Date)
+        var url = "https://www.pdga.com/apps/tournament/live-api/live_results_fetch_recent_events";
+
+        try
         {
-            var url = "https://www.pdga.com/apps/tournament/live-api/live_results_fetch_recent_events";
+            var json = await httpClient.GetStringAsync(url);
+            var tournaments = JObject.Parse(json)?["data"]?["Tournaments"] as JArray;
 
-            try
+            if (tournaments != null)
             {
-                var json = await httpClient.GetStringAsync(url);
-                var tournaments = JObject.Parse(json)?["data"]?["Tournaments"] as JArray;
-
-                if (tournaments != null)
+                foreach (var t in tournaments)
                 {
-                    foreach (var t in tournaments)
-                    {
-                        int id = t["TournamentID"]?.Value<int>() ?? 0;
-                        string rawTier = t["RawTier"]?.ToString();
+                    int id = t["TournamentID"]?.Value<int>() ?? 0;
+                    string rawTier = t["RawTier"]?.ToString();
 
-                        if ((rawTier == "ES" || rawTier == "M") && id > 0)
+                    if ((rawTier == "ES" || rawTier == "M") && id > 0)
+                    {
+                        bool exists = await db.Tournaments.AnyAsync(x => x.Id == id);
+                        if (!exists)
                         {
-                            bool exists = await db.Tournaments.AnyAsync(x => x.Id == id);
-                            if (!exists)
-                            {
-                                _logger.LogInformation("Auto-discovering new tournament: {Id} ({Tier})", id, rawTier);
-                                await dataService.FetchTournaments(id, "MPO");
-                                await dataService.FetchTournaments(id, "FPO");
-                            }
+                            _logger.LogInformation("Auto-discovering new tournament: {Id} ({Tier})", id, rawTier);
+                            await dataService.FetchTournaments(id, "MPO");
+                            await dataService.FetchTournaments(id, "FPO");
                         }
                     }
                 }
-
-                _lastDiscoveryDate = nowPT.Date;
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error discovering new tournaments.");
-            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error discovering new tournaments.");
         }
     }
 
+    // Auto-updates tournaments from 10AM-7PM PT between start date and end date
     private async Task UpdateActiveTournamentsAsync(DateTime nowPT, ApplicationDbContext db, DataService dataService)
     {
-        if (nowPT.Hour >= 12 && nowPT.Hour < 18)
-        {
-            var tournaments = await db.Tournaments.ToListAsync();
+        var tournaments = await db.Tournaments.ToListAsync();
 
-            foreach (var tournament in tournaments)
+        foreach (var tournament in tournaments)
+        {
+            if (tournament.StartDate <= nowPT && nowPT <= tournament.EndDate && !string.IsNullOrEmpty(tournament.Division))
             {
-                if (tournament.StartDate <= nowPT && nowPT <= tournament.EndDate && !string.IsNullOrEmpty(tournament.Division))
+                try
                 {
-                    try
-                    {
-                        _logger.LogInformation("Updating active tournament: {Id}", tournament.Id);
-                        await dataService.FetchTournaments(tournament.Id, tournament.Division);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Failed to update tournament {Id}", tournament.Id);
-                    }
+                    _logger.LogInformation("Updating active tournament: {Id}", tournament.Id);
+                    await dataService.FetchTournaments(tournament.Id, tournament.Division);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to update tournament {Id}", tournament.Id);
                 }
             }
         }
     }
 
+    // Updates every tournament in the database for that year every week on tuesday midnight
     private async Task WeeklyTournamentRefreshAsync(DateTime nowPT, ApplicationDbContext db, DataService dataService)
     {
         int currentYear = nowPT.Year;
