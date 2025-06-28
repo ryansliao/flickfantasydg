@@ -24,36 +24,40 @@
 }
 
 <div class="players-page-wrapper" style="display: none" id="resultsViewWrapper">
-    <div class="players-content-row">
-        <div id="mainContent" class="col pt-3">
+    <div class="container-fluid">
+        <div class="row">
+            <div id="mainContent" class="col pt-3">
 
-            <!-- Header and Filters aligned on same row -->
-            <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <h3>Tournament Results</h3>
+                <!-- Header and Filters aligned on same row -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <h3>Tournament Results</h3>
 
-                <div id="resultsFilterControls" class="d-flex align-items-center flex-wrap gap-2" data-league-id="@Model.League.LeagueId">
-                    <select id="tournamentDropdown" class="form-select form-select-sm">
-                        @foreach (var t in ViewBag.Tournaments as List<fantasydg.Models.Tournament>)
-                        {
-                            <option value="@t.Id" selected="@(t.Id == (ViewBag.SelectedTournamentId ?? -1) ? "selected" : null)">@t.Name</option>
-                        }
-                    </select>
+                    <div id="resultsFilterControls" class="d-flex align-items-center flex-wrap gap-2" data-league-id="@Model.League.LeagueId">
+                        <select id="tournamentDropdown" class="form-select form-select-sm">
+                            @foreach (var t in ViewBag.Tournaments as List<fantasydg.Models.Tournament>)
+                            {
+                                <option value="@t.Id" selected="@(t.Id == (ViewBag.SelectedTournamentId ?? -1) ? "selected" : null)">@t.Name</option>
+                            }
+                        </select>
 
-                    <select id="divisionDropdown" class="form-select form-select-sm">
-                        @foreach (var d in ViewBag.Divisions as List<string>)
-                        {
-                            <option value="@d" selected="@(ViewBag.SelectedDivision == d ? "selected" : null)">@d</option>
-                        }
-                    </select>
+                        <select id="divisionDropdown" class="form-select form-select-sm">
+                            @foreach (var d in ViewBag.Divisions as List<string>)
+                            {
+                                <option value="@d" selected="@(ViewBag.SelectedDivision == d ? "selected" : null)">@d</option>
+                            }
+                        </select>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Search bar row below -->
-            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
-            <div id="searchContainer" class="mb-3"></div>
+                <!-- Search bar row below -->
+                <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
+                <div id="searchContainer" class="mb-3"></div>
 
-            <div id="teamTournamentResultsContainer">
-                @await Html.PartialAsync("~/Views/Tournaments/TeamPlayersTable.cshtml", Model.Players)
+                <div id="teamTournamentResultsContainer">
+                    <div class="table-responsive">
+                        @await Html.PartialAsync("~/Views/Tournaments/TeamPlayersTable.cshtml", Model.Players)
+                    </div>
+                </div>
             </div>
         </div>
     </div>

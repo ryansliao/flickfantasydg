@@ -11,14 +11,9 @@
 .players-page-wrapper {
     display: flex;
     flex-direction: column;
-    height: calc(85vh);
-    width: calc(75vw);
-}
-
-.players-content-row {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
+    height: calc(90vh);
+    width: 100%;
+    max-width: 100vw;
 }
 
 #mainContent {

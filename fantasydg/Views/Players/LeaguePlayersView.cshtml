@@ -24,20 +24,24 @@
 }
 
 <div class="players-page-wrapper" style="display: none;" id="playersViewWrapper">
-    <div class="players-content-row">
-        <div id="mainContent" class="col pt-3">
-            <!-- Header row -->
-            <div class="d-flex align-items-center flex-wrap">
-                <h3>Available Players</h3>
-            </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div id="mainContent" class="col pt-3">
+                <!-- Header row -->
+                <div class="d-flex align-items-center flex-wrap">
+                    <h3>Available Players</h3>
+                </div>
 
-            <!-- Search bar row -->
-            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
-            <div id="searchContainer" class="mb-3"></div>
+                <!-- Search bar row -->
+                <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
+                <div id="searchContainer" class="mb-3"></div>
 
-            <div id="playerTableContainer">
-                @await Html.PartialAsync("~/Views/Players/PlayersTable.cshtml", Model.Players)
+                <div id="playerTableContainer">
+                    <div class="table-responsive">
+                        @await Html.PartialAsync("~/Views/Players/PlayersTable.cshtml", Model.Players)
+                    </div>
+                </div>
             </div>
-        </div>
+         </div>
     </div>
 </div>

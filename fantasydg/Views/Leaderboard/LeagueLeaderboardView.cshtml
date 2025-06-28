@@ -25,21 +25,25 @@
 }
 
 <div class="players-page-wrapper" style="display: none" id="resultsViewWrapper">
-    <div class="players-content-row">
-        <div id="mainContent" class="col pt-3">
-            <h3>Leaderboard</h3>
-            <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
+    <div class="container-fluid">
+        <div class="row">
+            <div id="mainContent" class="col pt-3">
+                <h3>Leaderboard</h3>
+                <hr style="width: 100%; margin: 1rem auto; border-top: 2px solid #444;" />
 
-            @if (!hasData)
-            {
-                <div class="alert alert-warning mt-4">
-                    No fantasy points have been recorded for any tournament.
-                </div>
-            }
-            else
-            {
-                @await Html.PartialAsync("~/Views/Leaderboard/_TournamentTotalPointsTable.cshtml", Model)
-            }
+                @if (!hasData)
+                {
+                    <div class="alert alert-warning mt-4">
+                        No fantasy points have been recorded for any tournament.
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        @await Html.PartialAsync("~/Views/Leaderboard/_TournamentTotalPointsTable.cshtml", Model)
+                    </div>
+                }
+            </div>
         </div>
     </div>
 </div>

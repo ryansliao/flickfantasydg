@@ -11,14 +11,9 @@
 .players-page-wrapper {
     display: flex;
     flex-direction: column;
-    height: calc(85vh);
-    width: calc(75vw);
-}
-
-.players-content-row {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
+    height: calc(90vh);
+    width: 100%;
+    max-width: 100vw;
 }
 
 #mainContent {
@@ -103,12 +98,13 @@ table.dataTable {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 20px;
-        height: 20px;
-        font-size: 0.9rem;
+        width: 14px;
+        height: 15px;
+        font-size: 0.8rem;
         padding: 0;
-        margin: 0;
+        margin: 0 auto;
         line-height: 1;
+        vertical-align: middle;
     }
 
     /* Header styling */
