@@ -1,7 +1,5 @@
 ﻿body, html {
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
+    min-height: 100vh;
 }
 
 .d-none {
@@ -9,11 +7,12 @@
 }
 
 .players-page-wrapper {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    height: calc(90vh);
     width: 100%;
     max-width: 100vw;
+    overflow: hidden;
 }
 
 #mainContent {
@@ -64,7 +63,6 @@ form.filter-form label {
 .table-scroll-container {
     flex: none;
     overflow: visible;
-    padding-bottom: 50px;
 }
 
 /* Base table layout */

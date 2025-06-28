@@ -116,9 +116,6 @@ document.addEventListener("DOMContentLoaded", function () {
     initializePlayersTable();
     rebindAddButtons();
 
-    document.getElementById("tournamentDropdown").addEventListener("change", fetchPlayersViaAjax);
-    document.getElementById("divisionDropdown").addEventListener("change", fetchPlayersViaAjax);
-
     const topScroll = document.querySelector('.table-scroll-top');
     const bottomScroll = document.querySelector('.table-scroll-bottom');
     const wrapper = document.querySelector('.table-scroll-wrapper');
