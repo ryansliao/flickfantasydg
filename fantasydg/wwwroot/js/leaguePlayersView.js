@@ -22,8 +22,8 @@ function initializePlayersTable() {
         ],
         dom: 'f rt<"bottom"ip>',
         initComplete: function () {
-            $('#tableWrapper').removeClass('d-none');
             $('#loadingSpinner').hide();
+            $('#tableWrapper').removeClass('d-none');
 
             const filter = $('#playersTable_filter').detach();
             $('#searchContainer').html(filter).show();

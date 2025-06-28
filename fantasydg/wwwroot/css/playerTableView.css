@@ -74,6 +74,7 @@ table.dataTable {
     border-collapse: collapse;
     box-sizing: border-box;
     vertical-align: middle;
+    width: 100% !important;
 }
 
     .stats-table th,
