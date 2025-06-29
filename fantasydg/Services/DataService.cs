@@ -264,8 +264,8 @@ namespace fantasydg.Services
                     }
                     else
                     {
-                        existing.Place = pt.Place;
-                        existing.TotalToPar = pt.TotalToPar;
+                        //existing.Place = pt.Place;
+                        //existing.TotalToPar = pt.TotalToPar;
                         existing.Fairway = pt.Fairway;
                         existing.C1InReg = pt.C1InReg;
                         existing.C2InReg = pt.C2InReg;

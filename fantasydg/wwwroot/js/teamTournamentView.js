@@ -4,7 +4,7 @@ let currentSearchTerm = '';
 function initializePlayersTable() {
     playersDataTable = $('#playersTable').DataTable({
         scrollX: true,
-        scrollY: 'calc(100vh - 355px)',
+        scrollY: 'calc(70vh)',
         scrollCollapse: true,
         paging: false,
         searching: true,
