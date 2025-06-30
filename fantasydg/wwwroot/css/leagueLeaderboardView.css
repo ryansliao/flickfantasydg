@@ -77,13 +77,12 @@ table.dataTable {
     div.DTFC_LeftWrapper table th,
     div.DTFC_LeftWrapper table td {
         font-size: 0.8rem;
-        padding: 2px 4px;
-        line-height: 1.1;
+        padding: 2px 2px;
+        line-height: 1;
         box-sizing: border-box;
         vertical-align: middle;
         white-space: nowrap;
         overflow: hidden;
-        text-overflow: ellipsis;
         text-align: center;
         height: auto;
         min-height: 0;
@@ -113,9 +112,9 @@ table.dataTable {
     div.DTFC_LeftWrapper table thead th {
         background-color: #e1e1e1 !important;
         color: #000;
-        font-weight: bold;
         font-size: 0.75rem;
-        padding: 4px 5px;
+        padding: 2px 2px;
+        margin-right: 2px;
         line-height: 1.1;
         text-align: center !important;
         white-space: normal !important;

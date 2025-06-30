@@ -20,6 +20,35 @@ public class TournamentService : BackgroundService
         _logger = logger;
     }
 
+    /* Test Code
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        var nowPT = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, PacificTimeZone);
+
+        using var scope = _serviceProvider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dataService = scope.ServiceProvider.GetRequiredService<DataService>();
+
+        try
+        {
+            _logger.LogInformation("🏁 TournamentService starting — running UpdateActiveTournamentsAsync...");
+
+            await UpdateActiveTournamentsAsync(nowPT, db, dataService);
+
+            _logger.LogInformation("✅ UpdateActiveTournamentsAsync completed at startup.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "❌ Error during UpdateActiveTournamentsAsync at startup.");
+        }
+
+        // Keep service alive for future scheduling if needed
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
+        }
+    } */
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
@@ -96,16 +125,23 @@ public class TournamentService : BackgroundService
 
         foreach (var tournament in tournaments)
         {
-            if (tournament.StartDate <= nowPT && nowPT <= tournament.EndDate && !string.IsNullOrEmpty(tournament.Division))
+            _logger.LogInformation("🔍 Checking tournament {Id}: {Name}, Division={Division}, Start={Start}, End={End}",
+                tournament.Id, tournament.Name, tournament.Division, tournament.StartDate, tournament.EndDate);
+
+            //if (tournament.StartDate <= nowPT && nowPT <= tournament.EndDate && !string.IsNullOrEmpty(tournament.Division))
             {
                 try
                 {
                     _logger.LogInformation("Updating active tournament: {Id}", tournament.Id);
                     await dataService.FetchTournaments(tournament.Id, tournament.Division);
+
+                    tournament.LastUpdatedTime = DateTime.UtcNow;
+                    db.Entry(tournament).Property(t => t.LastUpdatedTime).IsModified = true;
+                    await db.SaveChangesAsync();
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Failed to update tournament {Id}", tournament.Id);
+                    _logger.LogWarning("⏭ Skipping tournament {Id} — outside date range or missing division");
                 }
             }
         }
@@ -126,6 +162,10 @@ public class TournamentService : BackgroundService
             {
                 _logger.LogInformation("Weekly refresh: Updating tournament {Id}", tournament.Id);
                 await dataService.FetchTournaments(tournament.Id, tournament.Division);
+
+                tournament.LastUpdatedTime = DateTime.UtcNow;
+                db.Entry(tournament).Property(t => t.LastUpdatedTime).IsModified = true;
+                await db.SaveChangesAsync();
             }
             catch (Exception ex)
             {

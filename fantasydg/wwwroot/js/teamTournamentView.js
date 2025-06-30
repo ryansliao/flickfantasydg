@@ -13,12 +13,12 @@ function initializePlayersTable() {
         info: false,
         order: [[0, 'asc']],
         fixedColumns: {
-            leftColumns: 3
+            leftColumns: 2
         },
         columnDefs: [
-            { targets: 0, width: "100px" },
-            { targets: 1, width: "150px" },
-            { targets: "_all", width: "50px" }
+            { targets: 0, width: "75px" },
+            { targets: 1, width: "100px" },
+            { targets: "_all", width: "40px" }
         ],
         dom: 'f rt<"bottom"ip>',
         initComplete: function () {

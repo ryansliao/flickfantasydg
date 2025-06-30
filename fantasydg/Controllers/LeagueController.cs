@@ -272,7 +272,8 @@ namespace fantasydg.Controllers
                 {
                     TeamName = team.Name,
                     OwnerName = team.Owner?.UserName ?? "Unknown",
-                    PointsByTournament = new Dictionary<int, double>()
+                    PointsByTournament = new Dictionary<int, double>(),
+                    WinsByTournament = new Dictionary<int, int>()
                 };
 
                 foreach (var tournament in tournaments)
@@ -280,18 +281,23 @@ namespace fantasydg.Controllers
                     leagueWeights.TryGetValue((tournament.Id, tournament.Division), out var weight);
                     if (weight == 0) weight = 1;
 
-                    double score = league.LeagueScoringMode switch
-                    {
-                        League.ScoringMode.TotalPoints => GetTeamScoreForTournament(league, team, tournament) * weight,
-                        League.ScoringMode.WinsPerTournament => GetWinScoreForTeam(league, team, tournament) * weight,
-                        _ => 0
-                    };
+                    // Always calculate raw points and raw wins
+                    double rawPoints = GetTeamScoreForTournament(league, team, tournament);
+                    double rawWins = GetWinScoreForTeam(league, team, tournament);
 
-                    row.PointsByTournament[tournament.Id] = score;
+                    // Assign both regardless of scoring mode
+                    row.PointsByTournament[tournament.Id] = rawPoints * weight;
+                    row.WinsByTournament[tournament.Id] = (int)rawWins;
                 }
 
                 row.TotalPoints = row.PointsByTournament.Values.Sum();
+                row.TotalWins = row.WinsByTournament.Values.Sum();
                 model.Teams.Add(row);
+
+                foreach (var kv in row.PointsByTournament)
+                {
+                    Console.WriteLine($"[DEBUG] Team: {row.TeamName}, TournamentId: {kv.Key}, Points: {kv.Value}");
+                }
             }
 
             ViewBag.NoFantasyPoints = !model.Teams.Any(tr => tr.PointsByTournament.Any());

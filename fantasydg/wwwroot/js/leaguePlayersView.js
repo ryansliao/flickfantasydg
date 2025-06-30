@@ -17,8 +17,19 @@ function initializePlayersTable() {
         },
         columnDefs: [
             { orderable: false, targets: 0, width: "40px" },
-            { targets: 1, width: "150px" },
-            { targets: "_all", width: "50px" }
+            { targets: 1, width: "100px" },
+            { targets: "_all", width: "40px" },
+            {
+                targets: "_all",
+                render: function (data, type, row, meta) {
+                    if (meta.col < 2) return data; // Skip columns 0 and 1
+
+                    const num = parseFloat(data?.toString().replace(/[^0-9.\-]/g, ''));
+                    if (isNaN(num)) return data;
+
+                    return type === 'display' ? num.toFixed(1) : num;
+                }
+            }
         ],
         dom: 'f rt<"bottom"ip>',
         initComplete: function () {

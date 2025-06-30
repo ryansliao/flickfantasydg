@@ -80,8 +80,12 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVhZGVyYm9hcmRcTGVhZ3VlTGVhZGVyYm9hcmRWaWV3LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Leaderboard/_TournamentTotalPointsTable.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVhZGVyYm9hcmRcX1RvdXJuYW1lbnRUb3RhbFBvaW50c1RhYmxlLmNzaHRtbA==
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Leaderboard/_TournamentPointsTable.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVhZGVyYm9hcmRcX1RvdXJuYW1lbnRQb2ludHNUYWJsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/Leaderboard/_TournamentWinsTable.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVhZGVyYm9hcmRcX1RvdXJuYW1lbnRXaW5zVGFibGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/RyanS/source/repos/flickfantasydg/fantasydg/Views/League/Create.cshtml]

@@ -32,7 +32,18 @@
     </div>
     <div class="container-fluid">
         <div id="mainContent" class="col pt-3">
-            <h3>Leaderboard</h3>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h3 class="mb-0">Leaderboard</h3>
+                <div class="d-flex align-items-center">
+                    <label class="me-2 mb-0" for="scoringToggle">Wins</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="scoringToggle"
+                               @(Model.League.LeagueScoringMode == League.ScoringMode.TotalPoints ? "checked" : "")>
+                    </div>
+                    <label class="ms-2 mb-0" for="scoringToggle">Points</label>
+                </div>
+            </div>
+
             <hr style="width: 100%; margin: 0.5rem 0; border-top: 2px solid #444;" />
 
             @if (!hasData)
@@ -44,7 +55,14 @@
             else
             {
                 <div class="table-responsive">
-                    @await Html.PartialAsync("~/Views/Leaderboard/_TournamentTotalPointsTable.cshtml", Model)
+                    <div id="winsTable" class="leaderboard-table"
+                         style="display: @(Model.League.LeagueScoringMode == League.ScoringMode.WinsPerTournament ? "block" : "none")">
+                        @await Html.PartialAsync("~/Views/Leaderboard/_TournamentWinsTable.cshtml", Model)
+                    </div>
+                    <div id="fantasyPointsTable" class="leaderboard-table"
+                         style="display: @(Model.League.LeagueScoringMode == League.ScoringMode.TotalPoints ? "block" : "none")">
+                        @await Html.PartialAsync("~/Views/Leaderboard/_TournamentPointsTable.cshtml", Model)
+                    </div>
                 </div>
             }
         </div>

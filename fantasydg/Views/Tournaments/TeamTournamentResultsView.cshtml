@@ -55,7 +55,21 @@
 
             <!-- Search bar row below -->
             <hr style="width: 100%; margin: 0.5rem 0; border-top: 2px solid #444;" />
-            <div id="searchContainer" class="mb-2"></div>
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <!-- Search bar injected by DataTables -->
+                <div id="searchContainer"></div>
+
+                <!-- Right-aligned Last Updated display -->
+                <div class="text-muted small" id="lastUpdatedLabel">
+                    Last Updated:
+                    @(
+                        Model.Tournament?.LastUpdatedTime.HasValue == true
+                        ? TimeZoneInfo.ConvertTimeFromUtc(Model.Tournament.LastUpdatedTime.Value, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time")).ToString("g")
+                        : "Never"
+                    )
+                </div>
+            </div>
 
             <div id="teamTournamentResultsContainer">
                 <div class="table-responsive">

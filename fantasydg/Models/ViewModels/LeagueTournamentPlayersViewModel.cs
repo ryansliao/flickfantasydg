@@ -4,5 +4,6 @@
     {
         public League League { get; set; }
         public List<PlayerTournament> Players { get; set; }
+        public Tournament Tournament { get; set; }
     }
 }

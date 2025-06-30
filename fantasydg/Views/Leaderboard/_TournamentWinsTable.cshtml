@@ -1,13 +1,13 @@
 ﻿@model fantasydg.Models.ViewModels.LeagueLeaderboardViewModel
 
-<div id="tableWrapper" class="d-none table-scroll-container">
+<div id="tableWinsWrapper" class="d-none table-scroll-container">
     <div class="table-scroll-top"></div>
     <div class="table-scroll-wrapper">
-        <table id="playersTable" class="stats-table stripe">
+        <table id="playersWinsTable" class="stats-table stripe">
             <thead>
                 <tr>
                     <th>Team</th>
-                    <th>Total</th>
+                    <th>Total Wins</th>
                     @foreach (var t in Model.Tournaments.AsEnumerable().Reverse())
                     {
                         <th>@t.Name</th>
@@ -19,15 +19,11 @@
                 {
                     <tr>
                         <td class="fw-semibold">@team.TeamName</td>
-                        <td class="fw-bold">@team.TotalPoints.ToString("0.##")</td>
+                        <td class="fw-bold">@team.TotalWins</td>
                         @foreach (var t in Model.Tournaments.AsEnumerable().Reverse())
                         {
                             <td>
-                                @(
-                                    team.PointsByTournament.TryGetValue(t.Id, out var pts)
-                                    ? pts.ToString("0.##")
-                                    : "-"
-                                )
+                                @(team.WinsByTournament.TryGetValue(t.Id, out var wins) ? wins.ToString() : "-")
                             </td>
                         }
                     </tr>
