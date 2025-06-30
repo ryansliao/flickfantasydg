@@ -410,6 +410,7 @@ namespace fantasydg.Controllers
             {
                 League = league,
                 Players = playerTournamentList
+                Tournament = selectedTournament
             };
 
             var playerTeamMap = await _db.TeamPlayers
