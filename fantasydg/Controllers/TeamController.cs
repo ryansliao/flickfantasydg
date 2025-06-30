@@ -241,7 +241,7 @@ namespace fantasydg.Controllers
 
             ViewBag.TeamId = team.TeamId;
             ViewBag.TeamName = team.Name;
-            return View(team.League);
+            return View("Settings", team);
         }
 
         // Change team name
@@ -257,7 +257,8 @@ namespace fantasydg.Controllers
             if (string.IsNullOrWhiteSpace(Name) || Name.Length > 20)
             {
                 TempData["TeamSettingsSaved"] = "Team name must be between 1 and 20 characters.";
-                return View("Settings", team);
+                var league = await _db.Leagues.FindAsync(team.LeagueId);
+                return RedirectToAction("Settings", new { teamId = TeamId });
             }
 
             team.Name = Name;

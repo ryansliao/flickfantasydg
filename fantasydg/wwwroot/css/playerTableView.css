@@ -74,8 +74,10 @@ table.dataTable {
     table-layout: fixed;
     border-collapse: collapse;
     box-sizing: border-box;
-    vertical-align: middle;
     width: 100% !important;
+    text-align: center;
+    vertical-align: middle;
+    white-space: normal;
 }
 
     .stats-table th,
@@ -83,13 +85,9 @@ table.dataTable {
     div.DTFC_LeftWrapper table th,
     div.DTFC_LeftWrapper table td {
         font-size: 0.8rem;
-        padding: 2px 2px;
+        padding: 1px 1px;
         line-height: 1;
         box-sizing: border-box;
-        vertical-align: middle;
-        white-space: nowrap;
-        overflow: hidden;
-        text-align: center;
         height: auto;
         min-height: 0;
     }
@@ -105,7 +103,6 @@ table.dataTable {
         padding: 0;
         margin: 0 auto;
         line-height: 1;
-        vertical-align: middle;
     }
 
     /* Header styling */
@@ -114,27 +111,29 @@ table.dataTable {
         background-color: #e1e1e1 !important;
         color: #000;
         font-size: 0.7rem;
-        padding: 2px 2px;
-        margin-right: 2px;
-        line-height: 1;
-        text-align: center !important;
-        white-space: normal !important;
-        vertical-align: middle;
+        line-height: 1.2;
+        text-align: center;
     }
 
-        /* Sorting icons */
-        table.dataTable thead th.sorting::before,
+        /* Sorting arrow properties */
         table.dataTable thead th.sorting::after,
-        table.dataTable thead th.sorting_asc::before,
         table.dataTable thead th.sorting_asc::after,
-        table.dataTable thead th.sorting_desc::before,
         table.dataTable thead th.sorting_desc::after {
+            content: "";
             font-size: 0.5rem !important;
-            margin-left: 4px;
-            vertical-align: middle;
+            margin-left: 2px;
             display: inline-block;
-            transform: translateY(1px);
         }
+
+    /* Ellipsis support for wrapped cell/header text */
+    table.dataTable th .ellipsis-text,
+    table.dataTable td .ellipsis-text {
+        display: inline-block;
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
 /* Scroll body override */
 div.dataTables_scrollBody {

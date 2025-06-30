@@ -4,7 +4,7 @@
         scrollY: 'calc(70vh)',
         scrollCollapse: true,
         paging: false,
-        searching: true,
+        searching: false,
         ordering: true,
         autoWidth: false,
         info: false,
@@ -14,19 +14,12 @@
         },
         columnDefs: [
             { targets: 0, width: "100px" },
-            { targets: "_all", width: "60px" }
+            { targets: "_all", width: "75px" }
         ],
         dom: 'f rt<"bottom"ip>',
         initComplete: function () {
             $('#loadingSpinner').hide();
             $('#tablePointsWrapper').removeClass('d-none');
-
-            const $filter = $('#playersPointsTable_filter');
-            const $target = $('#searchContainer');
-
-            if ($filter.length && $target.length && $target.children().length === 0) {
-                $target.append($filter).show();
-            }
 
             setTimeout(() => {
                 tablePoints.columns.adjust().draw(false);
@@ -39,7 +32,7 @@
         scrollY: 'calc(70vh)',
         scrollCollapse: true,
         paging: false,
-        searching: true,
+        searching: false,
         ordering: true,
         autoWidth: false,
         info: false,
@@ -49,19 +42,12 @@
         },
         columnDefs: [
             { targets: 0, width: "100px" },
-            { targets: "_all", width: "60px" }
+            { targets: "_all", width: "75px" }
         ],
         dom: 'f rt<"bottom"ip>',
         initComplete: function () {
             $('#loadingSpinner').hide();
             $('#tableWinsWrapper').removeClass('d-none');
-
-            const $filter = $('#playersWinsTable_filter').detach();
-            const $target = $('#searchContainer');
-
-            if ($filter.length && $target.length && $target.children().length === 0) {
-                $target.append($filter).show();
-            }
 
             setTimeout(() => {
                 tableWins.columns.adjust().draw(false);

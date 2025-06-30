@@ -125,10 +125,10 @@ public class TournamentService : BackgroundService
 
         foreach (var tournament in tournaments)
         {
-            _logger.LogInformation("🔍 Checking tournament {Id}: {Name}, Division={Division}, Start={Start}, End={End}",
+            _logger.LogInformation("Checking tournament {Id}: {Name}, Division={Division}, Start={Start}, End={End}",
                 tournament.Id, tournament.Name, tournament.Division, tournament.StartDate, tournament.EndDate);
 
-            //if (tournament.StartDate <= nowPT && nowPT <= tournament.EndDate && !string.IsNullOrEmpty(tournament.Division))
+            if (tournament.StartDate <= nowPT && nowPT <= tournament.EndDate && !string.IsNullOrEmpty(tournament.Division))
             {
                 try
                 {
@@ -141,7 +141,7 @@ public class TournamentService : BackgroundService
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning("⏭ Skipping tournament {Id} — outside date range or missing division");
+                    _logger.LogWarning("Skipping tournament {Id} — outside date range or missing division");
                 }
             }
         }

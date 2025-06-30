@@ -16,9 +16,9 @@ function initializePlayersTable() {
             leftColumns: 2
         },
         columnDefs: [
-            { targets: 0, width: "75px" },
+            { targets: 0, width: "100px" },
             { targets: 1, width: "100px" },
-            { targets: "_all", width: "40px" }
+            { targets: "_all", width: "50px" }
         ],
         dom: 'f rt<"bottom"ip>',
         initComplete: function () {
@@ -39,6 +39,15 @@ function initializePlayersTable() {
                     searchInput.dispatchEvent(new Event('input', { bubbles: true }));
                 }
             }
+
+            $('#playersTable thead th, #playersTable tbody td').each(function () {
+                const html = $(this).html().trim();
+                const text = $(this).text().trim();
+
+                if (html === text) {
+                    $(this).html(`<span class="ellipsis-text" title="${text}">${text}</span>`);
+                }
+            });
 
             setTimeout(() => {
                 playersDataTable.columns.adjust();

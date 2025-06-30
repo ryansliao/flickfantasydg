@@ -1,5 +1,5 @@
 ﻿@using fantasydg.Models.ViewModels
-@model fantasydg.Models.League
+@model fantasydg.Models.Team
 
 @{
     ViewBag.Title = "Team Settings";
@@ -8,9 +8,14 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col pt-3">
-            <h3>Team Settings</h3>
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <h3>Settings</h3>
+                <a class="btn btn-outline-secondary" asp-controller="Team" asp-action="View" asp-route-teamId="@Model.TeamId">
+                    ← Back to Team
+                </a>
+            </div>
 
-            <hr style="width: 100%; margin: 1.5rem auto; border-top: 2px solid #444;" />
+            <hr style="width: 100%; margin: 0.5rem auto; border-top: 2px solid #444;" />
 
             @if (TempData["TeamSettingsSaved"] != null)
             {

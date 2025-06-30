@@ -18,7 +18,7 @@ function initializePlayersTable() {
         columnDefs: [
             { orderable: false, targets: 0, width: "40px" },
             { targets: 1, width: "100px" },
-            { targets: "_all", width: "40px" },
+            { targets: "_all", width: "50px" },
             {
                 targets: "_all",
                 render: function (data, type, row, meta) {
@@ -44,10 +44,10 @@ function initializePlayersTable() {
             }
 
             if (currentSearchTerm) {
-                // ✅ Apply the filter first
+                // Apply the filter first
                 playersDataTable.search(currentSearchTerm).draw(false);
 
-                // ✅ Then manually update input box (for visual consistency)
+                // Then manually update input box (for visual consistency)
                 setTimeout(() => {
                     const searchInput = document.querySelector('#playersTable_filter input[type="search"]');
                     if (searchInput) {
@@ -56,6 +56,15 @@ function initializePlayersTable() {
                     }
                 }, 0);
             }
+
+            $('#playersTable thead th, #playersTable tbody td').each(function () {
+                const html = $(this).html().trim();
+                const text = $(this).text().trim();
+
+                if (html === text) {
+                    $(this).html(`<span class="ellipsis-text" title="${text}">${text}</span>`);
+                }
+            });
 
             setTimeout(() => {
                 playersDataTable.columns.adjust();
@@ -71,7 +80,7 @@ async function fetchPlayersViaAjax() {
 
     const url = `/League/Players?leagueId=${leagueId}&tournamentId=${tournamentId}&division=${encodeURIComponent(division)}`;
 
-    // ✅ Save current search term
+    // Save current search term
     if ($.fn.DataTable.isDataTable("#playersTable")) {
         currentSearchTerm = $('#playersTable').DataTable().search();
         $('#playersTable').DataTable().destroy();
@@ -89,8 +98,10 @@ async function fetchPlayersViaAjax() {
     const html = await response.text();
     document.getElementById("playerTableContainer").innerHTML = html;
 
-    initializePlayersTable();
-    rebindAddButtons();
+    setTimeout(() => {
+        initializePlayersTable();
+        rebindAddButtons();
+    }, 0);
 }
 
 function rebindAddButtons() {
