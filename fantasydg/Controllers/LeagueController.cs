@@ -409,7 +409,7 @@ namespace fantasydg.Controllers
             var model = new LeagueTournamentPlayersViewModel
             {
                 League = league,
-                Players = playerTournamentList
+                Players = playerTournamentList,
                 Tournament = selectedTournament
             };
 
