@@ -148,30 +148,6 @@ namespace fantasydg.Controllers
             });
         }
 
-        /* 
-        [HttpGet]
-        public async Task<IActionResult> GetLockOptions(int teamId)
-        {
-            var tournaments = await _repository.GetAllTournamentsAsync();
-            var lockedIds = await _db.TeamPlayerTournaments
-                .Where(tpt => tpt.TeamId == teamId && tpt.IsLocked)
-                .Select(tpt => tpt.TournamentId)
-                .Distinct()
-                .ToListAsync();
-
-            var results = tournaments
-                .OrderByDescending(t => t.StartDate)
-                .Select(t => new {
-                    t.Id,
-                    t.Name,
-                    t.StartDate,
-                    IsLocked = lockedIds.Contains(t.Id)
-                });
-
-            return Json(results);
-        }
-        */
-
         // Show current roster starters in the tournament lock modal
         [HttpGet]
         public async Task<IActionResult> GetStarterPreview(int teamId, int tournamentId)
@@ -357,8 +333,10 @@ namespace fantasydg.Controllers
             if (team == null)
                 return Unauthorized();
 
-            // Get all starter TeamPlayers
-            var starters = team.TeamPlayers.Where(tp => tp.Status == RosterStatus.Starter).ToList();
+            // Get all rostered players (Starters + Bench)
+            var rosteredPlayers = team.TeamPlayers
+                .Where(tp => tp.Status == RosterStatus.Starter || tp.Status == RosterStatus.Bench)
+                .ToList();
 
             // Check if already locked
             var alreadyLocked = await _db.TeamPlayerTournaments
@@ -378,39 +356,33 @@ namespace fantasydg.Controllers
             }
             else
             {
-                if (!starters.Any())
+                if (!rosteredPlayers.Any())
                 {
                     TempData["RosterLockError"] = "You must assign at least one starter before locking the roster.";
                     return RedirectToAction("View", new { teamId, tournamentId });
                 }
 
-                var missingStarters = starters
+                // Find players on the roster who are NOT in the selected tournament
+                var missingPlayers = rosteredPlayers
                     .Where(tp => !tp.Player.PlayerTournaments.Any(pt => pt.TournamentId == tournamentId))
                     .ToList();
 
-                if (missingStarters.Any())
-                {
-                    string names = string.Join(", ", missingStarters.Select(p => p.Player.Name));
-                    TempData["RosterLockWarning"] = $"Locked roster. The following starters are not in this tournament and were still saved: {names}";
-                }
-
-                foreach (var tp in starters)
+                foreach (var tp in rosteredPlayers)
                 {
                     var pt = tp.Player.PlayerTournaments
                         .FirstOrDefault(p => p.TournamentId == tournamentId);
 
-                    if (pt != null)
+                    if (pt == null) continue;
+
+                    _db.TeamPlayerTournaments.Add(new TeamPlayerTournament
                     {
-                        _db.TeamPlayerTournaments.Add(new TeamPlayerTournament
-                        {
-                            TeamId = teamId,
-                            PDGANumber = tp.PDGANumber,
-                            TournamentId = tournamentId,
-                            Division = pt.Division,
-                            Status = tp.Status.ToString(),
-                            IsLocked = true
-                        });
-                    }
+                        TeamId = teamId,
+                        PDGANumber = tp.PDGANumber,
+                        TournamentId = tournamentId,
+                        Division = pt.Division,
+                        Status = tp.Status.ToString(),
+                        IsLocked = true
+                    });
                 }
 
                 await _db.SaveChangesAsync();

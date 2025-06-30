@@ -112,14 +112,14 @@
                                     <li>
                                         <a class="dropdown-item @(controller == "League" && action == "TeamTournamentResultsView" ? "active" : "")"
                                            asp-controller="League" asp-action="TeamTournamentResultsView" asp-route-leagueId="@leagueId">
-                                            Tournament Results
+                                            Tournaments
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider" /></li>
                                     <li>
                                         <a class="dropdown-item @(controller == "League" && action == "Players" ? "active" : "")"
                                            asp-controller="League" asp-action="Players" asp-route-leagueId="@leagueId">
-                                            Available Players
+                                            Players
                                         </a>
                                     </li>
                                 </ul>

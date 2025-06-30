@@ -8,6 +8,7 @@
     var division = (string)ViewBag.SelectedDivision;
     var tournamentId = (int)ViewBag.SelectedTournamentId;
     var teamMap = ViewBag.PlayerTeamMap as Dictionary<int, string>;
+    var statusMap = ViewBag.StatusMap as Dictionary<(int, int, int), string>;
 }
 
 <div id="tableWrapper" class="d-none table-scroll-container">
@@ -17,6 +18,7 @@
             <tr>
                 <th>Team</th>
                 <th>Player</th>
+                <th>Status</th>
                 <th>Points</th>
                 <th>Place</th>
                 <th>Total</th>
@@ -25,32 +27,58 @@
                 <th>Bogey+</th>
                 <th>Double Bogey+</th>
                 <th>Fairway</th>
-                <th>C1 Reg</th>
-                <th>C2 Reg</th>
+                <th>C1 In-Reg</th>
+                <th>C2 In-Reg</th>
                 <th>Parked</th>
                 <th>Scramble</th>
                 <th>OB</th>
-                <th>C1x Putt</th>
-                <th>C2 Putt</th>
+                <th>C1x Putting</th>
+                <th>C2 Putting</th>
                 <th>Putt Distance</th>
                 <th>Long Throw-In</th>
                 <th>Avg. Putt Distance</th>
                 <th>Strokes Gained</th>
                 <th>SG Putting</th>
-                <th>SG Tee→Grn</th>
-                <th>SG C1x</th>
-                <th>SG C2</th>
+                <th>SG Tee→Green</th>
+                <th>SG C1x Putting</th>
+                <th>SG C2 Putting</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var pt in Model.OrderBy(pt => pt.Place))
+            @{
+                var sortedPlayers = Model
+                .OrderBy(pt => teamMap.TryGetValue(pt.PDGANumber, out var teamName) ? teamName : "")
+                .ThenBy(pt =>
+                statusMap.TryGetValue((teamId, pt.PDGANumber, pt.TournamentId), out var s)
+                ? (s == "Starter" ? 0 : 1)
+                : 2)
+                .ThenBy(pt => pt.Place)
+                .ToList();
+            }
+
+            @foreach (var pt in sortedPlayers)
             {
                 var key = (pt.PDGANumber, pt.TournamentId, pt.Division);
+                var status = statusMap.TryGetValue((teamId, pt.PDGANumber, pt.TournamentId), out var s) ? s : "Unknown";
                 float points = fantasyMap.ContainsKey(key) ? fantasyMap[key] : 0f;
 
-                <tr>
+                <tr class="@(status == "Bench" ? "table-secondary" : "")">
                     <td>@(ViewBag.PlayerTeamMap[pt.PDGANumber])</td>
                     <td>@pt.Player.Name</td>
+                    <td>
+                        @if (status == "Bench")
+                        {
+                            <span class="badge bg-danger">Bench</span>
+                        }
+                        else if (status == "Starter")
+                        {
+                            <span class="badge bg-success">Starter</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Unknown</span>
+                        }
+                    </td>
                     <td>@points.ToString("0.0")</td>
                     <td>@pt.Place</td>
                     <td>@pt.TotalToPar</td>

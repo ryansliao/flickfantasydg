@@ -338,29 +338,31 @@ namespace fantasydg.Controllers
             division ??= divisions.Contains("MPO") ? "MPO" : divisions.FirstOrDefault();
             ViewBag.SelectedDivision = division;
 
+            // Get team given league, owner
+            var teamId = await _db.Teams
+                .Where(t => t.LeagueId == leagueId && t.OwnerId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                .Select(t => (int?)t.TeamId)
+                .FirstOrDefaultAsync() ?? 0;
+
             // Get all assigned players in league
             var assignedPDGAs = await _db.TeamPlayers
                 .Where(tp => tp.LeagueId == leagueId)
                 .Select(tp => tp.PDGANumber)
                 .ToListAsync();
 
-            // Filter players who participated in the selected tournament
-            var participatingPlayers = await _db.TeamPlayerTournaments
+
+            var allRosteredPlayers = await _db.TeamPlayerTournaments
                 .Where(tpt =>
                     tpt.TournamentId == selectedTournament.Id &&
                     tpt.IsLocked &&
-                    assignedPDGAs.Contains(tpt.PDGANumber))
+                    assignedPDGAs.Contains(tpt.PDGANumber) &&
+                    tpt.Division == division)
                 .Include(tpt => tpt.Player)
                     .ThenInclude(p => p.PlayerTournaments)
                 .ToListAsync();
 
-            // You can filter division here if needed, but only if it's stored in TeamPlayerTournament
-            participatingPlayers = participatingPlayers
-                .Where(tpt => tpt.Division == division)
-                .ToList();
-
             // Then convert to PlayerTournaments (if needed by view)
-            var playerTournamentList = participatingPlayers.Select(tpt =>
+            var playerTournamentList = allRosteredPlayers.Select(tpt =>
             {
                 var ptMatch = tpt.Player?.PlayerTournaments
                     ?.FirstOrDefault(pt => pt.TournamentId == tpt.TournamentId);
@@ -412,17 +414,29 @@ namespace fantasydg.Controllers
                 .Where(tp => tp.LeagueId == leagueId)
                 .ToDictionaryAsync(tp => tp.PDGANumber, tp => tp.Team.Name);
 
+            var statusMap = allRosteredPlayers.ToDictionary(
+                tpt => (tpt.TeamId, tpt.PDGANumber, tpt.TournamentId),
+                tpt => tpt.Status
+            );
+            
             // ViewBag values
             ViewBag.LeagueId = league.LeagueId;
             ViewBag.LeagueName = league.Name;
             ViewBag.Divisions = divisions;
+            ViewBag.TeamId = teamId;
             ViewBag.SelectedDivision = division;
             ViewBag.FantasyMap = fantasyMap;
             ViewBag.PlayerTeamMap = playerTeamMap;
-            ViewBag.TeamId = await _db.Teams
-                .Where(t => t.LeagueId == leagueId && t.OwnerId == User.FindFirstValue(ClaimTypes.NameIdentifier))
-                .Select(t => (int?)t.TeamId)
-                .FirstOrDefaultAsync();
+            ViewBag.StatusMap = statusMap;
+
+            playerTournamentList = playerTournamentList
+                .OrderBy(pt =>
+                    playerTeamMap.TryGetValue(pt.PDGANumber, out var teamName) ? teamName : "")
+                .ThenBy(pt =>
+                    statusMap.TryGetValue((teamId, pt.PDGANumber, pt.TournamentId), out var status)
+                        ? (status == "Starter" ? 0 : 1)
+                        : 2)
+                .ToList();
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 return PartialView("~/Views/Tournaments/TeamPlayersTable.cshtml", model.Players);
@@ -456,7 +470,6 @@ namespace fantasydg.Controllers
 
             var playersWithSeasonStats = allPlayerTournaments
                 .GroupBy(pt => pt.PDGANumber)
-                .Where(g => !assignedPDGANumbers.Contains(g.Key))
                 .Select(g =>
                 {
                     var first = g.First();
@@ -497,6 +510,7 @@ namespace fantasydg.Controllers
             ViewBag.LeagueId = leagueId;
             ViewBag.LeagueName = league.Name;
             ViewBag.TeamId = await GetUserTeamId(leagueId);
+            ViewBag.AssignedPDGANumbers = assignedPDGANumbers;
             ViewBag.FantasyMap = await _leagueService.GetFantasyPointsMapAsync(leagueId);
 
             var model = new LeagueAvailablePlayersViewModel

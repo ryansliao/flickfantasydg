@@ -3,16 +3,68 @@
   "WorkspaceRootPath": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\services\\tournamentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\services\\tournamentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\views\\tournaments\\teamplayerstable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\tournaments\\teamplayerstable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\controllers\\leaguecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\controllers\\leaguecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\controllers\\teamcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\controllers\\teamcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\controllers\\leaguecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\controllers\\leaguecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\models\\playertournament.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\playertournament.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\views\\tournaments\\teamtournamentresultsview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\tournaments\\teamtournamentresultsview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\models\\teamplayertournament.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\teamplayertournament.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\views\\players\\playerstable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\players\\playerstable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\models\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\models\\teamplayer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\teamplayer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\services\\tournamentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\services\\tournamentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\services\\playerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\services\\playerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\services\\leagueservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\services\\leagueservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\views\\players\\leagueplayersview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\players\\leagueplayersview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\site.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\wwwroot\\js\\site.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\leagueleaderboardview.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
@@ -27,20 +79,8 @@
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\wwwroot\\js\\leagueplayersview.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\views\\players\\leagueplayersview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\players\\leagueplayersview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\css\\playertableview.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\wwwroot\\css\\playertableview.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\views\\players\\playerstable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\players\\playerstable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\views\\tournaments\\teamplayerstable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\tournaments\\teamplayerstable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\models\\team.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -63,10 +103,6 @@
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\wwwroot\\css\\leagueleaderboardview.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\views\\tournaments\\teamtournamentresultsview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\tournaments\\teamtournamentresultsview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\views\\leaderboard\\_tournamentpointstable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\leaderboard\\_tournamentpointstable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -84,10 +120,6 @@
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\RyanS\\AppData\\Local\\Temp\\iioww5l0..sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\services\\playerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\services\\playerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -110,24 +142,12 @@
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\team\\teamview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\models\\viewmodels\\leagueavailableplayersviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\viewmodels\\leagueavailableplayersviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\models\\playertournament.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\playertournament.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\models\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -150,16 +170,8 @@
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\databaserepository\\databaserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\models\\notificationbell.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\notificationbell.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\models\\teamplayer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\teamplayer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\models\\viewmodels\\leaguestandingsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -167,10 +179,6 @@
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\RyanS\\AppData\\Local\\Temp\\reanmkqz..sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\site.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\wwwroot\\js\\site.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\css\\tournamentinput.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
@@ -189,20 +197,12 @@
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\viewmodels\\teamviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\models\\teamplayertournament.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\teamplayertournament.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\models\\viewmodels\\errorviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\viewmodels\\errorviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\models\\viewmodels\\tournamentinputviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\models\\viewmodels\\tournamentinputviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\services\\leagueservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|solutionrelative:fantasydg\\services\\leagueservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F0A7024-A495-4102-A852-0B92C4145EFA}|fantasydg\\fantasydg.csproj|c:\\users\\ryans\\source\\repos\\flickfantasydg\\fantasydg\\views\\team\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -329,17 +329,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "LeagueController.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Controllers\\LeagueController.cs",
               "RelativeDocumentMoniker": "fantasydg\\Controllers\\LeagueController.cs",
               "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Controllers\\LeagueController.cs",
               "RelativeToolTip": "fantasydg\\Controllers\\LeagueController.cs",
-              "ViewState": "AgIAAAMCAAAAAAAAAAD4vzECAAAtAAAAAAAAAA==",
+              "ViewState": "AgIAAKUBAAAAAAAAAADgv78BAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-30T01:35:55.175Z",
               "IsPinned": true,
@@ -347,42 +347,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "TeamController.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Controllers\\TeamController.cs",
               "RelativeDocumentMoniker": "fantasydg\\Controllers\\TeamController.cs",
               "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Controllers\\TeamController.cs",
               "RelativeToolTip": "fantasydg\\Controllers\\TeamController.cs",
-              "ViewState": "AgIAAPYAAAAAAAAAAAAowPUAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAFwBAAAAAAAAAAAIwG8BAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-21T16:46:03.055Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "leagueLeaderboardView.js",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\leagueLeaderboardView.js",
-              "RelativeDocumentMoniker": "fantasydg\\wwwroot\\js\\leagueLeaderboardView.js",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\leagueLeaderboardView.js",
-              "RelativeToolTip": "fantasydg\\wwwroot\\js\\leagueLeaderboardView.js",
-              "ViewState": "AgIAABEAAAAAAAAAAADgvxAAAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-06-30T16:53:36.606Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "teamTournamentView.js",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\teamTournamentView.js",
-              "RelativeDocumentMoniker": "fantasydg\\wwwroot\\js\\teamTournamentView.js",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\teamTournamentView.js",
-              "RelativeToolTip": "fantasydg\\wwwroot\\js\\teamTournamentView.js",
-              "ViewState": "AgIAAC8AAAAAAAAAAAAQwEcAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-06-30T17:07:19.217Z",
+              "WhenOpened": "2025-06-30T17:58:35Z",
               "EditorCaption": ""
             },
             {
@@ -391,20 +364,201 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "TeamPlayersTable.cshtml",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Tournaments\\TeamPlayersTable.cshtml",
+              "RelativeDocumentMoniker": "fantasydg\\Views\\Tournaments\\TeamPlayersTable.cshtml",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Tournaments\\TeamPlayersTable.cshtml",
+              "RelativeToolTip": "fantasydg\\Views\\Tournaments\\TeamPlayersTable.cshtml",
+              "ViewState": "AgIAADMAAAAAAAAAAAAQwEYAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-20T17:17:45.339Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "PlayerTournament.cs",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\PlayerTournament.cs",
+              "RelativeDocumentMoniker": "fantasydg\\Models\\PlayerTournament.cs",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\PlayerTournament.cs",
+              "RelativeToolTip": "fantasydg\\Models\\PlayerTournament.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAA1wDUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T23:38:04.021Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "fantasydg\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "fantasydg\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAGAAAAAAAAAAAAAAAHIAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-20T00:59:05.52Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 5,
-              "Title": "leaguePlayersView.js",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\leaguePlayersView.js",
-              "RelativeDocumentMoniker": "fantasydg\\wwwroot\\js\\leaguePlayersView.js",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\leaguePlayersView.js",
-              "RelativeToolTip": "fantasydg\\wwwroot\\js\\leaguePlayersView.js",
-              "ViewState": "AgIAACoAAAAAAAAAAADwvzsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-06-30T15:57:58.775Z",
+              "Title": "TeamTournamentResultsView.cshtml",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Tournaments\\TeamTournamentResultsView.cshtml",
+              "RelativeDocumentMoniker": "fantasydg\\Views\\Tournaments\\TeamTournamentResultsView.cshtml",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Tournaments\\TeamTournamentResultsView.cshtml",
+              "RelativeToolTip": "fantasydg\\Views\\Tournaments\\TeamTournamentResultsView.cshtml",
+              "ViewState": "AgIAACcAAAAAAAAAAAAkwEAAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-17T18:02:24.557Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "TeamPlayerTournament.cs",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\TeamPlayerTournament.cs",
+              "RelativeDocumentMoniker": "fantasydg\\Models\\TeamPlayerTournament.cs",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\TeamPlayerTournament.cs",
+              "RelativeToolTip": "fantasydg\\Models\\TeamPlayerTournament.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-04T16:57:22.064Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
+              "Title": "PlayersTable.cshtml",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Players\\PlayersTable.cshtml",
+              "RelativeDocumentMoniker": "fantasydg\\Views\\Players\\PlayersTable.cshtml",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Players\\PlayersTable.cshtml",
+              "RelativeToolTip": "fantasydg\\Views\\Players\\PlayersTable.cshtml",
+              "ViewState": "AgIAADkAAAAAAAAAAAAAAE0AAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-20T19:37:28.001Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Player.cs",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\Player.cs",
+              "RelativeDocumentMoniker": "fantasydg\\Models\\Player.cs",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\Player.cs",
+              "RelativeToolTip": "fantasydg\\Models\\Player.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAA5AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-21T04:07:52.398Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "TeamPlayer.cs",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\TeamPlayer.cs",
+              "RelativeDocumentMoniker": "fantasydg\\Models\\TeamPlayer.cs",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\TeamPlayer.cs",
+              "RelativeToolTip": "fantasydg\\Models\\TeamPlayer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-04T05:02:15.102Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "TournamentService.cs",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Services\\TournamentService.cs",
+              "RelativeDocumentMoniker": "fantasydg\\Services\\TournamentService.cs",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Services\\TournamentService.cs",
+              "RelativeToolTip": "fantasydg\\Services\\TournamentService.cs",
+              "ViewState": "AgIAADMAAAAAAAAAAIA3wIoAAABcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-28T13:59:24.781Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "PlayerService.cs",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Services\\PlayerService.cs",
+              "RelativeDocumentMoniker": "fantasydg\\Services\\PlayerService.cs",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Services\\PlayerService.cs",
+              "RelativeToolTip": "fantasydg\\Services\\PlayerService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADIAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-28T15:22:33.58Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "LeagueService.cs",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Services\\LeagueService.cs",
+              "RelativeDocumentMoniker": "fantasydg\\Services\\LeagueService.cs",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Services\\LeagueService.cs",
+              "RelativeToolTip": "fantasydg\\Services\\LeagueService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFsAAABFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T02:03:42.439Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "LeaguePlayersView.cshtml",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Players\\LeaguePlayersView.cshtml",
+              "RelativeDocumentMoniker": "fantasydg\\Views\\Players\\LeaguePlayersView.cshtml",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Players\\LeaguePlayersView.cshtml",
+              "RelativeToolTip": "fantasydg\\Views\\Players\\LeaguePlayersView.cshtml",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABwAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-30T17:38:07.984Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "_LoginPartial.cshtml",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
+              "RelativeDocumentMoniker": "fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
+              "RelativeToolTip": "fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-27T17:10:13.223Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "site.js",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\site.js",
+              "RelativeDocumentMoniker": "fantasydg\\wwwroot\\js\\site.js",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\site.js",
+              "RelativeToolTip": "fantasydg\\wwwroot\\js\\site.js",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-06-20T22:16:40.627Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "teamTournamentView.js",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\teamTournamentView.js",
+              "RelativeDocumentMoniker": "fantasydg\\wwwroot\\js\\teamTournamentView.js",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\teamTournamentView.js",
+              "RelativeToolTip": "fantasydg\\wwwroot\\js\\teamTournamentView.js",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAQwEcAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-06-30T17:07:19.217Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
               "Title": "playerTableView.css",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\css\\playerTableView.css",
               "RelativeDocumentMoniker": "fantasydg\\wwwroot\\css\\playerTableView.css",
@@ -412,64 +566,35 @@
               "RelativeToolTip": "fantasydg\\wwwroot\\css\\playerTableView.css",
               "ViewState": "AgIAAHUAAAAAAAAAAAAAAIQAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-06-20T18:39:14.398Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-20T18:39:14.398Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "TournamentService.cs",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Services\\TournamentService.cs",
-              "RelativeDocumentMoniker": "fantasydg\\Services\\TournamentService.cs",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Services\\TournamentService.cs",
-              "RelativeToolTip": "fantasydg\\Services\\TournamentService.cs",
-              "ViewState": "AgIAAHEAAAAAAAAAAAAtwIoAAABcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-28T13:59:24.781Z",
-              "EditorCaption": ""
+              "DocumentIndex": 18,
+              "Title": "leaguePlayersView.js",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\leaguePlayersView.js",
+              "RelativeDocumentMoniker": "fantasydg\\wwwroot\\js\\leaguePlayersView.js",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\leaguePlayersView.js",
+              "RelativeToolTip": "fantasydg\\wwwroot\\js\\leaguePlayersView.js",
+              "ViewState": "AgIAACoAAAAAAAAAAADwvzsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-06-30T15:57:58.775Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "PlayersTable.cshtml",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Players\\PlayersTable.cshtml",
-              "RelativeDocumentMoniker": "fantasydg\\Views\\Players\\PlayersTable.cshtml",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Players\\PlayersTable.cshtml",
-              "RelativeToolTip": "fantasydg\\Views\\Players\\PlayersTable.cshtml",
-              "ViewState": "AgIAACEAAAAAAAAAAAAAADAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-20T19:37:28.001Z",
-              "EditorCaption": ""
+              "DocumentIndex": 16,
+              "Title": "leagueLeaderboardView.js",
+              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\leagueLeaderboardView.js",
+              "RelativeDocumentMoniker": "fantasydg\\wwwroot\\js\\leagueLeaderboardView.js",
+              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\leagueLeaderboardView.js",
+              "RelativeToolTip": "fantasydg\\wwwroot\\js\\leagueLeaderboardView.js",
+              "ViewState": "AgIAABEAAAAAAAAAAADgvxAAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-06-30T16:53:36.606Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "LeaguePlayersView.cshtml",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Players\\LeaguePlayersView.cshtml",
-              "RelativeDocumentMoniker": "fantasydg\\Views\\Players\\LeaguePlayersView.cshtml",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Players\\LeaguePlayersView.cshtml",
-              "RelativeToolTip": "fantasydg\\Views\\Players\\LeaguePlayersView.cshtml",
-              "ViewState": "AgIAABAAAAAAAAAAAAAQwCcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-17T19:14:38.435Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "TeamPlayersTable.cshtml",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Tournaments\\TeamPlayersTable.cshtml",
-              "RelativeDocumentMoniker": "fantasydg\\Views\\Tournaments\\TeamPlayersTable.cshtml",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Tournaments\\TeamPlayersTable.cshtml",
-              "RelativeToolTip": "fantasydg\\Views\\Tournaments\\TeamPlayersTable.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACYAAAAjAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-20T17:17:45.339Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 20,
               "Title": "Team.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\Team.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\Team.cs",
@@ -477,12 +602,11 @@
               "RelativeToolTip": "fantasydg\\Models\\Team.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-21T19:07:06.415Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-21T19:07:06.415Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 21,
               "Title": "Settings.cshtml",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Team\\Settings.cshtml",
               "RelativeDocumentMoniker": "fantasydg\\Views\\Team\\Settings.cshtml",
@@ -490,12 +614,11 @@
               "RelativeToolTip": "fantasydg\\Views\\Team\\Settings.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-26T22:33:58.548Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-26T22:33:58.548Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 22,
               "Title": "Settings.cshtml",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\League\\Settings.cshtml",
               "RelativeDocumentMoniker": "fantasydg\\Views\\League\\Settings.cshtml",
@@ -503,12 +626,11 @@
               "RelativeToolTip": "fantasydg\\Views\\League\\Settings.cshtml",
               "ViewState": "AgIAACEAAAAAAAAAAAAAADgAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-20T17:42:31.461Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-20T17:42:31.461Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 23,
               "Title": "League.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\League.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\League.cs",
@@ -516,12 +638,11 @@
               "RelativeToolTip": "fantasydg\\Models\\League.cs",
               "ViewState": "AgIAADIAAAAAAAAAAAA0wBIAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T19:03:47.381Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T19:03:47.381Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 24,
               "Title": "leagueLeaderboardView.css",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\css\\leagueLeaderboardView.css",
               "RelativeDocumentMoniker": "fantasydg\\wwwroot\\css\\leagueLeaderboardView.css",
@@ -529,24 +650,11 @@
               "RelativeToolTip": "fantasydg\\wwwroot\\css\\leagueLeaderboardView.css",
               "ViewState": "AgIAAHUAAAAAAAAAAAAAAIYAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-06-20T18:17:55.744Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-20T18:17:55.744Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "TeamTournamentResultsView.cshtml",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Tournaments\\TeamTournamentResultsView.cshtml",
-              "RelativeDocumentMoniker": "fantasydg\\Views\\Tournaments\\TeamTournamentResultsView.cshtml",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Tournaments\\TeamTournamentResultsView.cshtml",
-              "RelativeToolTip": "fantasydg\\Views\\Tournaments\\TeamTournamentResultsView.cshtml",
-              "ViewState": "AgIAABgAAAAAAAAAAAAkwEAAAAAaAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-17T18:02:24.557Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 25,
               "Title": "_TournamentPointsTable.cshtml",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Leaderboard\\_TournamentPointsTable.cshtml",
               "RelativeDocumentMoniker": "fantasydg\\Views\\Leaderboard\\_TournamentPointsTable.cshtml",
@@ -558,7 +666,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 26,
               "Title": "LeagueLeaderboardViewModel.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\ViewModels\\LeagueLeaderboardViewModel.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\ViewModels\\LeagueLeaderboardViewModel.cs",
@@ -570,7 +678,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 27,
               "Title": "DataService.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Services\\DataService.cs",
               "RelativeDocumentMoniker": "fantasydg\\Services\\DataService.cs",
@@ -582,7 +690,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 28,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\appsettings.json",
               "RelativeDocumentMoniker": "fantasydg\\appsettings.json",
@@ -594,7 +702,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 29,
               "Title": "iioww5l0..sql",
               "DocumentMoniker": "C:\\Users\\RyanS\\AppData\\Local\\Temp\\iioww5l0..sql",
               "RelativeDocumentMoniker": "..\\..\\..\\AppData\\Local\\Temp\\iioww5l0..sql",
@@ -605,19 +713,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "PlayerService.cs",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Services\\PlayerService.cs",
-              "RelativeDocumentMoniker": "fantasydg\\Services\\PlayerService.cs",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Services\\PlayerService.cs",
-              "RelativeToolTip": "fantasydg\\Services\\PlayerService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADIAAAAbAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-28T15:22:33.58Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 30,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Program.cs",
               "RelativeDocumentMoniker": "fantasydg\\Program.cs",
@@ -629,7 +725,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 31,
               "Title": "Tournament.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\Tournament.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\Tournament.cs",
@@ -641,7 +737,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 32,
               "Title": "Create.cshtml",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\League\\Create.cshtml",
               "RelativeDocumentMoniker": "fantasydg\\Views\\League\\Create.cshtml",
@@ -653,7 +749,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 33,
               "Title": "LeagueView.cshtml",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\League\\LeagueView.cshtml",
               "RelativeDocumentMoniker": "fantasydg\\Views\\League\\LeagueView.cshtml",
@@ -665,7 +761,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 34,
               "Title": "TeamView.cshtml",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Team\\TeamView.cshtml",
               "RelativeDocumentMoniker": "fantasydg\\Views\\Team\\TeamView.cshtml",
@@ -677,7 +773,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 35,
               "Title": "site.css",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\css\\site.css",
               "RelativeDocumentMoniker": "fantasydg\\wwwroot\\css\\site.css",
@@ -689,19 +785,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "fantasydg\\Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "fantasydg\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAAD4AAAAAAAAAAAAAAIUAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-20T00:59:05.52Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 36,
               "Title": "LeagueAvailablePlayersViewModel.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\ViewModels\\LeagueAvailablePlayersViewModel.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\ViewModels\\LeagueAvailablePlayersViewModel.cs",
@@ -713,31 +797,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
-              "Title": "PlayerTournament.cs",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\PlayerTournament.cs",
-              "RelativeDocumentMoniker": "fantasydg\\Models\\PlayerTournament.cs",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\PlayerTournament.cs",
-              "RelativeToolTip": "fantasydg\\Models\\PlayerTournament.cs",
-              "ViewState": "AgIAAB8AAAAAAAAAAAA1wDUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-18T23:38:04.021Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 31,
-              "Title": "Player.cs",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\Player.cs",
-              "RelativeDocumentMoniker": "fantasydg\\Models\\Player.cs",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\Player.cs",
-              "RelativeToolTip": "fantasydg\\Models\\Player.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAA5AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-21T04:07:52.398Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 37,
               "Title": "launchSettings.json",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "fantasydg\\Properties\\launchSettings.json",
@@ -749,7 +809,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 38,
               "Title": "AccountController.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Controllers\\AccountController.cs",
               "RelativeDocumentMoniker": "fantasydg\\Controllers\\AccountController.cs",
@@ -761,7 +821,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 39,
               "Title": "ExternalLogin.cshtml.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Areas\\Identity\\Pages\\Account\\ExternalLogin.cshtml.cs",
               "RelativeDocumentMoniker": "fantasydg\\Areas\\Identity\\Pages\\Account\\ExternalLogin.cshtml.cs",
@@ -773,7 +833,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 40,
               "Title": "ExternalLogin.cshtml",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Areas\\Identity\\Pages\\Account\\ExternalLogin.cshtml",
               "RelativeDocumentMoniker": "fantasydg\\Areas\\Identity\\Pages\\Account\\ExternalLogin.cshtml",
@@ -785,7 +845,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 41,
               "Title": "DatabaseRepository.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\DatabaseRepository\\DatabaseRepository.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\DatabaseRepository\\DatabaseRepository.cs",
@@ -797,7 +857,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 42,
               "Title": "NotificationBell.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\NotificationBell.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\NotificationBell.cs",
@@ -809,31 +869,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
-              "Title": "_LoginPartial.cshtml",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
-              "RelativeDocumentMoniker": "fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
-              "RelativeToolTip": "fantasydg\\Views\\Shared\\_LoginPartial.cshtml",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAWwBMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-27T17:10:13.223Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 39,
-              "Title": "TeamPlayer.cs",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\TeamPlayer.cs",
-              "RelativeDocumentMoniker": "fantasydg\\Models\\TeamPlayer.cs",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\TeamPlayer.cs",
-              "RelativeToolTip": "fantasydg\\Models\\TeamPlayer.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAaAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T05:02:15.102Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 43,
               "Title": "LeagueStandingsViewModel.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\ViewModels\\LeagueStandingsViewModel.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\ViewModels\\LeagueStandingsViewModel.cs",
@@ -845,7 +881,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 44,
               "Title": "reanmkqz..sql",
               "DocumentMoniker": "C:\\Users\\RyanS\\AppData\\Local\\Temp\\reanmkqz..sql",
               "RelativeDocumentMoniker": "..\\..\\..\\AppData\\Local\\Temp\\reanmkqz..sql",
@@ -856,19 +892,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
-              "Title": "site.js",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\site.js",
-              "RelativeDocumentMoniker": "fantasydg\\wwwroot\\js\\site.js",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\js\\site.js",
-              "RelativeToolTip": "fantasydg\\wwwroot\\js\\site.js",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-06-20T22:16:40.627Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 45,
               "Title": "tournamentInput.css",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\wwwroot\\css\\tournamentInput.css",
               "RelativeDocumentMoniker": "fantasydg\\wwwroot\\css\\tournamentInput.css",
@@ -880,7 +904,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 46,
               "Title": "TransferOwnership.cshtml",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Views\\League\\TransferOwnership.cshtml",
               "RelativeDocumentMoniker": "fantasydg\\Views\\League\\TransferOwnership.cshtml",
@@ -892,7 +916,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 47,
               "Title": "ApplicationUser.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\ApplicationUser.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\ApplicationUser.cs",
@@ -904,7 +928,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 48,
               "Title": "TeamViewModel.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\ViewModels\\TeamViewModel.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\ViewModels\\TeamViewModel.cs",
@@ -916,19 +940,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
-              "Title": "TeamPlayerTournament.cs",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\TeamPlayerTournament.cs",
-              "RelativeDocumentMoniker": "fantasydg\\Models\\TeamPlayerTournament.cs",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\TeamPlayerTournament.cs",
-              "RelativeToolTip": "fantasydg\\Models\\TeamPlayerTournament.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T16:57:22.064Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 49,
               "Title": "ErrorViewModel.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\ViewModels\\ErrorViewModel.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\ViewModels\\ErrorViewModel.cs",
@@ -940,7 +952,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 49,
+              "DocumentIndex": 50,
               "Title": "TournamentInputViewModel.cs",
               "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Models\\ViewModels\\TournamentInputViewModel.cs",
               "RelativeDocumentMoniker": "fantasydg\\Models\\ViewModels\\TournamentInputViewModel.cs",
@@ -949,18 +961,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-03T04:05:09.319Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 50,
-              "Title": "LeagueService.cs",
-              "DocumentMoniker": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Services\\LeagueService.cs",
-              "RelativeDocumentMoniker": "fantasydg\\Services\\LeagueService.cs",
-              "ToolTip": "C:\\Users\\RyanS\\source\\repos\\flickfantasydg\\fantasydg\\Services\\LeagueService.cs",
-              "RelativeToolTip": "fantasydg\\Services\\LeagueService.cs",
-              "ViewState": "AgIAACQAAAAAAAAAAAAowCsAAAA6AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-03T02:03:42.439Z"
             },
             {
               "$type": "Document",

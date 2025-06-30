@@ -22,21 +22,21 @@
                 <th>Bogey+</th>
                 <th>Double Bogey+</th>
                 <th>Fairway</th>
-                <th>C1 Reg</th>
-                <th>C2 Reg</th>
+                <th>C1 In-Reg</th>
+                <th>C2 In-Reg</th>
                 <th>Parked</th>
                 <th>Scramble</th>
                 <th>OB</th>
-                <th>C1x Putt</th>
-                <th>C2 Putt</th>
+                <th>C1x Putting</th>
+                <th>C2 Putting</th>
                 <th>Putt Distance</th>
                 <th>Long Throw-In</th>
                 <th>Avg. Putt Distance</th>
                 <th>Strokes Gained</th>
                 <th>SG Putting</th>
-                <th>SG Tee→Grn</th>
-                <th>SG C1x</th>
-                <th>SG C2</th>
+                <th>SG Tee→Green</th>
+                <th>SG C1x Putting</th>
+                <th>SG C2 Putting</th>
             </tr>
         </thead>
         <tbody>
@@ -46,12 +46,19 @@
 
                 <tr>
                     <td>
-                        <form method="post" asp-action="AddPlayer" asp-controller="Team" class="ajax-add-player-form">
-                            <input type="hidden" name="teamId" value="@teamId" />
-                            <input type="hidden" name="leagueId" value="@leagueId" />
-                            <input type="hidden" name="PDGANumber" value="@pt.PDGANumber" />
-                            <button type="submit" class="btn btn-sm btn-success">+</button>
-                        </form>
+                        @if (!((List<int>)ViewBag.AssignedPDGANumbers).Contains(pt.PDGANumber))
+                        {
+                            <form method="post" asp-action="AddPlayer" asp-controller="Team" class="ajax-add-player-form">
+                                <input type="hidden" name="teamId" value="@teamId" />
+                                <input type="hidden" name="leagueId" value="@leagueId" />
+                                <input type="hidden" name="PDGANumber" value="@pt.PDGANumber" />
+                                <button type="submit" class="btn btn-sm btn-success">+</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted"></span>
+                        }
                     </td>
                     <td>@pt.Player.Name</td>
                     <td>@pt.FantasyPoints.ToString("0.0")</td>
