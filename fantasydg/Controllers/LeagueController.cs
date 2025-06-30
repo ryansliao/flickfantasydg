@@ -293,11 +293,6 @@ namespace fantasydg.Controllers
                 row.TotalPoints = row.PointsByTournament.Values.Sum();
                 row.TotalWins = row.WinsByTournament.Values.Sum();
                 model.Teams.Add(row);
-
-                foreach (var kv in row.PointsByTournament)
-                {
-                    Console.WriteLine($"[DEBUG] Team: {row.TeamName}, TournamentId: {kv.Key}, Points: {kv.Value}");
-                }
             }
 
             ViewBag.NoFantasyPoints = !model.Teams.Any(tr => tr.PointsByTournament.Any());

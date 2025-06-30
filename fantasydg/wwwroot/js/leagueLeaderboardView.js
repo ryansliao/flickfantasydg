@@ -21,8 +21,12 @@
             $('#loadingSpinner').hide();
             $('#tablePointsWrapper').removeClass('d-none');
 
-            const filter = $('#playersPointsTable_filter').detach();
-            $('#searchContainer').empty().append(filter).show();
+            const $filter = $('#playersPointsTable_filter');
+            const $target = $('#searchContainer');
+
+            if ($filter.length && $target.length && $target.children().length === 0) {
+                $target.append($filter).show();
+            }
 
             setTimeout(() => {
                 tablePoints.columns.adjust().draw(false);
@@ -52,8 +56,12 @@
             $('#loadingSpinner').hide();
             $('#tableWinsWrapper').removeClass('d-none');
 
-            const filter = $('#playersWinsTable_filter').detach();
-            $('#searchContainer').empty().append(filter).show();
+            const $filter = $('#playersWinsTable_filter').detach();
+            const $target = $('#searchContainer');
+
+            if ($filter.length && $target.length && $target.children().length === 0) {
+                $target.append($filter).show();
+            }
 
             setTimeout(() => {
                 tableWins.columns.adjust().draw(false);

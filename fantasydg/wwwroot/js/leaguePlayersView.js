@@ -36,8 +36,12 @@ function initializePlayersTable() {
             $('#loadingSpinner').hide();
             $('#tableWrapper').removeClass('d-none');
 
-            const filter = $('#playersTable_filter').detach();
-            $('#searchContainer').html(filter).show();
+            const $filter = $('#playersTable_filter').detach();
+            const $target = $('#searchContainer');
+
+            if ($filter.length && $target.length && $target.children().length === 0) {
+                $target.append($filter).show();
+            }
 
             if (currentSearchTerm) {
                 // ✅ Apply the filter first
