@@ -23,6 +23,8 @@
     </script>
 }
 
+<div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer" style="z-index: 1100;"></div>
+
 <div class="players-page-wrapper" style="display: none" id="resultsViewWrapper">
     <div id="loadingSpinner" class="text-center">
         <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
@@ -72,9 +74,7 @@
             </div>
 
             <div id="teamTournamentResultsContainer">
-                <div class="table-responsive">
-                    @await Html.PartialAsync("~/Views/Tournaments/TeamPlayersTable.cshtml", Model.Players)
-                </div>
+                @await Html.PartialAsync("~/Views/Tournaments/TeamPlayersTable.cshtml", Model.Players)
             </div>
         </div>
     </div>

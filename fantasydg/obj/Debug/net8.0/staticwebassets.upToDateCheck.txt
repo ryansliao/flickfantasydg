@@ -5,7 +5,6 @@ wwwroot\css\teamView.css
 wwwroot\css\tournamentInput.css
 wwwroot\favicon.ico
 wwwroot\js\leagueLeaderboardView.js
-wwwroot\js\leaguePlayersView.js
 wwwroot\js\leagueSettingsModal.js
 wwwroot\js\site.js
 wwwroot\js\teamTournamentView.js
@@ -67,3 +66,4 @@ wwwroot\lib\jquery\dist\jquery.js
 wwwroot\lib\jquery\dist\jquery.min.js
 wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\LICENSE.txt
+wwwroot\js\leaguePlayersView.js

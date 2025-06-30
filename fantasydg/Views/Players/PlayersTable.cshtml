@@ -7,84 +7,86 @@
     var teamId = (int)ViewBag.TeamId;
 }
 
-<div id="tableWrapper" class="d-none table-scroll-container">
-    <div id="playerAddAlert" class="d-none"></div>
-    <div class="table-scroll-top"></div>
-    <table id="playersTable" class="stats-table stripe">
-        <thead>
-            <tr>
-                <th>Add</th>
-                <th>Player</th>
-                <th>Points</th>
-                <th>Place</th>
-                <th>Birdie-</th>
-                <th>Eagle-</th>
-                <th>Bogey+</th>
-                <th>Double Bogey+</th>
-                <th>Fairway</th>
-                <th>C1 In-Reg</th>
-                <th>C2 In-Reg</th>
-                <th>Parked</th>
-                <th>Scramble</th>
-                <th>OB</th>
-                <th>C1x Putting</th>
-                <th>C2 Putting</th>
-                <th>Putt Distance</th>
-                <th>Long Throw-In</th>
-                <th>Avg. Putt Distance</th>
-                <th>Strokes Gained</th>
-                <th>SG Putting</th>
-                <th>SG Tee→Green</th>
-                <th>SG C1x Putting</th>
-                <th>SG C2 Putting</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var pt in Model.OrderBy(pt => pt.Place))
-            {
-                var points = pt.FantasyPoints;
-
+<div class="table-responsive">
+    <div id="tableWrapper" class="d-none table-scroll-container">
+        <div id="playerAddAlert" class="d-none"></div>
+        <div class="table-scroll-top"></div>
+        <table id="playersTable" class="stats-table stripe">
+            <thead>
                 <tr>
-                    <td>
-                        @if (!((List<int>)ViewBag.AssignedPDGANumbers).Contains(pt.PDGANumber))
-                        {
-                            <form method="post" asp-action="AddPlayer" asp-controller="Team" class="ajax-add-player-form">
-                                <input type="hidden" name="teamId" value="@teamId" />
-                                <input type="hidden" name="leagueId" value="@leagueId" />
-                                <input type="hidden" name="PDGANumber" value="@pt.PDGANumber" />
-                                <button type="submit" class="btn btn-sm btn-success">+</button>
-                            </form>
-                        }
-                        else
-                        {
-                            <span class="text-muted"></span>
-                        }
-                    </td>
-                    <td>@pt.Player.Name</td>
-                    <td>@pt.FantasyPoints.ToString("0.0")</td>
-                    <td>@pt.Place</td>
-                    <td>@pt.BirdieMinus%</td>
-                    <td>@pt.EagleMinus%</td>
-                    <td>@pt.BogeyPlus%</td>
-                    <td>@pt.DoubleBogeyPlus%</td>
-                    <td>@pt.Fairway%</td>
-                    <td>@pt.C1InReg%</td>
-                    <td>@pt.C2InReg%</td>
-                    <td>@pt.Parked%</td>
-                    <td>@pt.Scramble%</td>
-                    <td>@pt.ObRate%</td>
-                    <td>@pt.C1xPutting%</td>
-                    <td>@pt.C2Putting%</td>
-                    <td>@pt.TotalPuttDistance</td>
-                    <td>@pt.LongThrowIn</td>
-                    <td>@pt.AvgPuttDistance</td>
-                    <td>@pt.StrokesGainedTotal</td>
-                    <td>@pt.StrokesGainedPutting</td>
-                    <td>@pt.StrokesGainedTeeToGreen</td>
-                    <td>@pt.StrokesGainedC1xPutting</td>
-                    <td>@pt.StrokesGainedC2Putting</td>
+                    <th>Add</th>
+                    <th>Player</th>
+                    <th>Points</th>
+                    <th>Place</th>
+                    <th>Birdie-</th>
+                    <th>Eagle-</th>
+                    <th>Bogey+</th>
+                    <th>Double Bogey+</th>
+                    <th>Fairway</th>
+                    <th>C1 In-Reg</th>
+                    <th>C2 In-Reg</th>
+                    <th>Parked</th>
+                    <th>Scramble</th>
+                    <th>OB</th>
+                    <th>C1x Putting</th>
+                    <th>C2 Putting</th>
+                    <th>Putt Distance</th>
+                    <th>Long Throw-In</th>
+                    <th>Avg. Putt Distance</th>
+                    <th>Strokes Gained</th>
+                    <th>SG Putting</th>
+                    <th>SG Tee→Green</th>
+                    <th>SG C1x Putting</th>
+                    <th>SG C2 Putting</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var pt in Model.OrderBy(pt => pt.Place))
+                {
+                    var points = pt.FantasyPoints;
+
+                    <tr>
+                        <td>
+                            @if (!((List<int>)ViewBag.AssignedPDGANumbers).Contains(pt.PDGANumber))
+                            {
+                                <form method="post" asp-action="AddPlayer" asp-controller="Team" class="ajax-add-player-form">
+                                    <input type="hidden" name="teamId" value="@teamId" />
+                                    <input type="hidden" name="leagueId" value="@leagueId" />
+                                    <input type="hidden" name="PDGANumber" value="@pt.PDGANumber" />
+                                    <button type="submit" class="btn btn-sm btn-success">+</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted"></span>
+                            }
+                        </td>
+                        <td>@pt.Player.Name</td>
+                        <td>@pt.FantasyPoints.ToString("0.0")</td>
+                        <td>@pt.Place</td>
+                        <td>@pt.BirdieMinus%</td>
+                        <td>@pt.EagleMinus%</td>
+                        <td>@pt.BogeyPlus%</td>
+                        <td>@pt.DoubleBogeyPlus%</td>
+                        <td>@pt.Fairway%</td>
+                        <td>@pt.C1InReg%</td>
+                        <td>@pt.C2InReg%</td>
+                        <td>@pt.Parked%</td>
+                        <td>@pt.Scramble%</td>
+                        <td>@pt.ObRate%</td>
+                        <td>@pt.C1xPutting%</td>
+                        <td>@pt.C2Putting%</td>
+                        <td>@pt.TotalPuttDistance</td>
+                        <td>@pt.LongThrowIn</td>
+                        <td>@pt.AvgPuttDistance</td>
+                        <td>@pt.StrokesGainedTotal</td>
+                        <td>@pt.StrokesGainedPutting</td>
+                        <td>@pt.StrokesGainedTeeToGreen</td>
+                        <td>@pt.StrokesGainedC1xPutting</td>
+                        <td>@pt.StrokesGainedC2Putting</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>

@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("fantasydg")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5d8eeeb1d21aca2eadf4e61265d01b95a0e1bfea")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eec48a7e0ffd314ba3167a1a1708aa7fcfe7c833")]
 [assembly: System.Reflection.AssemblyProductAttribute("fantasydg")]
 [assembly: System.Reflection.AssemblyTitleAttribute("fantasydg")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

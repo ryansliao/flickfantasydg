@@ -1,7 +1,8 @@
 ﻿let playersDataTable = null;
-let currentSearchTerm = '';
 
 function initializePlayersTable() {
+    $('#tableWrapper').addClass('d-none');
+
     playersDataTable = $('#playersTable').DataTable({
         scrollX: true,
         scrollY: 'calc(70vh)',
@@ -35,26 +36,11 @@ function initializePlayersTable() {
         initComplete: function () {
             $('#loadingSpinner').hide();
             $('#tableWrapper').removeClass('d-none');
+            $('#searchContainer').empty();
 
             const $filter = $('#playersTable_filter').detach();
-            const $target = $('#searchContainer');
-
-            if ($filter.length && $target.length && $target.children().length === 0) {
-                $target.append($filter).show();
-            }
-
-            if (currentSearchTerm) {
-                // Apply the filter first
-                playersDataTable.search(currentSearchTerm).draw(false);
-
-                // Then manually update input box (for visual consistency)
-                setTimeout(() => {
-                    const searchInput = document.querySelector('#playersTable_filter input[type="search"]');
-                    if (searchInput) {
-                        searchInput.value = currentSearchTerm;
-                        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-                    }
-                }, 0);
+            if ($filter.length) {
+                $('#searchContainer').append($filter).show();
             }
 
             $('#playersTable thead th, #playersTable tbody td').each(function () {
@@ -68,41 +54,50 @@ function initializePlayersTable() {
 
             setTimeout(() => {
                 playersDataTable.columns.adjust();
+                document.getElementById("playerTableContainer")?.classList.remove("d-none");
             }, 10);
         }
     });
 }
 
 async function fetchPlayersViaAjax() {
-    const tournamentId = document.getElementById("tournamentDropdown").value;
-    const division = document.getElementById("divisionDropdown").value;
-    const leagueId = document.getElementById("playerFilterControls").dataset.leagueId;
+    console.log("fetchPlayersViaAjax START");
 
-    const url = `/League/Players?leagueId=${leagueId}&tournamentId=${tournamentId}&division=${encodeURIComponent(division)}`;
-
-    // Save current search term
-    if ($.fn.DataTable.isDataTable("#playersTable")) {
-        currentSearchTerm = $('#playersTable').DataTable().search();
-        $('#playersTable').DataTable().destroy();
-        $('#playersTable').remove();
+    const container = document.getElementById("playerTableContainer");
+    if (!container) {
+        console.error("Missing #playerTableContainer");
+        return;
     }
 
-    $('#searchContainer').empty();
+    // Hide container BEFORE replacing HTML
+    container.classList.add("d-none");
+
+    const leagueId = container.dataset.leagueId;
+    if (!leagueId) {
+        console.warn("Missing leagueId for table reload");
+        return;
+    }
+
+    const url = `/League/Players?leagueId=${leagueId}`;
+
+    if ($.fn.DataTable.isDataTable("#playersTable")) {
+        $('#playersTable').DataTable().destroy();
+    }
 
     const response = await fetch(url, {
-        headers: {
-            "X-Requested-With": "XMLHttpRequest"
-        }
+        headers: { "X-Requested-With": "XMLHttpRequest" }
     });
 
     const html = await response.text();
-    document.getElementById("playerTableContainer").innerHTML = html;
+    container.innerHTML = html;
 
     setTimeout(() => {
-        initializePlayersTable();
+        initializePlayersTable(); // will show container when ready
         rebindAddButtons();
     }, 0);
 }
+
+
 
 function rebindAddButtons() {
     document.querySelectorAll(".ajax-add-player-form").forEach(form => {
@@ -125,7 +120,11 @@ function rebindAddButtons() {
 
                 if (data.success) {
                     showToast(data.message, "success");
-                    await fetchPlayersViaAjax();
+                    try {
+                        await fetchPlayersViaAjax();
+                    } catch (err) {
+                        console.error("fetchPlayersViaAjax failed:", err);
+                    }
                 } else {
                     showToast(data.message, "danger");
                 }
