@@ -109,6 +109,7 @@ namespace fantasydg.Controllers
             ViewBag.LeagueName = league.Name;
             ViewBag.LeagueId = league.LeagueId;
             ViewBag.Standings = await GetStandings(id);
+            ViewBag.ScoringMode = league.LeagueScoringMode;
 
             return View("LeagueView", league);
         }
@@ -194,7 +195,6 @@ namespace fantasydg.Controllers
                 .Where(t => (league.IncludeMPO && t.Division == "MPO") || (league.IncludeFPO && t.Division == "FPO"))
                 .ToListAsync();
 
-            // Get all league-specific weights
             var leagueWeights = await _db.LeagueTournaments
                 .Where(lt => lt.LeagueId == leagueId)
                 .ToDictionaryAsync(
@@ -202,26 +202,48 @@ namespace fantasydg.Controllers
                     lt => lt.Weight
                 );
 
+            var teamScores = new Dictionary<int, double>();
+            var teamWins = new Dictionary<int, int>();
+
             foreach (var team in league.Teams)
             {
-                team.Points = CalculateTeamPoints(league, team, tournaments, leagueWeights);
+                double totalPoints = 0;
+                int totalWins = 0;
+
+                foreach (var tournament in tournaments)
+                {
+                    leagueWeights.TryGetValue((tournament.Id, tournament.Division), out double weight);
+                    if (weight == 0) weight = 1;
+
+                    double score = GetTeamScoreForTournament(league, team, tournament);
+                    double wins = GetWinScoreForTeam(league, team, tournament);
+
+                    totalPoints += score * weight;
+                    totalWins += (int)wins;
+                }
+
+                teamScores[team.TeamId] = totalPoints;
+                teamWins[team.TeamId] = totalWins;
+
+                team.Points = totalPoints;
             }
 
             await _db.SaveChangesAsync();
 
-            var results = league.Teams
-                .OrderByDescending(t => t.Points)
-                .Select((t, index) => new LeagueStandingsViewModel
-                {
-                    Placement = index + 1,
-                    MemberName = t.Owner?.UserName ?? "Unknown",
-                    TeamName = t.Name,
-                    FantasyPoints = t.Points
-                })
-                .ToList();
+            var sortedTeams = league.LeagueScoringMode == League.ScoringMode.WinsPerTournament
+                ? league.Teams.OrderByDescending(t => teamWins[t.TeamId])
+                : league.Teams.OrderByDescending(t => teamScores[t.TeamId]);
 
-            return results;
+            return sortedTeams.Select((team, index) => new LeagueStandingsViewModel
+            {
+                Placement = index + 1,
+                MemberName = team.Owner?.UserName ?? "Unknown",
+                TeamName = team.Name,
+                FantasyPoints = teamScores[team.TeamId],
+                Wins = teamWins[team.TeamId]
+            }).ToList();
         }
+
 
         // Leaderboard View
         [HttpGet]

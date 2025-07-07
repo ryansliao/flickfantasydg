@@ -28,13 +28,22 @@
 
             @if (ViewBag.Standings != null)
             {
-                <table class="table table-striped mt-2" style="width: 50%">
+                var scoringMode = (League.ScoringMode)ViewBag.ScoringMode;
+
+                <table class="table table-striped mt-2" style="width: 60%">
                     <thead>
                         <tr>
                             <th>Placement</th>
                             <th>Member</th>
                             <th>Team</th>
-                            <th>Points</th>
+                            @if (scoringMode == League.ScoringMode.TotalPoints)
+                            {
+                                <th>Points</th>
+                            }
+                            else if (scoringMode == League.ScoringMode.WinsPerTournament)
+                            {
+                                <th>Wins</th>
+                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -44,7 +53,14 @@
                                 <td>@s.Placement</td>
                                 <td>@s.MemberName</td>
                                 <td>@s.TeamName</td>
-                                <td>@s.FantasyPoints.ToString("F2")</td>
+                                @if (scoringMode == League.ScoringMode.TotalPoints)
+                                {
+                                    <td>@s.FantasyPoints.ToString("F2")</td>
+                                }
+                                else if (scoringMode == League.ScoringMode.WinsPerTournament)
+                                {
+                                    <td>@s.Wins</td>
+                                }
                             </tr>
                         }
                     </tbody>
