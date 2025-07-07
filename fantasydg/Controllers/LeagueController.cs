@@ -1,12 +1,14 @@
 ﻿using fantasydg.Data;
 using fantasydg.Models;
-using fantasydg.Models.ViewModels;
 using fantasydg.Models.Repository;
+using fantasydg.Models.ViewModels;
 using fantasydg.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using NuGet.Protocol.Core.Types;
+using System.Reflection;
 using System.Security.Claims;
 
 namespace fantasydg.Controllers
@@ -58,9 +60,17 @@ namespace fantasydg.Controllers
 
             ModelState.Remove(nameof(league.OwnerId)); // fix lingering error
 
+            foreach (var kvp in ModelState)
+            {
+                foreach (var error in kvp.Value.Errors)
+                {
+                    Console.WriteLine($"Model error in '{kvp.Key}': {error.ErrorMessage}");
+                }
+            }
+
             if (!ModelState.IsValid)
             {
-                return View("LeagueView", league);
+                return View("Create", league);
             }
 
             // First save the league
@@ -344,13 +354,13 @@ namespace fantasydg.Controllers
                 .Select(t => (int?)t.TeamId)
                 .FirstOrDefaultAsync() ?? 0;
 
-            // Get all assigned players in league
+            // Get all assigned PDGA numbers in the league
             var assignedPDGAs = await _db.TeamPlayers
                 .Where(tp => tp.LeagueId == leagueId)
                 .Select(tp => tp.PDGANumber)
                 .ToListAsync();
 
-
+            // Get all rostered players for selected tournament and division
             var allRosteredPlayers = await _db.TeamPlayerTournaments
                 .Where(tpt =>
                     tpt.TournamentId == selectedTournament.Id &&
@@ -361,42 +371,16 @@ namespace fantasydg.Controllers
                     .ThenInclude(p => p.PlayerTournaments)
                 .ToListAsync();
 
-            // Then convert to PlayerTournaments (if needed by view)
-            var playerTournamentList = allRosteredPlayers.Select(tpt =>
-            {
-                var ptMatch = tpt.Player?.PlayerTournaments
-                    ?.FirstOrDefault(pt => pt.TournamentId == tpt.TournamentId);
+            // Sort players
+            var playerTeamMap = await _db.TeamPlayers
+                .Where(tp => tp.LeagueId == leagueId)
+                .ToDictionaryAsync(tp => tp.PDGANumber, tp => tp.Team.Name);
 
-                return new PlayerTournament
-                {
-                    PDGANumber = tpt.PDGANumber,
-                    Player = tpt.Player,
-                    TournamentId = tpt.TournamentId,
-                    Division = tpt.Division,
-                    Place = ptMatch?.Place ?? -1,
-                    TotalToPar = ptMatch?.TotalToPar ?? 999,
-                    Fairway = ptMatch?.Fairway ?? -1,
-                    C1InReg = ptMatch?.C1InReg ?? -1,
-                    C2InReg = ptMatch?.C2InReg ?? -1,
-                    Scramble = ptMatch?.Scramble ?? -1,
-                    C1Putting = ptMatch?.C1Putting ?? -1,
-                    C1xPutting = ptMatch?.C1xPutting ?? -1,
-                    C2Putting = ptMatch?.C2Putting ?? -1,
-                    ObRate = ptMatch?.ObRate ?? -1,
-                    BirdieMinus = ptMatch?.BirdieMinus ?? -1,
-                    Par = ptMatch?.Par ?? -1,
-                    BogeyPlus = ptMatch?.BogeyPlus ?? -1,
-                    DoubleBogeyPlus = ptMatch?.DoubleBogeyPlus ?? -1,
-                    TotalPuttDistance = ptMatch?.TotalPuttDistance ?? -1,
-                    LongThrowIn = ptMatch?.LongThrowIn ?? -1,
-                    AvgPuttDistance = ptMatch?.AvgPuttDistance ?? -1,
-                    StrokesGainedTotal = ptMatch?.StrokesGainedTotal ?? -1,
-                    StrokesGainedPutting = ptMatch?.StrokesGainedPutting ?? -1,
-                    StrokesGainedTeeToGreen = ptMatch?.StrokesGainedTeeToGreen ?? -1,
-                    StrokesGainedC1xPutting = ptMatch?.StrokesGainedC1xPutting ?? -1,
-                    StrokesGainedC2Putting = ptMatch?.StrokesGainedC2Putting ?? -1
-                };
-            }).ToList();
+            allRosteredPlayers = allRosteredPlayers
+                .OrderBy(tpt => playerTeamMap.TryGetValue(tpt.PDGANumber, out var teamName) ? teamName : "")
+                .ThenBy(tpt => tpt.Status == "Starter" ? 0 : (tpt.Status == "Bench" ? 1 : 2))
+                .ThenBy(tpt => tpt.Player?.PlayerTournaments?.FirstOrDefault(pt => pt.TournamentId == tpt.TournamentId)?.Place ?? int.MaxValue)
+                .ToList();
 
             // Ensure fantasy points are up to date
             await _leagueService.UpdateFantasyPointsForLeagueAsync(leagueId);
@@ -406,40 +390,20 @@ namespace fantasydg.Controllers
             var model = new LeagueTournamentPlayersViewModel
             {
                 League = league,
-                Players = playerTournamentList,
+                TeamPlayerTournaments = allRosteredPlayers,
                 Tournament = selectedTournament
             };
 
-            var playerTeamMap = await _db.TeamPlayers
-                .Where(tp => tp.LeagueId == leagueId)
-                .ToDictionaryAsync(tp => tp.PDGANumber, tp => tp.Team.Name);
-
-            var statusMap = allRosteredPlayers.ToDictionary(
-                tpt => (tpt.TeamId, tpt.PDGANumber, tpt.TournamentId),
-                tpt => tpt.Status
-            );
-            
             // ViewBag values
             ViewBag.LeagueId = league.LeagueId;
             ViewBag.LeagueName = league.Name;
-            ViewBag.Divisions = divisions;
             ViewBag.TeamId = teamId;
             ViewBag.SelectedDivision = division;
             ViewBag.FantasyMap = fantasyMap;
             ViewBag.PlayerTeamMap = playerTeamMap;
-            ViewBag.StatusMap = statusMap;
-
-            playerTournamentList = playerTournamentList
-                .OrderBy(pt =>
-                    playerTeamMap.TryGetValue(pt.PDGANumber, out var teamName) ? teamName : "")
-                .ThenBy(pt =>
-                    statusMap.TryGetValue((teamId, pt.PDGANumber, pt.TournamentId), out var status)
-                        ? (status == "Starter" ? 0 : 1)
-                        : 2)
-                .ToList();
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                return PartialView("~/Views/Tournaments/TeamPlayersTable.cshtml", model.Players);
+                return PartialView("~/Views/Tournaments/TeamPlayersTable.cshtml", model.TeamPlayerTournaments);
 
             return View("~/Views/Tournaments/TeamTournamentResultsView.cshtml", model);
         }
@@ -576,6 +540,49 @@ namespace fantasydg.Controllers
             ViewBag.LeagueName = league.Name;
 
             return View(league);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateActiveTournaments(int id)
+        {
+            var nowPT = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
+                TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
+
+            var db = HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
+            var dataService = HttpContext.RequestServices.GetRequiredService<DataService>();
+
+            var service = new TournamentService(HttpContext.RequestServices, NullLogger<TournamentService>.Instance);
+            var method = typeof(TournamentService).GetMethod("UpdateActiveTournamentsAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            if (method != null)
+                await (Task)method.Invoke(service, new object[] { nowPT, db, dataService })!;
+
+            TempData["ActiveTournamentsUpdated"] = "✅ All active tournaments were updated successfully.";
+            return RedirectToAction("Settings", new { id });
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DiscoverNewTournaments(int id)
+        {
+            var nowPT = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
+                TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
+
+            var db = HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
+            var dataService = HttpContext.RequestServices.GetRequiredService<DataService>();
+            var httpClient = HttpContext.RequestServices.GetRequiredService<HttpClient>();
+
+            var service = new TournamentService(HttpContext.RequestServices, NullLogger<TournamentService>.Instance);
+            var method = typeof(TournamentService).GetMethod("DiscoverNewTournamentsAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            if (method != null)
+                await (Task)method.Invoke(service, new object[] { nowPT, db, dataService, httpClient })!;
+
+            TempData["NewTournamentsDiscovered"] = "🧭 New Elite Series and Major tournaments discovered and added!";
+            return RedirectToAction("Settings", new { id });
         }
 
         // Change included divisions in league settings

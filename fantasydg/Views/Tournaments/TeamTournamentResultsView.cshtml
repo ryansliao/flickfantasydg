@@ -2,7 +2,7 @@
 @model LeagueTournamentPlayersViewModel
 
 @{
-    ViewBag.Title = "Tournament Results";
+    ViewBag.Title = $"{Model.League.Name} - {Model.Tournament.Name} Results";
 }
 
 @section Styles {
@@ -74,7 +74,7 @@
             </div>
 
             <div id="teamTournamentResultsContainer">
-                @await Html.PartialAsync("~/Views/Tournaments/TeamPlayersTable.cshtml", Model.Players)
+                @await Html.PartialAsync("~/Views/Tournaments/TeamPlayersTable.cshtml", Model.TeamPlayerTournaments)
             </div>
         </div>
     </div>

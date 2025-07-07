@@ -9,6 +9,12 @@
     if (TempData["TournamentInputSuccess"] != null)
         toastMessages.Add(new { text = TempData["TournamentInputSuccess"], type = "success" });
 
+    if (TempData["ActiveTournamentsUpdated"] != null)
+        toastMessages.Add(new { text = TempData["ActiveTournamentsUpdated"], type = "success" });
+
+    if (TempData["NewTournamentsDiscovered"] != null)
+        toastMessages.Add(new { text = TempData["NewTournamentsDiscovered"], type = "success" });
+
     if (TempData["RosterSettingsSaved"] != null)
         toastMessages.Add(new { text = TempData["RosterSettingsSaved"], type = "success" });
 
@@ -35,10 +41,6 @@
 
     var toastJson = System.Text.Json.JsonSerializer.Serialize(toastMessages);
 }
-
-<script id="server-toast-data" type="application/json">
-    @Html.Raw(toastJson)
-</script>
 
 <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer" style="z-index: 1100;"></div>
 
@@ -78,6 +80,18 @@
                     </form>
                 </div>
             </div>
+
+            <form asp-action="UpdateActiveTournaments" asp-controller="League" asp-route-id="@Model.LeagueId"
+                  method="post" data-no-ajax style="display:inline; margin-left: 10px;">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-warning">🔄 Update Active Tournaments</button>
+            </form>
+
+            <form asp-action="DiscoverNewTournaments" asp-controller="League" asp-route-id="@Model.LeagueId"
+                  method="post" data-no-ajax style="display:inline; margin-left: 10px;">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-info">🧭 Discover New Tournaments</button>
+            </form>
 
             <hr style="width: 100%; margin: 0.5rem 0; border-top: 2px solid #444;" />
 
@@ -298,6 +312,9 @@
 </div>
 
 @section Scripts {
+    <script id="server-toast-data" type="application/json">
+        @Html.Raw(toastJson)
+    </script>
     <script src="~/js/leagueSettingsModal.js"></script>
 }
 

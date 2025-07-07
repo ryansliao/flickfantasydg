@@ -95,10 +95,10 @@ namespace fantasydg.Controllers
 
             if (selectedTeam == null) return NotFound();
 
-            ViewBag.LeagueName = mainTeam.League?.Name;
-            ViewBag.LeagueId = mainTeam.LeagueId;
-            ViewBag.TeamId = teamId;
-            ViewBag.SelectedTeamId = selectedTeamId;
+            ViewBag.LeagueName = selectedTeam.League?.Name;
+            ViewBag.LeagueId = selectedTeam.LeagueId;
+            ViewBag.TeamId = mainTeam?.TeamId;
+            ViewBag.SelectedTeamId = selectedTeam.TeamId;
             ViewBag.OtherTeams = allTeams;
 
             var allTournaments = await _repository.GetAllTournamentsAsync();
@@ -215,6 +215,8 @@ namespace fantasydg.Controllers
             if (team == null)
                 return Unauthorized();
 
+            ViewBag.LeagueName =team.League?.Name;
+            ViewBag.LeagueId = team.LeagueId;
             ViewBag.TeamId = team.TeamId;
             ViewBag.TeamName = team.Name;
             return View("Settings", team);

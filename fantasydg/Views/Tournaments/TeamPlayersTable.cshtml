@@ -1,14 +1,8 @@
-﻿@model IEnumerable<fantasydg.Models.PlayerTournament>
+﻿@model IEnumerable<fantasydg.Models.TeamPlayerTournament>
 
 @{
-    var fantasyMap = ViewBag.FantasyMap as Dictionary<(int, int, string), float> ?? new();
-    var leagueName = ViewBag.LeagueName as string;
-    var leagueId = (int)ViewBag.LeagueId;
-    var teamId = (int)ViewBag.TeamId;
-    var division = (string)ViewBag.SelectedDivision;
-    var tournamentId = (int)ViewBag.SelectedTournamentId;
-    var teamMap = ViewBag.PlayerTeamMap as Dictionary<int, string>;
-    var statusMap = ViewBag.StatusMap as Dictionary<(int, int, int), string>;
+    var fantasyMap = ViewBag.FantasyMap as Dictionary<(int PDGANumber, int TournamentId, string Division), float>;
+    var playerTeamMap = ViewBag.PlayerTeamMap as Dictionary<int, string>;
 }
 
 <div class="table-responsive">
@@ -46,32 +40,22 @@
                 </tr>
             </thead>
             <tbody>
-                @{
-                    var sortedPlayers = Model
-                    .OrderBy(pt => teamMap.TryGetValue(pt.PDGANumber, out var teamName) ? teamName : "")
-                    .ThenBy(pt =>
-                    statusMap.TryGetValue((teamId, pt.PDGANumber, pt.TournamentId), out var s)
-                    ? (s == "Starter" ? 0 : 1)
-                    : 2)
-                    .ThenBy(pt => pt.Place)
-                    .ToList();
-                }
-
-                @foreach (var pt in sortedPlayers)
+                @foreach (var tpt in Model)
                 {
-                    var key = (pt.PDGANumber, pt.TournamentId, pt.Division);
-                    var status = statusMap.TryGetValue((teamId, pt.PDGANumber, pt.TournamentId), out var s) ? s : "Unknown";
-                    float points = fantasyMap.ContainsKey(key) ? fantasyMap[key] : 0f;
+                    var pt = tpt.Player?.PlayerTournaments?.FirstOrDefault(p => p.TournamentId == tpt.TournamentId);
+                    var fantasyKey = (tpt.PDGANumber, tpt.TournamentId, tpt.Division);
+                    var fantasyPoints = fantasyMap.ContainsKey(fantasyKey) ? fantasyMap[fantasyKey] : 0f;
+                    var teamName = playerTeamMap.TryGetValue(tpt.PDGANumber, out var name) ? name : "Unknown";
 
-                    <tr class="@(status == "Bench" ? "table-secondary" : "")">
+                    <tr class="@(tpt.Status == "Bench" ? "table-secondary" : "")">
                         <td>@(ViewBag.PlayerTeamMap[pt.PDGANumber])</td>
                         <td>@pt.Player.Name</td>
                         <td>
-                            @if (status == "Bench")
+                            @if (tpt.Status == "Bench")
                             {
                                 <span class="badge bg-danger">Bench</span>
                             }
-                            else if (status == "Starter")
+                            else if (tpt.Status == "Starter")
                             {
                                 <span class="badge bg-success">Starter</span>
                             }
@@ -80,7 +64,7 @@
                                 <span class="badge bg-secondary">Unknown</span>
                             }
                         </td>
-                        <td>@points.ToString("0.0")</td>
+                        <td>@fantasyPoints.ToString("0.0")</td>
                         <td>@pt.Place</td>
                         <td>@pt.TotalToPar</td>
                         <td>@pt.BirdieMinus%</td>

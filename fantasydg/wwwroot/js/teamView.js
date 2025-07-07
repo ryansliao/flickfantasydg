@@ -191,15 +191,6 @@
     }
 
     window.showToast = showToast;
-
-    document.querySelectorAll('.dropdown-toggle').forEach(function (toggle) {
-        const dropdown = new bootstrap.Dropdown(toggle);
-        toggle.addEventListener('click', function (e) {
-            e.stopImmediatePropagation(); // force override
-            e.preventDefault(); // prevent other handlers from stealing it
-            dropdown.toggle();
-        });
-    });
 });
 
 function showToast(message, type = "success") {
