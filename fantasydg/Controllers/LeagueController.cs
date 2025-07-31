@@ -203,12 +203,12 @@ namespace fantasydg.Controllers
                 );
 
             var teamScores = new Dictionary<int, double>();
-            var teamWins = new Dictionary<int, int>();
+            var teamWins = new Dictionary<int, double>();
 
             foreach (var team in league.Teams)
             {
                 double totalPoints = 0;
-                int totalWins = 0;
+                double totalWins = 0;
 
                 foreach (var tournament in tournaments)
                 {
@@ -219,7 +219,7 @@ namespace fantasydg.Controllers
                     double wins = GetWinScoreForTeam(league, team, tournament);
 
                     totalPoints += score * weight;
-                    totalWins += (int)wins;
+                    totalWins += wins * weight;
                 }
 
                 teamScores[team.TeamId] = totalPoints;
