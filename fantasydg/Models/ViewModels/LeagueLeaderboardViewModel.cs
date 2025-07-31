@@ -12,8 +12,8 @@
             public string OwnerName { get; set; }
             public Dictionary<int, double> PointsByTournament { get; set; } = new();
             public double TotalPoints { get; set; }
-            public Dictionary<int, int> WinsByTournament { get; set; } = new();
-            public int TotalWins { get; set; }
+            public Dictionary<int, double> WinsByTournament { get; set; } = new();
+            public double TotalWins { get; set; }
         }
     }
 }

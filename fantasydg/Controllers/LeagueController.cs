@@ -305,7 +305,7 @@ namespace fantasydg.Controllers
                     TeamName = team.Name,
                     OwnerName = team.Owner?.UserName ?? "Unknown",
                     PointsByTournament = new Dictionary<int, double>(),
-                    WinsByTournament = new Dictionary<int, int>()
+                    WinsByTournament = new Dictionary<int, double>()
                 };
 
                 foreach (var tournament in tournaments)
@@ -319,7 +319,7 @@ namespace fantasydg.Controllers
 
                     // Assign both regardless of scoring mode
                     row.PointsByTournament[tournament.Id] = rawPoints * weight;
-                    row.WinsByTournament[tournament.Id] = (int)rawWins;
+                    row.WinsByTournament[tournament.Id] = rawWins * weight;
                 }
 
                 row.TotalPoints = row.PointsByTournament.Values.Sum();
