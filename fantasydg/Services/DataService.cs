@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
+using System.Drawing.Printing;
 using System.Security.Principal;
 using static System.Formats.Asn1.AsnWriter;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -325,10 +326,17 @@ namespace fantasydg.Services
                     var roundJson = await _httpClient.GetStringAsync(roundUrl);
                     var roundData = JObject.Parse(roundJson)["data"];
 
+                    if (roundData[0]["pool"] != null)
+                    {
+                        roundData = roundData[0];
+                    }
+
                     if (roundData == null || roundData["scores"] == null)
                     {
                         continue;
                     }
+
+                    
 
                     // Get final round placement and score
                     roundNumber += 1;

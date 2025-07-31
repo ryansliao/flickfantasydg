@@ -1,4 +1,4 @@
-using fantasydg.Data;
+﻿using fantasydg.Data;
 using fantasydg.Models;
 using fantasydg.Models.Repository;
 using fantasydg.Services;
@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+    builder.Configuration.AddUserSecrets<Program>();
     var configuration = builder.Configuration;
 
     builder.Services.AddAuthentication().AddGoogle(googleOptions =>
@@ -26,6 +27,7 @@ try
     //var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
     builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
@@ -40,16 +42,31 @@ try
     builder.Services.AddHttpClient<DataService>();
     builder.Services.AddScoped<DatabaseRepository>();
     builder.Services.AddScoped<LeagueService>();
-    builder.Services.AddHostedService<TournamentService>();
+    builder.Services.AddHostedService<TournamentDiscoveryService>();
+    builder.Services.AddHostedService<TournamentUpdateService>();
     builder.Services.AddScoped<PlayerService>();
 
     var app = builder.Build();
 
+    /*
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        db.Database.Migrate(); // applies migrations on Azure or local startup
-    }
+        var connection = db.Database.GetDbConnection();
+
+        if (app.Environment.IsDevelopment())
+        { 
+            Console.WriteLine($"Connected to database: {connection.Database}");
+            Console.WriteLine($"On server: {connection.DataSource}");
+            Console.WriteLine($"Full connection string: {connection.ConnectionString}");
+
+            db.Database.Migrate(); // Only if you still want auto-migrations
+        }
+        else
+        {
+            Console.WriteLine("Migrations skipped for production database.");
+        }
+    }*/
 
     app.UseDeveloperExceptionPage();
 

@@ -575,8 +575,8 @@ namespace fantasydg.Controllers
             var db = HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
             var dataService = HttpContext.RequestServices.GetRequiredService<DataService>();
 
-            var service = new TournamentService(HttpContext.RequestServices, NullLogger<TournamentService>.Instance);
-            var method = typeof(TournamentService).GetMethod("UpdateActiveTournamentsAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+            var service = new TournamentDiscoveryService(HttpContext.RequestServices, NullLogger<TournamentDiscoveryService>.Instance);
+            var method = typeof(TournamentDiscoveryService).GetMethod("UpdateActiveTournamentsAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
             if (method != null)
                 await (Task)method.Invoke(service, new object[] { nowPT, db, dataService })!;
@@ -597,8 +597,8 @@ namespace fantasydg.Controllers
             var dataService = HttpContext.RequestServices.GetRequiredService<DataService>();
             var httpClient = HttpContext.RequestServices.GetRequiredService<HttpClient>();
 
-            var service = new TournamentService(HttpContext.RequestServices, NullLogger<TournamentService>.Instance);
-            var method = typeof(TournamentService).GetMethod("DiscoverNewTournamentsAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+            var service = new TournamentDiscoveryService(HttpContext.RequestServices, NullLogger<TournamentDiscoveryService>.Instance);
+            var method = typeof(TournamentDiscoveryService).GetMethod("DiscoverNewTournamentsAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
             if (method != null)
                 await (Task)method.Invoke(service, new object[] { nowPT, db, dataService, httpClient })!;
