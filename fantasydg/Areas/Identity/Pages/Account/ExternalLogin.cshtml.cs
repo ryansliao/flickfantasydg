@@ -2,6 +2,16 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
+using fantasydg.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
@@ -9,15 +19,6 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Options;
-using fantasydg.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
 
 namespace fantasydg.Areas.Identity.Pages.Account
 {
@@ -115,26 +116,36 @@ namespace fantasydg.Areas.Identity.Pages.Account
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
+                return RedirectToAction(nameof(Login));
             }
 
-            // Try to sign in with external login
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
             if (result.Succeeded)
             {
-                return LocalRedirect(returnUrl);
+                return RedirectToAction("Index", "Home");
             }
-
-            // Not signed in — show registration form
-            // Save return URL and external login provider for OnPost
-            ReturnUrl = returnUrl;
-            ProviderDisplayName = info.ProviderDisplayName;
-            Input = new InputModel
+            else
             {
-                Email = info.Principal.FindFirstValue(ClaimTypes.Email)
-            };
+                // NEW: check if user already exists by email
+                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+                var user = await _userManager.FindByEmailAsync(email);
 
-            return Page(); // Shows ExternalLogin.cshtml
+                if (user != null)
+                {
+                    // Link the external login to the existing user
+                    await _userManager.AddLoginAsync(user, info);
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // Fallback: no user found, show registration page
+                ViewData["ReturnUrl"] = returnUrl;
+                ViewData["LoginProvider"] = info.LoginProvider;
+                var emailFromProvider = info.Principal.FindFirstValue(ClaimTypes.Email);
+
+                TempData["LoginError"] = "No account found for this Google login, and automatic registration is disabled.";
+                return RedirectToAction("Login", "Account");
+            }
         }
 
         public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
@@ -161,7 +172,7 @@ namespace fantasydg.Areas.Identity.Pages.Account
                 result = await _userManager.AddLoginAsync(user, info);
                 if (result.Succeeded)
                 {
-                    // ✅ Skip confirmation and log in immediately
+                    // Skip confirmation and log in immediately
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);
                 }

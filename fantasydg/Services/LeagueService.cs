@@ -94,6 +94,7 @@ namespace fantasydg.Services
 
             return (float)Math.Round(score, 2);
         }
+
         public async Task<Dictionary<(int PDGANumber, int tournamentId, string division), float>> GetFantasyPointsMapAsync(int leagueId)
         {
             return await _db.LeaguePlayerFantasyPoints

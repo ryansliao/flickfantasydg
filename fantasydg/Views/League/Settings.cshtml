@@ -33,6 +33,9 @@
     if (TempData["ScoringSaved"] != null)
         toastMessages.Add(new { text = TempData["ScoringSaved"], type = "success" });
 
+    if (TempData["RosterLockResult"] != null)
+        toastMessages.Add(new { text = TempData["RosterLockResult"], type = "info" });
+
     if (TempData["InviteResult"] != null)
         toastMessages.Add(new { text = TempData["InviteResult"], type = "info" });
 
@@ -170,7 +173,81 @@
             </form>
 
             <hr style="width: 100%; margin: 0.5rem 0; border-top: 2px solid #444;" />
-            
+
+            <h4>Lock Rosters</h4>
+
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#lockRosterModal">
+                Lock Team Roster
+            </button>
+
+            <div class="modal fade" id="lockRosterModal" tabindex="-1" aria-labelledby="lockRosterLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <form asp-action="LockRoster" asp-controller="League" method="post" data-no-ajax>
+                        @Html.AntiForgeryToken()
+
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="lockRosterLabel">Lock Team Roster</h5>
+                                <a class="btn-close" href="@Url.Action("Settings", new { id = Model.LeagueId })" aria-label="Close"></a>
+                            </div>
+
+                            <div class="modal-body">
+                                <input type="hidden" name="leagueId" value="@Model.LeagueId" />
+
+                                <div class="mb-3">
+                                    <label for="teamId" class="form-label">Select Team</label>
+                                    @{
+                                        var selectedTeamId = TempData["PendingTeamId"] as int?;
+                                    }
+
+                                    <select class="form-select" name="teamId" required>
+                                        @foreach (var team in Model.Teams)
+                                        {
+                                            var selectedAttr = team.TeamId == selectedTeamId ? "selected" : "";
+                                            @:<option value="@team.TeamId" @selectedAttr>@team.Name</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="tournamentId" class="form-label">Select Tournament</label>
+                                    <select class="form-select" name="tournamentKey" required>
+                                        @foreach (var tournament in ViewBag.Tournaments)
+                                        {
+                                            if (tournament == null) { continue; }
+
+                                            <option value="@($"{tournament.Id}|{tournament.Division}")">
+                                                @tournament.Name (@tournament.Division)
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Enter Starter Names</label>
+
+                                    @{
+                                        var prefilledNames = TempData["PendingPlayerNames"] != null
+                                            ? System.Text.Json.JsonSerializer.Deserialize<List<string>>(TempData["PendingPlayerNames"].ToString())
+                                            : new List<string>(new string[Model.StarterCount]);
+                                    }
+
+                                    <textarea name="playerNames" class="form-control" rows="@Model.StarterCount" required">@string.Join("\n", prefilledNames)</textarea>
+
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-danger">Lock Roster</button>
+                                <a class="btn btn-secondary" href="@Url.Action("Settings", new { id = Model.LeagueId })">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <hr style="width: 100%; margin: 0.5rem 0; border-top: 2px solid #444;" />
+
             <h4>Tournament Weights</h4>
 
             @if (ViewBag.TournamentWeights != null)

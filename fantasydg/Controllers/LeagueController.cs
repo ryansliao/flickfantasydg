@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using Newtonsoft.Json;
 using NuGet.Protocol.Core.Types;
 using System.Reflection;
 using System.Security.Claims;
@@ -218,8 +219,15 @@ namespace fantasydg.Controllers
                     double score = GetTeamScoreForTournament(league, team, tournament);
                     double wins = GetWinScoreForTeam(league, team, tournament);
 
-                    totalPoints += score * weight;
                     totalWins += wins * weight;
+                    if (league.LeagueScoringMode == League.ScoringMode.WinsPerTournament)
+                    {
+                        totalPoints += score;
+                    }
+                    else
+                    {
+                        totalPoints += score * weight;
+                    }
                 }
 
                 teamScores[team.TeamId] = totalPoints;
@@ -313,13 +321,18 @@ namespace fantasydg.Controllers
                     leagueWeights.TryGetValue((tournament.Id, tournament.Division), out var weight);
                     if (weight == 0) weight = 1;
 
-                    // Always calculate raw points and raw wins
                     double rawPoints = GetTeamScoreForTournament(league, team, tournament);
                     double rawWins = GetWinScoreForTeam(league, team, tournament);
 
-                    // Assign both regardless of scoring mode
-                    row.PointsByTournament[tournament.Id] = rawPoints * weight;
                     row.WinsByTournament[tournament.Id] = rawWins * weight;
+                    if (league.LeagueScoringMode == League.ScoringMode.WinsPerTournament)
+                    {
+                        row.PointsByTournament[tournament.Id] = rawPoints;
+                    }
+                    else
+                    {
+                        row.PointsByTournament[tournament.Id] = rawPoints * weight;
+                    }
                 }
 
                 row.TotalPoints = row.PointsByTournament.Values.Sum();
@@ -519,6 +532,7 @@ namespace fantasydg.Controllers
         {
             var league = await _db.Leagues
                 .Include(l => l.Owner)
+                .Include(l => l.Teams)
                 .Include(l => l.Members).ThenInclude(m => m.User)
                 .FirstOrDefaultAsync(l => l.LeagueId == id);
 
@@ -537,7 +551,12 @@ namespace fantasydg.Controllers
                 .Select(t => (int?)t.TeamId)
                 .FirstOrDefaultAsync();
 
+            var enabledDivisions = new List<string>();
+            if (league.IncludeMPO) enabledDivisions.Add("MPO");
+            if (league.IncludeFPO) enabledDivisions.Add("FPO");
+
             var tournaments = await _db.Tournaments
+                .Where(t => !string.IsNullOrEmpty(t.Division) && enabledDivisions.Contains(t.Division))
                 .OrderByDescending(t => t.StartDate)
                 .ToListAsync();
 
@@ -557,6 +576,7 @@ namespace fantasydg.Controllers
                 })
                 .ToList();
 
+            ViewBag.Tournaments = tournaments;
             ViewBag.TournamentWeights = tournamentWeights;
             ViewBag.LeagueId = league.LeagueId;
             ViewBag.LeagueName = league.Name;
@@ -768,6 +788,95 @@ namespace fantasydg.Controllers
             }
 
             return RedirectToAction("Settings", new { id = LeagueId });
+        }
+
+        // Lock a team roster for a tournament
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LockRoster(int leagueId, int teamId, string tournamentKey, string playerNames)
+        {
+            var parts = tournamentKey.Split('|');
+            if (parts.Length != 2 || !int.TryParse(parts[0], out int tournamentId))
+            {
+                TempData["RosterLockResult"] = "Invalid tournament selection.";
+                return RedirectToAction("Settings", new { id = leagueId});
+            }
+            var division = parts[1];
+
+            var league = await _db.Leagues.FindAsync(leagueId);
+            if (league == null) return NotFound();
+
+            var names = playerNames.Split('\n')
+                .Select(n => n.Trim())
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .ToList();
+
+            var playerDict = await _db.PlayerTournaments
+                .Include(pt => pt.Player)
+                .Where(pt => names.Contains(pt.Player.Name))
+                .GroupBy(pt => pt.Player.Name)
+                .Select(g => g.First())
+                .ToDictionaryAsync(pt => pt.Player.Name, pt => pt.PDGANumber);
+
+            var unmatchedNames = new List<string>();
+            var matchedPlayers = new List<PlayerTournament>();
+
+            foreach (var name in names)
+            {
+                if (!playerDict.TryGetValue(name, out var pdgaNumber))
+                {
+                    unmatchedNames.Add(name);
+                    continue;
+                }
+
+                var playerTournament = await _db.PlayerTournaments.FirstOrDefaultAsync(pt =>
+                    pt.TournamentId == tournamentId &&
+                    pt.Division == division &&
+                    pt.PDGANumber == pdgaNumber);
+
+                if (playerTournament == null)
+                {
+                    unmatchedNames.Add(name);
+                    continue;
+                }
+
+                var existingEntry = await _db.TeamPlayerTournaments.FirstOrDefaultAsync(tpt =>
+                    tpt.TeamId == teamId &&
+                    tpt.TournamentId == tournamentId &&
+                    tpt.Division == division &&
+                    tpt.PDGANumber == pdgaNumber);
+
+                if (existingEntry != null)
+                {
+                    existingEntry.TeamId = teamId;
+                    existingEntry.Status = nameof(RosterStatus.Starter);
+                    existingEntry.IsLocked = true;
+                }
+                else
+                {
+                    var newTpt = new TeamPlayerTournament
+                    {
+                        TeamId = teamId,
+                        TournamentId = tournamentId,
+                        Division = division,
+                        PDGANumber = pdgaNumber,
+                        Status = nameof(RosterStatus.Starter),
+                        IsLocked = true
+                    };
+
+                    _db.TeamPlayerTournaments.Add(newTpt);
+                }
+            }
+
+            if (unmatchedNames.Any())
+            {
+                TempData["RosterLockResult"] = $"Could not find players: {string.Join(", ", unmatchedNames)} in {division} {tournamentId}";
+                return RedirectToAction("Settings", new { id = leagueId });
+            }
+            
+            await _db.SaveChangesAsync();
+            TempData["RosterLockResult"] = "Roster successfully locked!";
+           return RedirectToAction("Settings", new { id = leagueId });
         }
 
         // Changes owner of league
