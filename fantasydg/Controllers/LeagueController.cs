@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 using NuGet.Protocol.Core.Types;
+using System.Net.Http;
 using System.Reflection;
 using System.Security.Claims;
 
@@ -18,15 +19,31 @@ namespace fantasydg.Controllers
     public class LeagueController : Controller
     {
         private readonly ApplicationDbContext _db;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly DataService _dataService;
         private readonly LeagueService _leagueService;
         private readonly PlayerService _playerService;
+        private readonly TournamentUpdateService _updateService;
+        private readonly TournamentDiscoveryService _discoveryService;
         private readonly DatabaseRepository _repository;
 
-        public LeagueController(ApplicationDbContext db, LeagueService leagueService, PlayerService playerService, DatabaseRepository repository)
+        public LeagueController(
+            ApplicationDbContext db,
+            IHttpClientFactory httpClientFactory,
+            DataService dataService,
+            LeagueService leagueService, 
+            PlayerService playerService, 
+            TournamentUpdateService updateService, 
+            TournamentDiscoveryService discoveryService, 
+            DatabaseRepository repository)
         {
             _db = db;
+            _httpClientFactory = httpClientFactory;
+            _dataService = dataService;
             _leagueService = leagueService;
             _playerService = playerService;
+            _updateService = updateService;
+            _discoveryService = discoveryService;
             _repository = repository;
         }
 
@@ -477,6 +494,7 @@ namespace fantasydg.Controllers
                         Player = first.Player,
                         PDGANumber = (int)g.Key,
                         FantasyPoints = g.Sum(pt => pt.FantasyPoints),
+                        WorldRanking = (int)first.Player.WorldRanking,
                         Place = g.Average(pt => pt.Place),
                         Fairway = g.Average(pt => pt.Fairway),
                         C1InReg = g.Average(pt => pt.C1InReg),
@@ -592,14 +610,7 @@ namespace fantasydg.Controllers
             var nowPT = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
 
-            var db = HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
-            var dataService = HttpContext.RequestServices.GetRequiredService<DataService>();
-
-            var service = new TournamentDiscoveryService(HttpContext.RequestServices, NullLogger<TournamentDiscoveryService>.Instance);
-            var method = typeof(TournamentDiscoveryService).GetMethod("UpdateActiveTournamentsAsync", BindingFlags.NonPublic | BindingFlags.Instance);
-
-            if (method != null)
-                await (Task)method.Invoke(service, new object[] { nowPT, db, dataService })!;
+            await _updateService.RunManualUpdateAsync(nowPT);
 
             TempData["ActiveTournamentsUpdated"] = "✅ All active tournaments were updated successfully.";
             return RedirectToAction("Settings", new { id });
@@ -613,15 +624,9 @@ namespace fantasydg.Controllers
             var nowPT = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
 
-            var db = HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
-            var dataService = HttpContext.RequestServices.GetRequiredService<DataService>();
-            var httpClient = HttpContext.RequestServices.GetRequiredService<HttpClient>();
+            var httpClient = _httpClientFactory.CreateClient();
 
-            var service = new TournamentDiscoveryService(HttpContext.RequestServices, NullLogger<TournamentDiscoveryService>.Instance);
-            var method = typeof(TournamentDiscoveryService).GetMethod("DiscoverNewTournamentsAsync", BindingFlags.NonPublic | BindingFlags.Instance);
-
-            if (method != null)
-                await (Task)method.Invoke(service, new object[] { nowPT, db, dataService, httpClient })!;
+            await _discoveryService.RunManualDiscoveryAsync(nowPT);
 
             TempData["NewTournamentsDiscovered"] = "🧭 New Elite Series and Major tournaments discovered and added!";
             return RedirectToAction("Settings", new { id });

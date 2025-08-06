@@ -85,11 +85,21 @@
         document.getElementById('modalPdgaNumber').value = pdgaNumber;
         document.getElementById('playerModal').style.display = 'block';
 
+        fetch(`/Player/GetWorldRanking?pdgaNumber=${pdgaNumber}`)
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+                return res.json();
+            })
+            .then(data => {
+                document.getElementById("modalWorldRanking").textContent = data.worldRanking ?? "-";
+            })
+            .catch(err => {
+                document.getElementById("modalWorldRanking").textContent = "-";
+            });
+
         fetch(`/Player/GetStats?pdgaNumber=${pdgaNumber}`)
             .then(res => res.json())
             .then(data => {
-                console.log("Player stats response:", data);
-                console.log("totalPoints element:", document.getElementById('modalTotalPoints'));
                 document.getElementById('modalTotalPoints').textContent = data.totalPoints?.toFixed(1) ?? '-';
                 document.getElementById('modalAvgPlace').textContent = data.avgPlace?.toFixed(1) ?? '-';
                 document.getElementById('modalCount').textContent = data.tournamentCount ?? '-';

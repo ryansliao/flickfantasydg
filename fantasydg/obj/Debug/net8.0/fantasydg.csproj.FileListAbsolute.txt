@@ -320,4 +320,5 @@ C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\refint\fan
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\fantasydg.pdb
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\fantasydg.genruntimeconfig.cache
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\ref\fantasydg.dll
+C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\bin\Debug\net8.0\HtmlAgilityPack.dll
 C:\Users\RyanS\source\repos\flickfantasydg\fantasydg\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

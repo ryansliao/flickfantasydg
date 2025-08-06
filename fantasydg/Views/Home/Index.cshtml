@@ -1,7 +1,32 @@
-﻿@{
+﻿@model List<fantasydg.Models.League>
+
+@{
     ViewData["Title"] = "Home";
 }
 
-<h2>Welcome to Flick Fantasy Disc Golf!</h2>
+<h2 class=mb-3>Welcome to Flick Fantasy Disc Golf!</h2>
 
-<a class="btn btn-primary" href="/League">My Leagues</a>
+<div style="width: 40%">
+    <h4 class=mb-2>
+        Leagues
+    </h4>
+
+    <div>
+        @if (!Model.Any())
+        {
+            <p>You are not part of any leagues yet.</p>
+        }
+        else
+        {
+            <div class="list-group">
+                @foreach (var league in Model)
+                {
+                    <a class="list-group-item list-group-item-action"
+                       href="@Url.Action("View", "League", new { id = league.LeagueId })">
+                        @league.Name
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>

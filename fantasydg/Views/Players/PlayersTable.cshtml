@@ -17,6 +17,7 @@
                     <th>Add</th>
                     <th>Player</th>
                     <th>Points</th>
+                    <th data-orderable="true">World #</th>
                     <th>Place</th>
                     <th>Birdie-</th>
                     <th>Eagle-</th>
@@ -63,6 +64,9 @@
                         </td>
                         <td>@pt.Player.Name</td>
                         <td>@pt.FantasyPoints.ToString("0.0")</td>
+                        <td data-order="@pt.WorldRanking">
+                            @(pt.WorldRanking > 0 ? pt.WorldRanking.ToString() : "-")
+                        </td>
                         <td>@pt.Place</td>
                         <td>@pt.BirdieMinus%</td>
                         <td>@pt.EagleMinus%</td>

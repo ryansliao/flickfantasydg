@@ -29,20 +29,19 @@
             @if (ViewBag.Standings != null)
             {
                 var scoringMode = (League.ScoringMode)ViewBag.ScoringMode;
-
-                <table class="table table-striped mt-2" style="width: 60%">
+                <table class="table table-striped mt-2" style="width: 30vw;">
                     <thead>
                         <tr>
-                            <th>Placement</th>
-                            <th>Member</th>
-                            <th>Team</th>
+                            <th style="width: 5px;">Place</th>
+                            <th style="width: 20px;">Member</th>
+                            <th style="width: 20px;">Team</th>
                             @if (scoringMode == League.ScoringMode.TotalPoints)
                             {
-                                <th>Points</th>
+                                <th style="width: 10px;">Points</th>
                             }
                             else if (scoringMode == League.ScoringMode.WinsPerTournament)
                             {
-                                <th>Wins</th>
+                                <th style="width: 5px;">Wins</th>
                             }
                         </tr>
                     </thead>
@@ -50,16 +49,16 @@
                         @foreach (var s in (List<LeagueStandingsViewModel>)ViewBag.Standings)
                         {
                             <tr>
-                                <td>@s.Placement</td>
-                                <td>@s.MemberName</td>
-                                <td>@s.TeamName</td>
+                                <td style="width: 5px;">@s.Placement</td>
+                                <td style="width: 20px;">@s.MemberName</td>
+                                <td style="width: 20px;">@s.TeamName</td>
                                 @if (scoringMode == League.ScoringMode.TotalPoints)
                                 {
-                                    <td>@s.FantasyPoints.ToString("F2")</td>
+                                    <td style="width: 10px;">@s.FantasyPoints.ToString("F2")</td>
                                 }
                                 else if (scoringMode == League.ScoringMode.WinsPerTournament)
                                 {
-                                    <td>@s.Wins</td>
+                                    <td style="width: 5px;">@s.Wins</td>
                                 }
                             </tr>
                         }

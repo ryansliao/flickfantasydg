@@ -45,5 +45,13 @@ namespace fantasydg.Controllers
             });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetWorldRanking(int pdgaNumber)
+        {
+            var player = await _db.Players.FirstOrDefaultAsync(p => p.PDGANumber == pdgaNumber);
+            if (player == null) return NotFound();
+
+            return Json(new { worldRanking = player.WorldRanking });
+        }
     }
 }

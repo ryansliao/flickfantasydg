@@ -14,6 +14,16 @@ public class TournamentUpdateService : BackgroundService
         _logger = logger;
     }
 
+    // Public method for controller use
+    public async Task RunManualUpdateAsync(DateTime nowPT)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dataService = scope.ServiceProvider.GetRequiredService<DataService>();
+        await UpdateTournamentsAsync(nowPT, db, dataService);
+    }
+
+    // BackgroundService loop
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
@@ -26,26 +36,7 @@ public class TournamentUpdateService : BackgroundService
 
             try
             {
-                var tournaments = await db.Tournaments
-                    .Where(t => t.StartDate <= nowPT && t.EndDate >= nowPT)
-                    .ToListAsync();
-
-                foreach (var tournament in tournaments)
-                {
-                    try
-                    {
-                        _logger.LogInformation("Updating active tournament: {Id}", tournament.Id);
-                        await dataService.FetchTournaments(tournament.Id, tournament.Division);
-
-                        tournament.LastUpdatedTime = DateTime.UtcNow;
-                        db.Entry(tournament).Property(t => t.LastUpdatedTime).IsModified = true;
-                        await db.SaveChangesAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning("Error updating tournament {Id}: {Msg}", tournament.Id, ex.Message);
-                    }
-                }
+                await UpdateTournamentsAsync(nowPT, db, dataService);
             }
             catch (Exception ex)
             {
@@ -53,6 +44,41 @@ public class TournamentUpdateService : BackgroundService
             }
 
             await Task.Delay(TimeSpan.FromMinutes(20), stoppingToken);
+        }
+    }
+
+    // Shared logic used by both paths
+    private async Task UpdateTournamentsAsync(DateTime nowPT, ApplicationDbContext db, DataService dataService)
+    {
+        var tournaments = await db.Tournaments
+            .Where(t => t.StartDate <= nowPT && t.EndDate >= nowPT)
+            .ToListAsync();
+
+        bool anyUpdated = false;
+
+        foreach (var tournament in tournaments)
+        {
+            try
+            {
+                _logger.LogInformation("Updating active tournament: {Id}", tournament.Id);
+                await dataService.FetchTournaments(tournament.Id, tournament.Division);
+
+                tournament.LastUpdatedTime = DateTime.UtcNow;
+                db.Entry(tournament).Property(t => t.LastUpdatedTime).IsModified = true;
+                await db.SaveChangesAsync();
+
+                anyUpdated = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Error updating tournament {Id}: {Msg}", tournament.Id, ex.Message);
+            }
+        }
+
+        if (anyUpdated)
+        {
+            var playerService = _serviceProvider.GetRequiredService<PlayerService>();
+            await playerService.UpdateAllWorldRankingsAsync();
         }
     }
 }

@@ -16,13 +16,21 @@ namespace fantasydg.Controllers
         private readonly ApplicationDbContext _db;
         private readonly DataService _dataService;
         private readonly LeagueService _leagueService;
+        private readonly PlayerService _playerService;
         private readonly DatabaseRepository _repository;
         private readonly ILogger<DataService> _logger;
 
-        public TournamentController(ApplicationDbContext db, DataService dataService, LeagueService leagueService, DatabaseRepository repository, ILogger<DataService> logger)
+        public TournamentController(
+            ApplicationDbContext db, 
+            DataService dataService, 
+            LeagueService leagueService, 
+            PlayerService playerservice, 
+            DatabaseRepository repository, 
+            ILogger<DataService> logger)
         {
             _db = db;
             _dataService = dataService;
+            _playerService = playerservice;
             _leagueService = leagueService;
             _repository = repository;
             _logger = logger;
@@ -37,7 +45,18 @@ namespace fantasydg.Controllers
             foreach (var division in divisions)
             {
                 await _dataService.FetchTournaments(TournamentId, division);
+
+                var tournament = await _db.Tournaments
+                    .FirstOrDefaultAsync(t => t.Id == TournamentId && t.Division == division);
+
+                if (tournament != null)
+                {
+                    tournament.LastUpdatedTime = DateTime.UtcNow;
+                }
             }
+
+            // Update world rankings after tournament input
+            await _playerService.UpdateAllWorldRankingsAsync();
 
             TempData["TournamentInputSuccess"] = "Tournament successfully added or updated!";
             return RedirectToAction("Settings", "League", new { id = leagueId });

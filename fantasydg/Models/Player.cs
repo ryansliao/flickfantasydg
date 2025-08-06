@@ -10,6 +10,7 @@ namespace fantasydg.Models
         public int PDGANumber { get; set; }
         public int ResultId { get; set; }
         public string? Name { get; set; }
+        public int WorldRanking { get; set; }
         public double FantasyPoints { get; set; }
         public ICollection<PlayerTournament> PlayerTournaments { get; set; }
         public ICollection<TeamPlayer> TeamPlayers { get; set; }

@@ -16,7 +16,8 @@ namespace fantasydg.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var leagues = _context.Leagues.ToList();
+            return View(leagues);
         }
     }
 }

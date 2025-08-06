@@ -1,10 +1,13 @@
-﻿namespace fantasydg.Models.ViewModels
+﻿using System.Security.Permissions;
+
+namespace fantasydg.Models.ViewModels
 {
     public class PlayerSeasonStatsViewModel
     {
         public Player Player { get; set; }
         public int PDGANumber { get; set; }
         public double FantasyPoints { get; set; }
+        public int WorldRanking { get; set; }
         public double Place { get; set; }
         public double Fairway { get; set; }
         public double C1InReg { get; set; }

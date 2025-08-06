@@ -1,13 +1,24 @@
 ﻿using fantasydg.Data;
 using fantasydg.Models;
+using fantasydg.Services;
 using Microsoft.EntityFrameworkCore;
+using HtmlAgilityPack;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+
 public class PlayerService
 {
     private readonly ApplicationDbContext _db;
+    private readonly HttpClient _httpClient;
+    private const string BaseUrl = "https://www.pdga.com";
+    private const string RankingsUrl = "https://www.pdga.com/world-rankings";
 
-    public PlayerService(ApplicationDbContext db)
+    public PlayerService(ApplicationDbContext db, HttpClient httpClient)
     {
         _db = db;
+        _httpClient = httpClient;
     }
 
     public double CalculatePoints(League league, PlayerTournament pt, Tournament tournament)
@@ -64,5 +75,84 @@ public class PlayerService
         }
 
         await _db.SaveChangesAsync();
+    }
+
+    public async Task UpdateAllWorldRankingsAsync()
+    {
+        var mpo = await GetRankingsAsync("MPO");
+        var fpo = await GetRankingsAsync("FPO");
+
+        var players = await _db.Players.ToListAsync();
+
+        foreach (var player in players)
+        {
+            var match = mpo.FirstOrDefault(p => p.PDGANumber == player.PDGANumber) ??
+            fpo.FirstOrDefault(p => p.PDGANumber == player.PDGANumber);
+
+            player.WorldRanking = match?.Rank ?? 0;
+        }
+
+        await _db.SaveChangesAsync();
+    }
+
+    private async Task<List<RankedPlayer>> GetRankingsAsync(string division)
+    {
+        var rootHtml = await _httpClient.GetStringAsync(RankingsUrl);
+        var doc = new HtmlDocument();
+        doc.LoadHtml(rootHtml);
+
+        string linkText = division == "MPO" ? "All MPO Rankings" : "All FPO Rankings";
+        var linkNode = doc.DocumentNode.SelectSingleNode($"//a[contains(text(), '{linkText}')]");
+
+        if (linkNode == null) return new List<RankedPlayer>();
+
+        var href = linkNode.GetAttributeValue("href", null);
+        string divisionUrl = href != null && href.StartsWith("http") ? href : BaseUrl + href;
+
+        var rankingsHtml = await _httpClient.GetStringAsync(divisionUrl);
+        var rankingsDoc = new HtmlDocument();
+        rankingsDoc.LoadHtml(rankingsHtml);
+
+        var rows = rankingsDoc.DocumentNode.SelectNodes("//table//tr");
+        var result = new List<RankedPlayer>();
+
+        if (rows == null) return result;
+
+        foreach (var row in rows)
+        {
+            var cells = row.SelectNodes("td");
+            if (cells == null || cells.Count < 3) continue;
+
+            var rankText = cells[0].InnerText.Trim();
+            var rankParts = rankText.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            var rankString = rankParts.LastOrDefault();
+
+            var numText = cells[1].SelectSingleNode(".//a");
+            if (numText == null) continue;
+
+            var numString = numText.GetAttributeValue("href", "");
+            var parts = numString.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            var pdgaString = parts.LastOrDefault();
+
+            if (!int.TryParse(pdgaString, out int pdgaNumber))
+                continue;
+
+            if (!int.TryParse(rankString, out int rank))
+                continue;
+
+            result.Add(new RankedPlayer
+            {
+                Rank = rank,
+                PDGANumber = pdgaNumber
+            });
+        }
+
+        return result;
+    }
+
+    private class RankedPlayer
+    {
+        public int Rank { get; set; }
+        public int PDGANumber { get; set; }
     }
 }

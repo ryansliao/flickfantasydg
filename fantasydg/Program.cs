@@ -19,7 +19,7 @@ try
         googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
     });
 
-    // ? Add logging (built-in, no extra config needed)
+    // Add logging (built-in, no extra config needed)
     builder.Logging.ClearProviders();
     builder.Logging.AddConsole();
 
@@ -46,31 +46,13 @@ try
     builder.Services.AddHttpClient<DataService>();
     builder.Services.AddScoped<DatabaseRepository>();
     builder.Services.AddScoped<LeagueService>();
-    builder.Services.AddHostedService<TournamentDiscoveryService>();
-    builder.Services.AddHostedService<TournamentUpdateService>();
+    builder.Services.AddSingleton<TournamentDiscoveryService>();
+    builder.Services.AddHostedService(sp => sp.GetRequiredService<TournamentDiscoveryService>());
+    builder.Services.AddSingleton<TournamentUpdateService>();
+    builder.Services.AddHostedService(sp => sp.GetRequiredService<TournamentUpdateService>());
     builder.Services.AddScoped<PlayerService>();
 
     var app = builder.Build();
-
-    /*
-    using (var scope = app.Services.CreateScope())
-    {
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var connection = db.Database.GetDbConnection();
-
-        if (app.Environment.IsDevelopment())
-        { 
-            Console.WriteLine($"Connected to database: {connection.Database}");
-            Console.WriteLine($"On server: {connection.DataSource}");
-            Console.WriteLine($"Full connection string: {connection.ConnectionString}");
-
-            db.Database.Migrate(); // Only if you still want auto-migrations
-        }
-        else
-        {
-            Console.WriteLine("Migrations skipped for production database.");
-        }
-    }*/
 
     app.UseDeveloperExceptionPage();
 
