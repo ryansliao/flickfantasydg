@@ -21,11 +21,11 @@ namespace fantasydg.Controllers
         private readonly ILogger<DataService> _logger;
 
         public TournamentController(
-            ApplicationDbContext db, 
-            DataService dataService, 
-            LeagueService leagueService, 
-            PlayerService playerservice, 
-            DatabaseRepository repository, 
+            ApplicationDbContext db,
+            DataService dataService,
+            LeagueService leagueService,
+            PlayerService playerservice,
+            DatabaseRepository repository,
             ILogger<DataService> logger)
         {
             _db = db;
@@ -40,11 +40,18 @@ namespace fantasydg.Controllers
         [HttpPost]
         public async Task<IActionResult> Input(int TournamentId, int leagueId)
         {
+            var league = await _db.Leagues.FirstOrDefaultAsync(l => l.LeagueId == leagueId);
+            if (league == null)
+            {
+                TempData["Error"] = "League not found.";
+                return RedirectToAction("Index", "League");
+            }
+
             string[] divisions = { "MPO", "FPO" };
 
             foreach (var division in divisions)
             {
-                await _dataService.FetchTournaments(TournamentId, division);
+                await _dataService.FetchTournaments(TournamentId, division, league);
 
                 var tournament = await _db.Tournaments
                     .FirstOrDefaultAsync(t => t.Id == TournamentId && t.Division == division);
@@ -55,11 +62,11 @@ namespace fantasydg.Controllers
                 }
             }
 
-            // Update world rankings after tournament input
-            await _playerService.UpdateAllWorldRankingsAsync();
+            await _playerService.UpdateAllWorldRankingsAsync(includeMPO: true, includeFPO: false);
 
             TempData["TournamentInputSuccess"] = "Tournament successfully added or updated!";
             return RedirectToAction("Settings", "League", new { id = leagueId });
         }
+
     }
 }

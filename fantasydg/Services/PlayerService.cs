@@ -77,17 +77,31 @@ public class PlayerService
         await _db.SaveChangesAsync();
     }
 
-    public async Task UpdateAllWorldRankingsAsync()
+    public async Task UpdateAllWorldRankingsAsync(bool includeMPO, bool includeFPO)
     {
-        var mpo = await GetRankingsAsync("MPO");
-        var fpo = await GetRankingsAsync("FPO");
+        if (!includeMPO && !includeFPO)
+            return;
+
+        List<RankedPlayer> mpo = new();
+        List<RankedPlayer> fpo = new();
+
+        if (includeMPO)
+            mpo = await GetRankingsAsync("MPO");
+
+        if (includeFPO)
+            fpo = await GetRankingsAsync("FPO");
 
         var players = await _db.Players.ToListAsync();
 
         foreach (var player in players)
         {
-            var match = mpo.FirstOrDefault(p => p.PDGANumber == player.PDGANumber) ??
-            fpo.FirstOrDefault(p => p.PDGANumber == player.PDGANumber);
+            RankedPlayer? match = null;
+
+            if (includeMPO)
+                match = mpo.FirstOrDefault(p => p.PDGANumber == player.PDGANumber);
+
+            if (match == null && includeFPO)
+                match = fpo.FirstOrDefault(p => p.PDGANumber == player.PDGANumber);
 
             player.WorldRanking = match?.Rank ?? 0;
         }

@@ -46,10 +46,10 @@ try
     builder.Services.AddHttpClient<DataService>();
     builder.Services.AddScoped<DatabaseRepository>();
     builder.Services.AddScoped<LeagueService>();
-    builder.Services.AddSingleton<TournamentDiscoveryService>();
-    builder.Services.AddHostedService(sp => sp.GetRequiredService<TournamentDiscoveryService>());
-    builder.Services.AddSingleton<TournamentUpdateService>();
-    builder.Services.AddHostedService(sp => sp.GetRequiredService<TournamentUpdateService>());
+    builder.Services.AddScoped<TournamentDiscoveryService>();
+    builder.Services.AddHostedService<TournamentDiscoveryService>();
+    builder.Services.AddScoped<TournamentUpdateService>();
+    builder.Services.AddHostedService<TournamentUpdateService>();
     builder.Services.AddScoped<PlayerService>();
 
     var app = builder.Build();
@@ -85,6 +85,5 @@ try
 }
 catch (Exception ex)
 {
-    System.IO.File.WriteAllText("/home/Log_crash.txt", ex.ToString());
     throw;
 }

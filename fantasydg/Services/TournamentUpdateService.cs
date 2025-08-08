@@ -51,6 +51,8 @@ public class TournamentUpdateService : BackgroundService
     private async Task UpdateTournamentsAsync(DateTime nowPT, ApplicationDbContext db, DataService dataService)
     {
         var tournaments = await db.Tournaments
+            .Include(t => t.LeagueTournaments)
+                .ThenInclude(lt => lt.League)
             .Where(t => t.StartDate <= nowPT && t.EndDate >= nowPT)
             .ToListAsync();
 
@@ -60,14 +62,41 @@ public class TournamentUpdateService : BackgroundService
         {
             try
             {
-                _logger.LogInformation("Updating active tournament: {Id}", tournament.Id);
-                await dataService.FetchTournaments(tournament.Id, tournament.Division);
+                _logger.LogInformation("Checking tournament {Id} ({Division})", tournament.Id, tournament.Division);
 
-                tournament.LastUpdatedTime = DateTime.UtcNow;
-                db.Entry(tournament).Property(t => t.LastUpdatedTime).IsModified = true;
-                await db.SaveChangesAsync();
+                bool updated = false;
 
-                anyUpdated = true;
+                foreach (var lt in tournament.LeagueTournaments)
+                {
+                    var league = lt.League;
+                    if (league == null)
+                    {
+                        _logger.LogWarning("Skipping LeagueTournament without a valid League reference (TournamentId: {Id}, Division: {Division})", tournament.Id, tournament.Division);
+                        continue;
+                    }
+
+                    bool include = (tournament.Division == "MPO" && league.IncludeMPO) ||
+                                   (tournament.Division == "FPO" && league.IncludeFPO);
+
+                    if (!include)
+                    {
+                        _logger.LogInformation("Skipping tournament {Id} for league {LeagueId} — Division {Division} is excluded", tournament.Id, league.LeagueId, tournament.Division);
+                        continue;
+                    }
+
+                    _logger.LogInformation("Fetching tournament {Id} ({Division}) for league {LeagueId}", tournament.Id, tournament.Division, league.LeagueId);
+
+                    await dataService.FetchTournaments(tournament.Id, tournament.Division, league);
+                    updated = true;
+                }
+
+                if (updated)
+                {
+                    tournament.LastUpdatedTime = DateTime.UtcNow;
+                    db.Entry(tournament).Property(t => t.LastUpdatedTime).IsModified = true;
+                    await db.SaveChangesAsync();
+                    anyUpdated = true;
+                }
             }
             catch (Exception ex)
             {
@@ -77,8 +106,9 @@ public class TournamentUpdateService : BackgroundService
 
         if (anyUpdated)
         {
-            var playerService = _serviceProvider.GetRequiredService<PlayerService>();
-            await playerService.UpdateAllWorldRankingsAsync();
+            using var scope = _serviceProvider.CreateScope();
+            var playerService = scope.ServiceProvider.GetRequiredService<PlayerService>();
+            await playerService.UpdateAllWorldRankingsAsync(includeMPO: true, includeFPO: false);
         }
     }
 }

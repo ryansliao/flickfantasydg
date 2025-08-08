@@ -73,8 +73,14 @@ namespace fantasydg.Services
         }
 
         // Get tournament stats and populates tournament object
-        public async Task FetchTournaments(int tournamentId, string division)
+        public async Task FetchTournaments(int tournamentId, string division, League league)
         {
+            if ((division == "MPO" && !league.IncludeMPO) || (division == "FPO" && !league.IncludeFPO))
+            {
+                _logger.LogInformation("Skipping division {Division} for tournament {TournamentId}", division, tournamentId);
+                return;
+            }
+
             try
             {
                 // Parse tournament stats API response

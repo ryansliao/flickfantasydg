@@ -20,30 +20,27 @@ namespace fantasydg.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IServiceScopeFactory _scopeFactory;
         private readonly DataService _dataService;
         private readonly LeagueService _leagueService;
         private readonly PlayerService _playerService;
-        private readonly TournamentUpdateService _updateService;
-        private readonly TournamentDiscoveryService _discoveryService;
         private readonly DatabaseRepository _repository;
 
         public LeagueController(
             ApplicationDbContext db,
             IHttpClientFactory httpClientFactory,
+            IServiceScopeFactory scopeFactory,
             DataService dataService,
             LeagueService leagueService, 
-            PlayerService playerService, 
-            TournamentUpdateService updateService, 
-            TournamentDiscoveryService discoveryService, 
+            PlayerService playerService,
             DatabaseRepository repository)
         {
             _db = db;
             _httpClientFactory = httpClientFactory;
+            _scopeFactory = scopeFactory;
             _dataService = dataService;
             _leagueService = leagueService;
             _playerService = playerService;
-            _updateService = updateService;
-            _discoveryService = discoveryService;
             _repository = repository;
         }
 
@@ -610,7 +607,9 @@ namespace fantasydg.Controllers
             var nowPT = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
 
-            await _updateService.RunManualUpdateAsync(nowPT);
+            using var scope = _scopeFactory.CreateScope();
+            var updateService = scope.ServiceProvider.GetRequiredService<TournamentUpdateService>();
+            await updateService.RunManualUpdateAsync(nowPT);
 
             TempData["ActiveTournamentsUpdated"] = "✅ All active tournaments were updated successfully.";
             return RedirectToAction("Settings", new { id });
@@ -624,9 +623,10 @@ namespace fantasydg.Controllers
             var nowPT = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
 
-            var httpClient = _httpClientFactory.CreateClient();
+            using var scope = _scopeFactory.CreateScope();
+            var discoveryService = scope.ServiceProvider.GetRequiredService<TournamentDiscoveryService>();
 
-            await _discoveryService.RunManualDiscoveryAsync(nowPT);
+            await discoveryService.RunManualDiscoveryAsync(nowPT, id);
 
             TempData["NewTournamentsDiscovered"] = "🧭 New Elite Series and Major tournaments discovered and added!";
             return RedirectToAction("Settings", new { id });

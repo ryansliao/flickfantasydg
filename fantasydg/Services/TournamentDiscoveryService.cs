@@ -1,4 +1,5 @@
 ﻿using fantasydg.Data;
+using fantasydg.Models;
 using fantasydg.Services;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
@@ -17,14 +18,21 @@ public class TournamentDiscoveryService : BackgroundService
     }
 
     // Public controller-safe method
-    public async Task RunManualDiscoveryAsync(DateTime nowPT)
+    public async Task RunManualDiscoveryAsync(DateTime nowPT, int leagueId)
     {
         using var scope = _serviceProvider.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var dataService = scope.ServiceProvider.GetRequiredService<DataService>();
         var httpClient = scope.ServiceProvider.GetRequiredService<HttpClient>();
 
-        await DiscoverNewTournamentsAsync(nowPT, db, dataService, httpClient);
+        var league = await db.Leagues.FirstOrDefaultAsync(l => l.LeagueId == leagueId);
+        if (league == null)
+        {
+            _logger.LogWarning("League {LeagueId} not found. Skipping tournament discovery.", leagueId);
+            return;
+        }
+
+        await DiscoverNewTournamentsAsync(nowPT, db, dataService, httpClient, league);
     }
 
     // Background worker auto-executes this
@@ -34,7 +42,6 @@ public class TournamentDiscoveryService : BackgroundService
         {
             var nowPT = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, PacificTimeZone);
 
-            // Only run once per day at midnight
             if (_lastRunDate.Date != nowPT.Date && nowPT.Hour == 0)
             {
                 using var scope = _serviceProvider.CreateScope();
@@ -44,8 +51,14 @@ public class TournamentDiscoveryService : BackgroundService
 
                 try
                 {
-                    _logger.LogInformation("Midnight tournament discovery running for {Date}", nowPT.Date);
-                    await DiscoverNewTournamentsAsync(nowPT, db, dataService, httpClient);
+                    var leagues = await db.Leagues.AsNoTracking().ToListAsync();
+
+                    foreach (var league in leagues)
+                    {
+                        _logger.LogInformation("Midnight discovery for league {LeagueId} on {Date}", league.LeagueId, nowPT.Date);
+                        await DiscoverNewTournamentsAsync(nowPT, db, dataService, httpClient, league);
+                    }
+
                     _lastRunDate = nowPT.Date;
                 }
                 catch (Exception ex)
@@ -59,7 +72,7 @@ public class TournamentDiscoveryService : BackgroundService
     }
 
     // Private shared logic
-    private async Task DiscoverNewTournamentsAsync(DateTime nowPT, ApplicationDbContext db, DataService dataService, HttpClient httpClient)
+    private async Task DiscoverNewTournamentsAsync(DateTime nowPT, ApplicationDbContext db, DataService dataService, HttpClient httpClient, League league)
     {
         var url = "https://www.pdga.com/apps/tournament/live-api/live_results_fetch_recent_events";
 
@@ -67,6 +80,9 @@ public class TournamentDiscoveryService : BackgroundService
         {
             var json = await httpClient.GetStringAsync(url);
             var tournaments = JObject.Parse(json)?["data"]?["Tournaments"] as JArray;
+            bool shouldFetchMPO = league.IncludeMPO;
+            bool shouldFetchFPO = league.IncludeFPO;
+            bool anyNewDiscovered = false;
 
             if (tournaments != null)
             {
@@ -78,20 +94,27 @@ public class TournamentDiscoveryService : BackgroundService
                     if ((rawTier == "ES" || rawTier == "M") && id > 0)
                     {
                         bool exists = await db.Tournaments.AnyAsync(x => x.Id == id);
-                        bool anyNewDiscovered = false;
+                        if (exists) continue;
 
-                        if (!exists)
+                        _logger.LogInformation("Found new tournament: {Id} ({Tier})", id, rawTier);
+
+                        bool discovered = false;
+
+                        if (league.IncludeMPO)
                         {
-                            _logger.LogInformation("Found new tournament: {Id} ({Tier})", id, rawTier);
-                            await dataService.FetchTournaments(id, "MPO");
-                            await dataService.FetchTournaments(id, "FPO");
-                            anyNewDiscovered = true;
+                            await dataService.FetchTournaments(id, "MPO", league);
+                            discovered = true;
                         }
 
-                        if (anyNewDiscovered)
+                        if (league.IncludeFPO)
                         {
-                            var playerService = _serviceProvider.GetRequiredService<PlayerService>();
-                            await playerService.UpdateAllWorldRankingsAsync();
+                            await dataService.FetchTournaments(id, "FPO", league);
+                            discovered = true;
+                        }
+
+                        if (discovered)
+                        {
+                            anyNewDiscovered = true;
                         }
                     }
                 }
