@@ -332,17 +332,19 @@ namespace fantasydg.Services
                     var roundJson = await _httpClient.GetStringAsync(roundUrl);
                     var roundData = JObject.Parse(roundJson)["data"];
 
-                    if (roundData[0]["pool"] != null)
+                    if (roundData["pool"] is JArray arr && arr.Count > 0)
                     {
-                        roundData = roundData[0];
+                        roundData = arr[0];
+                    }
+                    else if (roundData["pool"] is JObject obj)
+                    {
+                        roundData = obj;
                     }
 
                     if (roundData == null || roundData["scores"] == null)
                     {
                         continue;
                     }
-
-                    
 
                     // Get final round placement and score
                     roundNumber += 1;
