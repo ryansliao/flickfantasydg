@@ -72,57 +72,57 @@ public class TournamentDiscoveryService : BackgroundService
     }
 
     // Private shared logic
-    private async Task DiscoverNewTournamentsAsync(DateTime nowPT, ApplicationDbContext db, DataService dataService, HttpClient httpClient, League league)
+    private async Task DiscoverNewTournamentsAsync(
+        DateTime nowPT,
+        ApplicationDbContext db,
+        DataService dataService,
+        HttpClient httpClient,
+        League league)
     {
-        var url = "https://www.pdga.com/apps/tournament/live-api/live_results_fetch_recent_events";
+        const string url = "https://www.pdga.com/apps/tournament/live-api/live_results_fetch_recent_events";
 
         try
         {
             var json = await httpClient.GetStringAsync(url);
             var tournaments = JObject.Parse(json)?["data"]?["Tournaments"] as JArray;
-            bool shouldFetchMPO = league.IncludeMPO;
-            bool shouldFetchFPO = league.IncludeFPO;
-            bool anyNewDiscovered = false;
 
-            if (tournaments != null)
+            if (tournaments == null) return;
+
+            foreach (var t in tournaments)
             {
-                foreach (var t in tournaments)
+                int id = t["TournID"]?.Value<int>() ?? 0;
+                string rawTier = t["RawTier"]?.ToString();
+
+                if (id <= 0 || (rawTier != "ES" && rawTier != "M")) continue;
+
+                bool exists = await db.Tournaments.AsNoTracking().AnyAsync(x => x.Id == id);
+                if (exists) continue;
+
+                _logger.LogInformation("Found new tournament: {Id} ({Tier}) for league {LeagueId}", id, rawTier, league.LeagueId);
+
+                bool discovered = false;
+
+                if (league.IncludeMPO)
                 {
-                    int id = t["TournID"]?.Value<int>() ?? 0;
-                    string rawTier = t["RawTier"]?.ToString();
+                    await dataService.FetchTournaments(id, "MPO", league);
+                    discovered = true;
+                }
 
-                    if ((rawTier == "ES" || rawTier == "M") && id > 0)
-                    {
-                        bool exists = await db.Tournaments.AnyAsync(x => x.Id == id);
-                        if (exists) continue;
+                if (league.IncludeFPO)
+                {
+                    await dataService.FetchTournaments(id, "FPO", league);
+                    discovered = true;
+                }
 
-                        _logger.LogInformation("Found new tournament: {Id} ({Tier})", id, rawTier);
-
-                        bool discovered = false;
-
-                        if (league.IncludeMPO)
-                        {
-                            await dataService.FetchTournaments(id, "MPO", league);
-                            discovered = true;
-                        }
-
-                        if (league.IncludeFPO)
-                        {
-                            await dataService.FetchTournaments(id, "FPO", league);
-                            discovered = true;
-                        }
-
-                        if (discovered)
-                        {
-                            anyNewDiscovered = true;
-                        }
-                    }
+                if (!discovered)
+                {
+                    _logger.LogInformation("League {LeagueId} excludes both divisions. Skipping tournament {Id}.", league.LeagueId, id);
                 }
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error during DiscoverNewTournamentsAsync");
+            _logger.LogError(ex, "Error during DiscoverNewTournamentsAsync for league {LeagueId}", league.LeagueId);
         }
     }
 }

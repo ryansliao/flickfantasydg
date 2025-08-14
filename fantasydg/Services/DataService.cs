@@ -113,7 +113,7 @@ namespace fantasydg.Services
                 DateTime.TryParse(endDateStr, out var parsedEndDate);
 
                 tournament.Name = info[0];
-                tournament.Tier = info[2];
+                tournament.Tier = info.Count > 3 ? info[3] : null;
                 tournament.StartDate = parsedStartDate == default ? DateTime.UtcNow : parsedStartDate;
                 tournament.EndDate = parsedEndDate == default ? DateTime.UtcNow : parsedEndDate;
 
@@ -121,36 +121,32 @@ namespace fantasydg.Services
 
                 var playerTournaments = new Dictionary<int, PlayerTournament>(); // Initialize dictionary of PlayerTournament objects
 
-                var (finalRoundStats, resultToPdga, roundNumber, nameMap) = await FetchRounds(tournamentId, division); //Initialize player from the final round
-                tournament.RoundNumber = roundNumber;
+                var (latestRoundStats, resultToPdga, roundNumber, nameMap) = await FetchRounds(tournamentId, division);
 
                 // Initialize player tournaments with empty stats before tournament starts
-                if (statsArray == null || !statsArray.Any())
+                foreach (var kvp in resultToPdga)
                 {
-                    foreach (var kvp in resultToPdga)
+                    int resultId = kvp.Key;
+                    int pdgaNumber = kvp.Value;
+
+                    string name = nameMap.TryGetValue(pdgaNumber, out var nm) ? nm : "Unknown";
+                    var player = await GetOrCreatePlayerAsync(pdgaNumber, name);
+
+                    var pt = new PlayerTournament
                     {
-                        int resultId = kvp.Key;
-                        int pdgaNumber = kvp.Value;
+                        ResultId = resultId,
+                        PDGANumber = pdgaNumber,
+                        TournamentId = tournamentId,
+                        Division = division
+                    };
 
-                        string name = nameMap.ContainsKey(pdgaNumber) ? nameMap[pdgaNumber] : "Unknown";
-                        var player = await GetOrCreatePlayerAsync(pdgaNumber, name);
-
-                        var pt = new PlayerTournament
-                        {
-                            ResultId = resultId,
-                            PDGANumber = pdgaNumber,
-                            TournamentId = tournamentId,
-                            Division = division
-                        };
-
-                        if (finalRoundStats.TryGetValue(pdgaNumber, out var stats))
-                        {
-                            pt.Place = stats.Place;
-                            pt.TotalToPar = stats.ToPar;
-                        }
-
-                        playerTournaments[resultId] = pt;
+                    if (latestRoundStats.TryGetValue(pdgaNumber, out var stats))
+                    {
+                        pt.Place = stats.Place;
+                        pt.TotalToPar = stats.ToPar;
                     }
+
+                    playerTournaments[resultId] = pt;
                 }
 
                 // Assign PlayerTournament stats for every player present in API response
@@ -159,34 +155,27 @@ namespace fantasydg.Services
                     var result = playerData["result"];
                     var statList = playerData["stats"] as JArray;
 
-                    if (result == null)
-                        continue;
+                    if (result == null) continue;
 
                     int resultId = result["resultId"]?.Value<int>() ?? 0;
                     string name = $"{result["firstName"]} {result["lastName"]}".Trim();
 
-                    if (!resultToPdga.TryGetValue(resultId, out int PDGANumber) || PDGANumber == 0)
-                        continue;
+                    if (!resultToPdga.TryGetValue(resultId, out int pdgaNumber) || pdgaNumber == 0) continue;
 
-                    var player = await GetOrCreatePlayerAsync(PDGANumber, name); // Initialize player object
-
-                    // Initialize empty PlayerTournament object
-                    var pt = new PlayerTournament
+                    if (!playerTournaments.TryGetValue(resultId, out var pt))
                     {
-                        ResultId = resultId,
-                        PDGANumber = PDGANumber,
-                        TournamentId = tournamentId,
-                        Division = division
-                    };
+                        var _ = await GetOrCreatePlayerAsync(pdgaNumber, name);
+                        pt = new PlayerTournament
+                        {
+                            ResultId = resultId,
+                            PDGANumber = pdgaNumber,
+                            TournamentId = tournamentId,
+                            Division = division
+                        };
+                        playerTournaments[resultId] = pt;
+                    }
 
                     playerTournaments[resultId] = pt;
-
-                    // Assign final round place and score to PlayerTournament attributes
-                    if (finalRoundStats.TryGetValue(pt.PDGANumber, out var stats))
-                    {
-                        pt.Place = stats.Place;
-                        pt.TotalToPar = stats.ToPar;
-                    }
 
                     // Assign API stats to PlayerTournament attributes
                     foreach (var stat in statList)
@@ -215,7 +204,6 @@ namespace fantasydg.Services
                             case 16: pt.TotalPuttDistance = statCount; break;
                             case 17: pt.LongThrowIn = statCount; break;
                             case 18: pt.AvgPuttDistance = Math.Round(statValue, 1); break;
-                            default: continue;
                         }
                     }
                 }
@@ -342,6 +330,14 @@ namespace fantasydg.Services
                     }
 
                     if (roundData == null || roundData["scores"] == null)
+                    {
+                        continue;
+                    }
+
+                    // Skip this round entirely if tee_times is "false"
+                    if (roundData["tee_times"] != null &&
+                        roundData["tee_times"].Type != JTokenType.Null &&
+                        roundData["tee_times"].ToString().Trim().Equals("false", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
