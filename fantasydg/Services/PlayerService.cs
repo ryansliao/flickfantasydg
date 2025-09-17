@@ -122,8 +122,15 @@ public class PlayerService
 
         var href = linkNode.GetAttributeValue("href", null);
         string divisionUrl = href != null && href.StartsWith("http") ? href : BaseUrl + href;
-
-        var rankingsHtml = await _httpClient.GetStringAsync(divisionUrl);
+        string rankingsHtml;
+        try
+        {
+            rankingsHtml = await _httpClient.GetStringAsync(divisionUrl);
+        }
+        catch
+        {
+            return new List<RankedPlayer>();
+        }
         var rankingsDoc = new HtmlDocument();
         rankingsDoc.LoadHtml(rankingsHtml);
 
